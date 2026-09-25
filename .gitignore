@@ -1,0 +1,38 @@
+# secrets and local state
+.env
+.env.*
+!.env.example
+ui/approvals.sqlite
+.claude/
+# runs are local output, except the canonical final run (the source of cases/*.json), which the
+# dashboard and the Railway image show. `runs/*` rather than `runs/` so the exceptions can apply.
+runs/*
+!runs/.gitkeep
+!runs/live-final-2/
+
+# raw data (708 MB) and the full DuckDB; the derived data/ids.duckdb and data/hhgoa_engine.duckdb ARE checked in
+data/raw/
+data/hhgoa.duckdb
+data/hhgoa.duckdb.wal
+data/out/
+data/corpus/raw/
+data/ofac/*.csv
+data/corpus/text/fatf_cyber_fraud_2023.txt  # copyrighted; `python -m rag.fetch_corpus` re-downloads it
+*.duckdb
+!data/ids.duckdb
+!data/hhgoa_engine.duckdb
+
+# python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+engine/out/*.engine.json
+engine/out/replay_rows.csv
+
+# editors / os
+.DS_Store
+.idea/
+.vscode/

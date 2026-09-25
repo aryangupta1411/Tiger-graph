@@ -1,0 +1,53 @@
+// case_subgraph — a small evidence subgraph for the UI: the card, its customer, its last <= 60 transactions
+// in (as_of - hours, as_of], the device profiles / purchaser email domains / billing regions of those
+// transactions, and the closed cases on the card. <= 300 nodes + edges by construction (2 + 60 + <= 60 devices
+// + <= 10 emails + <= 20 regions + <= 30 cases nodes; ~270 edges).
+// CONTRACT DEVIATION: the tuple fields are `vtype` / `etype` instead of `type` because TYPE is a GSQL reserved
+// word (4.2 keyword list); the UI reads nodes[].vtype and edges[].etype.
+USE GRAPH FraudGraph
+CREATE OR REPLACE QUERY case_subgraph(VERTEX<Card> c, DATETIME as_of, INT hours) FOR GRAPH FraudGraph SYNTAX v3 {
+  TYPEDEF TUPLE<STRING id, STRING vtype, STRING label> NodeRow;
+  TYPEDEF TUPLE<STRING src, STRING dst, STRING etype> EdgeRow;
+  TYPEDEF TUPLE<STRING ts, STRING id> Pick;
+  SetAccum<NodeRow> @@nodes;
+  SetAccum<EdgeRow> @@edges;
+  HeapAccum<Pick>(60, ts DESC, id DESC) @@picks;
+  ListAccum<Pick> @@pick_cur;
+  SetAccum<STRING> @@keep;
+  MaxAccum<STRING> @@cid;
+  DATETIME from_ts = epoch_to_datetime(datetime_to_epoch(as_of) - hours * 3600);
+
+  S = {c};
+  S = SELECT s FROM (s:S)
+      POST-ACCUM @@cid += s.id, @@nodes += NodeRow(s.id, "Card", s.card_type + " " + s.card_network);
+  U = SELECT u FROM (s:S)-[:REV_OWNS]->(u:Customer)
+      POST-ACCUM @@nodes += NodeRow(u.id, "Customer", u.id), @@edges += EdgeRow(u.id, @@cid, "OWNS");
+
+  T = SELECT t FROM (s:S)-[:MADE]->(t:Transaction)
+      WHERE t.ts > from_ts AND t.ts <= as_of
+      POST-ACCUM @@picks += Pick(t.ts_str, t.id);
+  WHILE @@picks.size() > 0 DO
+    @@pick_cur.clear();
+    @@pick_cur += @@picks.pop();
+    @@keep += @@pick_cur.get(0).id;
+  END;
+  T2 = SELECT t FROM (t:T)
+       WHERE @@keep.contains(t.id)
+       POST-ACCUM @@nodes += NodeRow(t.id, "Transaction", "$" + to_string(t.amt) + " " + t.product_cd + " " + t.ts_str),
+                  @@edges += EdgeRow(@@cid, t.id, "MADE");
+  D = SELECT d FROM (t:T2)-[:FROM_DEVICE]->(d:DeviceProfile)
+      ACCUM @@edges += EdgeRow(t.id, d.id, "FROM_DEVICE")
+      POST-ACCUM @@nodes += NodeRow(d.id, "DeviceProfile", d.id);
+  E = SELECT e FROM (t:T2)-[:PURCHASER_EMAIL]->(e:EmailDomain)
+      ACCUM @@edges += EdgeRow(t.id, e.id, "PURCHASER_EMAIL")
+      POST-ACCUM @@nodes += NodeRow(e.id, "EmailDomain", e.id);
+  R = SELECT r FROM (t:T2)-[:BILLED_IN]->(r:BillingRegion)
+      ACCUM @@edges += EdgeRow(t.id, r.id, "BILLED_IN")
+      POST-ACCUM @@nodes += NodeRow(r.id, "BillingRegion", r.id);
+  P = SELECT p FROM (s:S)-[:REV_ON_CARD]->(p:ClosedCase)
+      WHERE p.opened_at <= as_of
+      POST-ACCUM @@nodes += NodeRow(p.id, "ClosedCase", p.pattern + " " + p.outcome),
+                 @@edges += EdgeRow(p.id, @@cid, "ON_CARD");
+
+  PRINT @@nodes AS nodes, @@edges AS edges;
+}

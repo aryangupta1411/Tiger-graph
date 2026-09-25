@@ -1,0 +1,233 @@
+{
+ "query": "prior_cases_for_customer",
+ "case": "HHG-018",
+ "params": {
+  "cu": "C02354",
+  "as_of": "2016-11-27 14:41:26"
+ },
+ "expected": {
+  "closed_cases": [
+   {
+    "opened_at": "2016-11-01 12:12:15",
+    "id": "CC-5558",
+    "card_id": "C02354-K2",
+    "outcome": "confirmed_fraud",
+    "pattern": "card_not_present_fraud",
+    "exposure_usd": 8.2,
+    "report_filed": false,
+    "n_txns": 1,
+    "template_id": "fraud_reported"
+   },
+   {
+    "opened_at": "2016-10-29 16:31:52",
+    "id": "CC-5441",
+    "card_id": "C02354-K2",
+    "outcome": "confirmed_fraud",
+    "pattern": "out_of_region_use",
+    "exposure_usd": 2698.02,
+    "report_filed": true,
+    "n_txns": 19,
+    "template_id": "fraud_reported"
+   },
+   {
+    "opened_at": "2016-10-17 13:58:18",
+    "id": "CC-4942",
+    "card_id": "C02354-K2",
+    "outcome": "confirmed_fraud",
+    "pattern": "out_of_region_use",
+    "exposure_usd": 1094.94,
+    "report_filed": true,
+    "n_txns": 5,
+    "template_id": "fraud_reported"
+   },
+   {
+    "opened_at": "2016-10-11 22:12:18",
+    "id": "CC-4721",
+    "card_id": "C02354-K2",
+    "outcome": "confirmed_fraud",
+    "pattern": "out_of_region_use",
+    "exposure_usd": 1386.57,
+    "report_filed": true,
+    "n_txns": 10,
+    "template_id": "fraud_reported"
+   },
+   {
+    "opened_at": "2016-10-06 05:49:05",
+    "id": "CC-4436",
+    "card_id": "C02354-K2",
+    "outcome": "confirmed_fraud",
+    "pattern": "out_of_region_use",
+    "exposure_usd": 2610.53,
+    "report_filed": true,
+    "n_txns": 11,
+    "template_id": "fraud_reported"
+   },
+   {
+    "opened_at": "2016-09-28 08:19:32",
+    "id": "CC-4070",
+    "card_id": "C02354-K2",
+    "outcome": "confirmed_fraud",
+    "pattern": "account_takeover",
+    "exposure_usd": 2064.03,
+    "report_filed": true,
+    "n_txns": 3,
+    "template_id": "fraud_reported"
+   },
+   {
+    "opened_at": "2016-09-24 18:20:06",
+    "id": "CC-3899",
+    "card_id": "C02354-K2",
+    "outcome": "confirmed_fraud",
+    "pattern": "account_takeover",
+    "exposure_usd": 567.93,
+    "report_filed": false,
+    "n_txns": 6,
+    "template_id": "fraud_reported"
+   },
+   {
+    "opened_at": "2016-09-18 06:08:17",
+    "id": "CC-3634",
+    "card_id": "C02354-K2",
+    "outcome": "confirmed_fraud",
+    "pattern": "account_takeover",
+    "exposure_usd": 96.96,
+    "report_filed": false,
+    "n_txns": 1,
+    "template_id": "fraud_reported"
+   },
+   {
+    "opened_at": "2016-09-16 03:31:31",
+    "id": "CC-3537",
+    "card_id": "C02354-K2",
+    "outcome": "confirmed_fraud",
+    "pattern": "out_of_region_use",
+    "exposure_usd": 275.93,
+    "report_filed": false,
+    "n_txns": 2,
+    "template_id": "fraud_reported"
+   },
+   {
+    "opened_at": "2016-09-05 12:11:49",
+    "id": "CC-3085",
+    "card_id": "C02354-K2",
+    "outcome": "confirmed_fraud",
+    "pattern": "account_takeover",
+    "exposure_usd": 2328.05,
+    "report_filed": true,
+    "n_txns": 6,
+    "template_id": "fraud_reported"
+   },
+   {
+    "opened_at": "2016-08-25 13:12:26",
+    "id": "CC-2589",
+    "card_id": "C02354-K2",
+    "outcome": "confirmed_fraud",
+    "pattern": "out_of_region_use",
+    "exposure_usd": 96.02,
+    "report_filed": false,
+    "n_txns": 2,
+    "template_id": "fraud_reported"
+   },
+   {
+    "opened_at": "2016-08-21 19:44:38",
+    "id": "CC-2432",
+    "card_id": "C02354-K2",
+    "outcome": "confirmed_fraud",
+    "pattern": "account_takeover",
+    "exposure_usd": 359.41,
+    "report_filed": false,
+    "n_txns": 2,
+    "template_id": "fraud_reported"
+   },
+   {
+    "opened_at": "2016-08-16 07:34:48",
+    "id": "CC-2187",
+    "card_id": "C02354-K2",
+    "outcome": "confirmed_fraud",
+    "pattern": "account_takeover",
+    "exposure_usd": 543.01,
+    "report_filed": false,
+    "n_txns": 3,
+    "template_id": "fraud_reported"
+   },
+   {
+    "opened_at": "2016-08-13 03:45:51",
+    "id": "CC-2051",
+    "card_id": "C02354-K2",
+    "outcome": "confirmed_fraud",
+    "pattern": "account_takeover",
+    "exposure_usd": 226.12,
+    "report_filed": false,
+    "n_txns": 5,
+    "template_id": "fraud_reported"
+   },
+   {
+    "opened_at": "2016-08-05 06:23:28",
+    "id": "CC-1699",
+    "card_id": "C02354-K2",
+    "outcome": "confirmed_fraud",
+    "pattern": "account_takeover",
+    "exposure_usd": 329.06,
+    "report_filed": false,
+    "n_txns": 2,
+    "template_id": "fraud_reported"
+   },
+   {
+    "opened_at": "2016-07-30 07:41:05",
+    "id": "CC-1450",
+    "card_id": "C02354-K2",
+    "outcome": "confirmed_fraud",
+    "pattern": "account_takeover",
+    "exposure_usd": 2351.25,
+    "report_filed": true,
+    "n_txns": 14,
+    "template_id": "fraud_reported"
+   },
+   {
+    "opened_at": "2016-07-16 23:16:38",
+    "id": "CC-0631",
+    "card_id": "C02354-K2",
+    "outcome": "confirmed_fraud",
+    "pattern": "out_of_region_use",
+    "exposure_usd": 118.17,
+    "report_filed": false,
+    "n_txns": 2,
+    "template_id": "fraud_reported"
+   },
+   {
+    "opened_at": "2016-07-13 16:11:34",
+    "id": "CC-0454",
+    "card_id": "C02354-K2",
+    "outcome": "confirmed_fraud",
+    "pattern": "account_takeover",
+    "exposure_usd": 940.94,
+    "report_filed": false,
+    "n_txns": 6,
+    "template_id": "fraud_reported"
+   },
+   {
+    "opened_at": "2016-07-12 06:45:36",
+    "id": "CC-0405",
+    "card_id": "C02354-K2",
+    "outcome": "cleared",
+    "pattern": "none",
+    "exposure_usd": 0.0,
+    "report_filed": false,
+    "n_txns": 1,
+    "template_id": "cleared_travel"
+   },
+   {
+    "opened_at": "2016-07-09 00:09:53",
+    "id": "CC-0255",
+    "card_id": "C02354-K2",
+    "outcome": "confirmed_fraud",
+    "pattern": "account_takeover",
+    "exposure_usd": 1167.08,
+    "report_filed": true,
+    "n_txns": 7,
+    "template_id": "fraud_reported"
+   }
+  ],
+  "agent_cases": []
+ }
+}

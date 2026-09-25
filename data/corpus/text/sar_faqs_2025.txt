@@ -1,0 +1,170 @@
+                                                            Financial Crimes Enforcement Network
+                                                  Board of Governors of the Federal Reserve System
+                                                            Federal Deposit Insurance Corporation
+                                                              National Credit Union Administration
+                                                          Office of the Comptroller of the Currency
+
+    Frequently Asked Questions Regarding Suspicious Activity Reporting Requirements
+
+                                               October 9, 2025
+
+The Financial Crimes Enforcement Network (FinCEN), jointly with the Board of Governors of
+the Federal Reserve System (Federal Reserve), the Federal Deposit Insurance Corporation
+(FDIC), the National Credit Union Administration (NCUA), and the Office of the Comptroller of
+the Currency (OCC), is issuing answers to frequently asked questions (FAQs) regarding
+suspicious activity reports (SARs) and other anti-money laundering/countering the financing of
+terrorism (AML/CFT) considerations for financial institutions covered by SAR rules.1 The
+answers to these FAQs clarify regulatory requirements related to SARs to assist financial
+institutions with their compliance obligations while enabling institutions to focus resources on
+activities that produce the greatest value to law enforcement agencies and other authorized
+government users of Bank Secrecy Act (BSA) reporting. The answers to these FAQs do not alter
+existing BSA legal or regulatory requirements or establish new supervisory expectations.
+
+Question 1: SAR Filings for Potential Structuring-related Activity
+Is a financial institution required to file a SAR for a transaction or a series of transactions
+with a value at or near the currency transaction reporting (CTR) threshold (i.e., over
+$10,000) absent information that the transaction or series of transactions is designed to
+evade BSA reporting requirements?
+No. The mere presence of a transaction or series of transactions by or on behalf of the same
+person at or near the $10,000 CTR threshold is not information sufficient to require the filing of
+a SAR. Financial institutions are only required to file a SAR if the institution knows, suspects,
+or has reason to suspect that the transaction or series of transactions are designed to evade CTR
+
+
+
+
+1
+  Financial institutions subject to SAR requirements include: Banks (31 C.F.R. § 1020.320), Casinos and Card Clubs
+(31 C.F.R. § 1021.320), Money Services Businesses (31 C.F.R. § 1022.320), Brokers or Dealers in Securities (31
+C.F.R. § 1023.320), Mutual Funds (31 C.F.R. § 1024.320), Insurance Companies (31 C.F.R. § 1025.320), Futures
+Commission Merchants and Introducing Brokers in Commodities (31 C.F.R. § 1026.320), Loan or Finance
+Companies (31 C.F.R. § 1029.320), and Housing Government Sponsored Enterprises (31 C.F.R. § 1030.320). See
+also 12 C.F.R § 208.62 (Board of Governors of the Federal Reserve System), 12 C.F.R part 353 (Federal Deposit
+Insurance Corporation), 12 C.F.R. § 748.1(d) (National Credit Union Administration), 12 C.F.R § 21.11 (Office of
+the Comptroller of the Currency).
+
+                                                        1
+reporting requirements.2 Absent this knowledge, suspicion, or reason to suspect, financial
+institutions are not required to file a SAR.3
+A financial institution is required to file a SAR for a transaction conducted or attempted by, at, or
+through the institution if it involves or aggregates at least $5,000 in funds or other assets and the
+institution knows, suspects, or has reason to suspect that, among other criteria, the transaction is
+designed to evade any BSA reporting requirement. This includes transactions designed to evade
+the requirement that a financial institution file a CTR for one or more transactions in currency
+by, through, or to the institution, by or on behalf of any person, and that result in either cash in or
+cash out totaling more than $10,000 during any one business day.4
+Attempting to evade CTR reporting requirements—known as structuring—may be indicative of
+underlying illegal activity and is unlawful under the BSA.5 Under FinCEN’s regulations,
+structuring is defined as a person, acting alone, or in conjunction with, or on behalf of, other
+persons, conducting or attempting to conduct one or more transactions in currency, in any
+amount, at one or more financial institutions, on one or more days, in any manner, for the
+purpose of evading CTR reporting requirements.6 “In any manner” includes, but is not limited
+to, the breaking down of a single sum of currency exceeding $10,000 into smaller sums,
+including sums at or below $10,000, or the conduct of a transaction, or series of currency
+transactions, at or below $10,000.7
+A financial institution’s AML/CFT program should be designed to detect and report structuring
+to guard against use of the institution for money laundering and ensure the institution is
+compliant with the suspicious activity reporting requirements of the BSA. The extent and
+specific parameters under which a financial institution must monitor accounts and transactions
+for suspicious activity should be commensurate with the level of money laundering and terrorist
+financing risk of the specific institution, considering the type of products and services it offers,
+the locations it serves, and the nature of its customers.8
+Question 2: Continuing Activity Reviews
+Is a financial institution required to conduct a review of a customer or account following
+the filing of a SAR to determine whether suspicious activity has continued?
+No. Recognizing the burden that continued SAR filings on the same customer or account place
+on institutions, FinCEN suggested in October 2000 that institutions file a SAR for repeated and
+
+
+
+2
+  See, e.g., 31 C.F.R. § 1020.320(a)(2)(ii) (emphasis added).
+3
+  Nothing in this FAQ should be read to conflict with OCC’s Interpretive Letter 1166 or a financial institution’s
+ability to use appropriately tailored automated monitoring systems.
+4
+  See, e.g., 31 C.F.R. § 1020.320(a)(2)(ii); see also 31 C.F.R. §§ 1010.310-315.
+5
+  31 U.S.C. § 5324.
+6
+  31 C.F.R. § 1010.100(xx).
+7
+  Id. A transaction or series of transactions need not exceed the $10,000 reporting threshold at any single financial
+institution on any single day in order to constitute structuring within the meaning of the definition.
+8
+  FinCEN Ruling 2005-6, Suspicious Activity Reporting (Structuring), July 15, 2005.
+
+                                                          2
+ongoing suspicious activity at least every 90 days.9 Over time, this suggestion has become
+interpreted as a requirement or expectation that financial institutions conduct a separate review
+of a customer or account following the filing of a SAR to determine whether suspicious activity
+has continued.
+A financial institution is not required to conduct a separate review—manual or otherwise—of a
+customer or account following the filing of a SAR to determine whether suspicious activity has
+continued. Financial institutions instead may rely on risk-based internal policies, procedures,
+and controls to monitor and report suspicious activity as appropriate, provided those internal
+policies, procedures, and controls are reasonably designed to identify and report such activity.
+Question 3: Continuing Activity Reviews – Timeline
+What is the timeline for a financial institution that elects to file SARs in accordance with
+FinCEN’s continuing suspicious activity guidance?
+As noted in the prior FAQ, FinCEN previously suggested that financial institutions report
+continuing suspicious activity via a SAR filing at least every 90 days. Subsequent FinCEN
+guidance advised financial institutions to file SARs for continuing activity after a 90-day period
+with the filing deadline being 120 calendar days after the date of the previously related SAR
+filing.10 However, financial institutions are not required to do so and may instead file SARs as
+appropriate in line with applicable timelines.11
+For financial institutions that elect to file SARs in accordance with FinCEN’s continuing
+suspicious activity guidance, below is a timeline in which a financial institution files a SAR with
+an identified subject and determines that suspicious activity has continued:12
+    •    Day 0: detection of facts that may constitute a basis for filing a SAR
+    •    Day 30: filing of initial SAR
+    •    Day 120: end of 90-day period
+    •    Day 150: filing of a SAR for continued suspicious activity
+
+When filing a SAR for continuing activity, the date or date range of suspicious activity (Item 30
+on the SAR form) should include the entire 90-day period starting on the date immediately
+
+9
+  “As a general rule of thumb, organizations should report continuing suspicious activity with a report being filed at
+least every 90 days.” FinCEN, The SAR Activity Review: Trends, Tips & Issues, Volume 1, at p. 27 (Oct. 2000).
+10
+   FinCEN, The SAR Activity Review: Trends, Tips & Issues, Issue 21, at p. 53 (May 2012).
+11
+   Financial institutions are generally required to file a SAR no later than 30 calendar days after the date of the
+institution’s initial detection of facts that may constitute a basis for filing a SAR. An institution may take an
+additional 30 calendar days to identify a suspect if no suspect was identified on the date of the detection of the
+incident requiring reporting, but reporting must not be delayed more than 60 days after the date of initial detection of
+a reportable transaction. See, e.g., 31 C.F.R. § 1020.320(b)(3).
+12
+   If a financial institution cannot identify a subject and elects to file a SAR 60 days after detection of the facts that
+may constitute a basis for filing a SAR, the initial filing date would result in all additional dates being extended 30
+days: Day 0: detection of facts that may constitute a basis for filing a SAR; Day 60: filing of the initial SAR; Day
+150: end of the 90-day period; Day 180: filing of a SAR for continued suspicious activity.
+
+                                                            3
+following the filing of the initial SAR or the date following the end of the previous 90-day
+period.13
+Question 4: No SAR Documentation
+Is a financial institution required to document the decision not to file a SAR?
+No. There is no requirement or expectation under the BSA or its implementing regulations for a
+financial institution to document its decision not to file a SAR. FinCEN has previously
+encouraged, but not required, financial institutions to document the decision not to file a SAR.14
+Should a financial institution choose to document its decision not to file a SAR, the level of
+appropriate documentation may vary based on the specifics of the activity being reviewed and
+need not exceed that which is necessary for the institution’s internal policies, procedures, and
+controls, which should be risk-based and reasonably designed to identify and report suspicious
+activity. In most cases, a short, concise statement documenting a financial institution’s SAR
+decision will likely suffice, although a financial institution may consider more documentation to
+explain the factors that the institution considered in reaching a SAR filing determination in more
+complex investigation scenarios.
+
+
+
+
+13
+     FinCEN, Suspicious Activity Report (FinCEN SAR) Electronic Filing Requirements, at pp. 153 (Aug. 2021).
+14
+     FinCEN, The SAR Activity Review: Trends, Tips & Issues, Issue 10, at p. 35 (May 2006).
+
+                                                         4
+

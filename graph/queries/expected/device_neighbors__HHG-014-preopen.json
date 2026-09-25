@@ -1,0 +1,254 @@
+{
+ "query": "device_neighbors",
+ "case": "HHG-014-preopen",
+ "params": {
+  "d": "SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080",
+  "from_ts": "2016-11-01 00:00:00",
+  "to_ts": "2016-11-22 20:11:00",
+  "max_cards": 60
+ },
+ "expected": {
+  "device": {
+   "id": "SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080",
+   "is_strong": true,
+   "n_cards_alltime": 52,
+   "n_cards_30d": 28,
+   "n_proxy": 114,
+   "n_fraud_cases": 4
+  },
+  "cards": [
+   {
+    "card_id": "C04274-K1",
+    "customer_id": "C04274",
+    "n_txns": 2,
+    "sum_amt": 365.23,
+    "n_proxy": 2,
+    "n_new": 2,
+    "first_ts": "2016-11-18 19:12:00",
+    "last_ts": "2016-11-21 17:34:00"
+   },
+   {
+    "card_id": "C09049-K1",
+    "customer_id": "C09049",
+    "n_txns": 2,
+    "sum_amt": 284.67,
+    "n_proxy": 2,
+    "n_new": 2,
+    "first_ts": "2016-11-19 17:09:00",
+    "last_ts": "2016-11-20 14:37:00"
+   },
+   {
+    "card_id": "C09906-K1",
+    "customer_id": "C09906",
+    "n_txns": 2,
+    "sum_amt": 361.41,
+    "n_proxy": 2,
+    "n_new": 2,
+    "first_ts": "2016-11-18 22:45:00",
+    "last_ts": "2016-11-22 13:20:00"
+   },
+   {
+    "card_id": "C10326-K1",
+    "customer_id": "C10326",
+    "n_txns": 2,
+    "sum_amt": 262.92,
+    "n_proxy": 2,
+    "n_new": 2,
+    "first_ts": "2016-11-14 16:54:00",
+    "last_ts": "2016-11-14 18:13:00"
+   },
+   {
+    "card_id": "C11670-K2",
+    "customer_id": "C11670",
+    "n_txns": 2,
+    "sum_amt": 334.42,
+    "n_proxy": 2,
+    "n_new": 2,
+    "first_ts": "2016-11-18 15:21:00",
+    "last_ts": "2016-11-21 10:09:00"
+   },
+   {
+    "card_id": "C13487-K1",
+    "customer_id": "C13487",
+    "n_txns": 2,
+    "sum_amt": 187.33,
+    "n_proxy": 2,
+    "n_new": 2,
+    "first_ts": "2016-11-15 20:30:00",
+    "last_ts": "2016-11-22 16:11:00"
+   },
+   {
+    "card_id": "C01289-K1",
+    "customer_id": "C01289",
+    "n_txns": 1,
+    "sum_amt": 89.53,
+    "n_proxy": 1,
+    "n_new": 1,
+    "first_ts": "2016-11-18 10:59:00",
+    "last_ts": "2016-11-18 10:59:00"
+   },
+   {
+    "card_id": "C01996-K2",
+    "customer_id": "C01996",
+    "n_txns": 1,
+    "sum_amt": 225.36,
+    "n_proxy": 1,
+    "n_new": 1,
+    "first_ts": "2016-11-16 15:24:00",
+    "last_ts": "2016-11-16 15:24:00"
+   },
+   {
+    "card_id": "C02910-K1",
+    "customer_id": "C02910",
+    "n_txns": 1,
+    "sum_amt": 224.8,
+    "n_proxy": 1,
+    "n_new": 1,
+    "first_ts": "2016-11-18 18:17:00",
+    "last_ts": "2016-11-18 18:17:00"
+   },
+   {
+    "card_id": "C02975-K1",
+    "customer_id": "C02975",
+    "n_txns": 1,
+    "sum_amt": 36.12,
+    "n_proxy": 1,
+    "n_new": 1,
+    "first_ts": "2016-11-17 20:38:00",
+    "last_ts": "2016-11-17 20:38:00"
+   },
+   {
+    "card_id": "C03676-K2",
+    "customer_id": "C03676",
+    "n_txns": 1,
+    "sum_amt": 129.35,
+    "n_proxy": 1,
+    "n_new": 1,
+    "first_ts": "2016-11-22 09:50:00",
+    "last_ts": "2016-11-22 09:50:00"
+   },
+   {
+    "card_id": "C04108-K2",
+    "customer_id": "C04108",
+    "n_txns": 1,
+    "sum_amt": 162.35,
+    "n_proxy": 1,
+    "n_new": 1,
+    "first_ts": "2016-11-18 14:15:00",
+    "last_ts": "2016-11-18 14:15:00"
+   },
+   {
+    "card_id": "C05448-K2",
+    "customer_id": "C05448",
+    "n_txns": 1,
+    "sum_amt": 245.8,
+    "n_proxy": 1,
+    "n_new": 1,
+    "first_ts": "2016-11-22 17:00:00",
+    "last_ts": "2016-11-22 17:00:00"
+   },
+   {
+    "card_id": "C06710-K1",
+    "customer_id": "C06710",
+    "n_txns": 1,
+    "sum_amt": 184.19,
+    "n_proxy": 1,
+    "n_new": 1,
+    "first_ts": "2016-11-20 14:39:00",
+    "last_ts": "2016-11-20 14:39:00"
+   },
+   {
+    "card_id": "C08168-K1",
+    "customer_id": "C08168",
+    "n_txns": 1,
+    "sum_amt": 129.94,
+    "n_proxy": 1,
+    "n_new": 1,
+    "first_ts": "2016-11-15 22:37:00",
+    "last_ts": "2016-11-15 22:37:00"
+   },
+   {
+    "card_id": "C09975-K1",
+    "customer_id": "C09975",
+    "n_txns": 1,
+    "sum_amt": 48.92,
+    "n_proxy": 1,
+    "n_new": 1,
+    "first_ts": "2016-11-16 20:50:00",
+    "last_ts": "2016-11-16 20:50:00"
+   },
+   {
+    "card_id": "C10193-K2",
+    "customer_id": "C10193",
+    "n_txns": 1,
+    "sum_amt": 156.58,
+    "n_proxy": 1,
+    "n_new": 1,
+    "first_ts": "2016-11-18 14:58:00",
+    "last_ts": "2016-11-18 14:58:00"
+   },
+   {
+    "card_id": "C11082-K1",
+    "customer_id": "C11082",
+    "n_txns": 1,
+    "sum_amt": 44.98,
+    "n_proxy": 1,
+    "n_new": 1,
+    "first_ts": "2016-11-20 22:32:00",
+    "last_ts": "2016-11-20 22:32:00"
+   },
+   {
+    "card_id": "C12796-K1",
+    "customer_id": "C12796",
+    "n_txns": 1,
+    "sum_amt": 150.22,
+    "n_proxy": 1,
+    "n_new": 1,
+    "first_ts": "2016-11-18 18:35:00",
+    "last_ts": "2016-11-18 18:35:00"
+   },
+   {
+    "card_id": "C13291-K1",
+    "customer_id": "C13291",
+    "n_txns": 1,
+    "sum_amt": 154.02,
+    "n_proxy": 1,
+    "n_new": 1,
+    "first_ts": "2016-11-19 18:43:00",
+    "last_ts": "2016-11-19 18:43:00"
+   }
+  ],
+  "closed_cases": [
+   {
+    "id": "CC-2649",
+    "card_id": "C03528-K1",
+    "pattern": "undocumented",
+    "outcome": "confirmed_fraud",
+    "report_filed": true
+   },
+   {
+    "id": "CC-2971",
+    "card_id": "C09998-K1",
+    "pattern": "undocumented",
+    "outcome": "confirmed_fraud",
+    "report_filed": true
+   },
+   {
+    "id": "CC-2985",
+    "card_id": "C06617-K1",
+    "pattern": "undocumented",
+    "outcome": "confirmed_fraud",
+    "report_filed": true
+   },
+   {
+    "id": "CC-3035",
+    "card_id": "C09733-K1",
+    "pattern": "undocumented",
+    "outcome": "confirmed_fraud",
+    "report_filed": true
+   }
+  ],
+  "agent_cases": [],
+  "_n_cards_in_window": 20
+ }
+}

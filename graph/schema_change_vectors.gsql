@@ -1,0 +1,29 @@
+// graph/schema_change_vectors.gsql — adds the three VECTOR attributes (contracts/schema.md).
+//
+// Run AFTER the plain vertices are loaded (rebuild stage "vectors"; documented path: ecosys
+// VectorSearch.md adds emb2 to an already-loaded vertex with a schema-change job):
+//     uv run python graph/rebuild.py --only vectors        (or: rag.load_vectors --ensure-schema)
+// GLOBAL job, not `FOR GRAPH FraudGraph`: every vertex type in graph/schema.gsql is a GLOBAL type and
+// "local schema change jobs cannot alter global vertex types" (gsql-ref 4.2, Modifying a Graph Schema).
+// Syntax: `ALTER VERTEX v ADD VECTOR ATTRIBUTE name(DIMENSION=d, METRIC=m [, INDEXTYPE=..][, DATATYPE=..])`
+// (gsql-ref 4.2, Vector Database Operations; DIMENSION 1..4096, METRIC COSINE|L2|IP, INDEXTYPE HNSW default).
+// DIMENSION: the literal below is the default (EMBED_DIM=1024, which both EMBED_BACKEND=local with
+// BAAI/bge-large-en-v1.5 and EMBED_BACKEND=voyage with voyage-4-lite produce). Both senders --
+// rag.load_vectors.schema_change_gsql() and graph/rebuild.py schema_change_text() -- rewrite every
+// `DIMENSION=<n>` from $EMBED_DIM via rag.load_vectors.render_dimension(), so switching to a 384-d model
+// (EMBED_MODEL=BAAI/bge-small-en-v1.5 EMBED_DIM=384) needs no edit here. Changing the dimension on an
+// EXISTING graph still means dropping and re-adding the vector attributes and reloading vec_*.psv.
+// Idempotence: graph/rebuild.py checks conn.getVertexVectors(<vertex>) first and skips when present.
+// Side effect (gsql-ref 4.2, Modifying a Graph Schema): loading jobs that refer to an ALTERED vertex type become
+// invalid and, from 4.2, are kept but marked `disabled` -- i.e. load_closed_case / load_policy_chunk after this
+// job. graph/load_all.py therefore DROPs and re-CREATEs every loading job on each run, and rebuild.py orders the
+// stages schema -> load -> vectors. Installed queries are only invalidated by DROPs; the library is (re)installed
+// after this stage anyway (rebuild stage "install").
+USE GLOBAL
+CREATE GLOBAL SCHEMA_CHANGE JOB add_vectors {
+  ALTER VERTEX ClosedCase  ADD VECTOR ATTRIBUTE note_emb(DIMENSION=1024, METRIC="COSINE");
+  ALTER VERTEX AgentCase   ADD VECTOR ATTRIBUTE note_emb(DIMENSION=1024, METRIC="COSINE");
+  ALTER VERTEX PolicyChunk ADD VECTOR ATTRIBUTE emb(DIMENSION=1024, METRIC="COSINE");
+}
+RUN GLOBAL SCHEMA_CHANGE JOB add_vectors
+DROP JOB add_vectors

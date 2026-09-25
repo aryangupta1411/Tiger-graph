@@ -1,0 +1,59 @@
+// ring_profile — profile-centric ring facts for a card (PLAN §3.4): Card.ring_id names the strong DeviceProfile
+// on the card's online transactions that carries >= 2 confirmed-fraud cards or an anonymous-proxy share >= 0.9.
+// Wave semantics (decision D6): wave_cards = every OTHER card on the profile with at least one transaction inside
+// [min - 30 d, max + 30 d] of this card's own transactions on the profile (the card_txns_on_ring rows, ts <= as_of;
+// when the card has none before as_of the anchor is all of its ring transactions) — the wave cluster the engine
+// reports as connected_card_ids (27 for HHG-014); pre_open_cards = wave cards with a transaction <= as_of (19);
+// n_cards_alltime = DeviceProfile.n_cards_alltime, printed separately (52) so the all-time fan-out stays visible.
+// closed_cases = closed cases whose INVOLVES transactions used the profile, as rows {id, card_id, pattern, outcome,
+// report_filed} (the four undocumented Aug–Sep cases for the SM-G935F ring). When ring_id == "" everything else
+// is empty (device.id == "", n_cards_alltime == 0).
+// For a calendar window on the profile use device_neighbors(profile, from_ts, to_ts, max_cards).
+USE GRAPH FraudGraph
+CREATE OR REPLACE QUERY ring_profile(VERTEX<Card> c, DATETIME as_of) FOR GRAPH FraudGraph SYNTAX v3 {
+  TYPEDEF TUPLE<STRING id, BOOL is_strong, INT n_cards_alltime, INT n_cards_30d, INT n_proxy, INT n_fraud_cases> DevRow;
+  TYPEDEF TUPLE<STRING ts, STRING id, FLOAT amt> TxnRow;
+  TYPEDEF TUPLE<STRING id, STRING card_id, STRING pattern, STRING outcome, BOOL report_filed> ClosedRow;
+  MaxAccum<STRING> @@ring_id, @@cid;
+  MaxAccum<DevRow> @@device;
+  MaxAccum<INT> @@n_cards_alltime;
+  SetAccum<STRING> @@wave_cards, @@pre_open_cards;
+  SetAccum<ClosedRow> @@closed_cases;
+  HeapAccum<TxnRow>(50, ts ASC, id ASC) @@card_txns_on_ring;
+  // anchor of the wave: this card's transactions on the profile (<= as_of first, all-time as the fallback)
+  MinAccum<INT> @@own_lo = 9999999999, @@all_lo = 9999999999;
+  MaxAccum<INT> @@own_hi = 0, @@all_hi = 0;
+  SumAccum<INT> @@own_n;
+
+  S = {c};
+  S = SELECT s FROM (s:S) POST-ACCUM @@ring_id += s.ring_id, @@cid += s.id;
+
+  IF @@ring_id != "" THEN
+    D = SELECT d FROM (s:S)-[:MADE]->(t:Transaction)-[:FROM_DEVICE]->(d:DeviceProfile)
+        WHERE d.id == @@ring_id
+        ACCUM @@all_lo += datetime_to_epoch(t.ts), @@all_hi += datetime_to_epoch(t.ts),
+              IF t.ts <= as_of THEN
+                @@card_txns_on_ring += TxnRow(t.ts_str, t.id, t.amt), @@own_n += 1,
+                @@own_lo += datetime_to_epoch(t.ts), @@own_hi += datetime_to_epoch(t.ts)
+              END
+        POST-ACCUM @@device += DevRow(d.id, d.is_strong, d.n_cards_alltime, d.n_cards_30d, d.n_proxy, d.n_fraud_cases),
+                   @@n_cards_alltime += d.n_cards_alltime;
+
+    INT wave_lo = @@all_lo - 30 * 86400;
+    INT wave_hi = @@all_hi + 30 * 86400;
+    IF @@own_n > 0 THEN
+      wave_lo = @@own_lo - 30 * 86400;
+      wave_hi = @@own_hi + 30 * 86400;
+    END;
+
+    W = SELECT k FROM (d:D)-[:REV_FROM_DEVICE]->(u:Transaction)-[:REV_MADE]->(k:Card)
+        WHERE k.id != @@cid AND datetime_to_epoch(u.ts) >= wave_lo AND datetime_to_epoch(u.ts) <= wave_hi
+        ACCUM @@wave_cards += k.id,
+              IF u.ts <= as_of THEN @@pre_open_cards += k.id END;
+    P = SELECT p FROM (d:D)-[:REV_FROM_DEVICE]->(u:Transaction)-[:REV_INVOLVES]->(p:ClosedCase)
+        ACCUM @@closed_cases += ClosedRow(p.id, p.card_id, p.pattern, p.outcome, p.report_filed);
+  END;
+
+  PRINT @@ring_id AS ring_id, @@device AS device, @@wave_cards AS wave_cards, @@pre_open_cards AS pre_open_cards,
+        @@n_cards_alltime AS n_cards_alltime, @@card_txns_on_ring AS card_txns_on_ring, @@closed_cases AS closed_cases;
+}

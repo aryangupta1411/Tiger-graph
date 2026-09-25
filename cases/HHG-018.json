@@ -1,0 +1,148 @@
+{
+  "case_id": "HHG-018",
+  "case": {
+    "status": "escalated",
+    "verdict": "uncertain",
+    "fraud_probability": 0.55,
+    "pattern": "out_of_region_use",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3485990",
+      "3490180",
+      "3491361"
+    ],
+    "first_suspicious_txn_id": "3485990",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 197.11,
+    "evidence": [
+      {
+        "claim": "The customer reports they never made the $39.08 purchase 3491361 and asks the bank to check the card; in this bank's history 4,665 of 4,665 customer-reported closed cases were confirmed fraud and none were cleared, so the denial is treated as a strong fraud signal.",
+        "source": "customer",
+        "ref": "trigger",
+        "entity_ids": [
+          "3491361",
+          "C02354"
+        ]
+      },
+      {
+        "claim": "Per the bank's out_of_region_use convention, a card-present purchase away from the card's modal region is labeled out_of_region_use even when that region is known to the card: billing region 126.0 has 566 prior in-person purchases over 142 days versus modal region 325.0's 4,788 prior purchases over 149 days, so the flagged transaction and episode members outside 325.0 are labeled out_of_region_use rather than 'known, so ordinary use'.",
+        "source": "graph",
+        "ref": "query:region_history(c=C02354-K2, addr1=126.0, as_of=2016-11-27 14:41:26)",
+        "entity_ids": [
+          "3491361",
+          "C02354-K2"
+        ]
+      },
+      {
+        "claim": "recurring_charge_check on product W at billing region 126.0 found 17 prior purchases with median gap 5.0 days but gap coefficient of variation 1.03, which fails the R7 monthly-cadence requirement (gap CV <= 0.6), so the recurring-pattern exception does not apply and the case proceeds under R2.",
+        "source": "graph",
+        "ref": "query:recurring_charge_check(t=3491361, tol=0.01, as_of=2016-11-27 14:41:26)",
+        "entity_ids": [
+          "3491361",
+          "C02354-K2"
+        ]
+      },
+      {
+        "claim": "prior_cases_for_customer lists 19 confirmed-fraud closed cases on this same card (patterns account_takeover, out_of_region_use, card_not_present_fraud), the most recent (CC-5558) opened 2016-11-01, less than a month before this transaction, showing a card that is repeatedly compromised.",
+        "source": "graph",
+        "ref": "query:prior_cases_for_customer(cu=C02354, as_of=2016-11-27 14:41:26)",
+        "entity_ids": [
+          "CC-5558",
+          "CC-4070",
+          "CC-3899",
+          "CC-3634",
+          "CC-1450",
+          "CC-0255",
+          "C02354-K2"
+        ]
+      },
+      {
+        "claim": "Within the 48h episode_candidates chain around the flagged transaction, a second in-person transaction (3490180, $117.07, billing region 325.0) scored cms_p 0.719, well above the flagged transaction's own cms_p of 0.251, and is included in the engine's episode alongside 3491361.",
+        "source": "graph",
+        "ref": "query:episode_candidates(t=3491361, as_of=2016-11-27 14:41:26, gap_h=48)",
+        "entity_ids": [
+          "3490180",
+          "3491361"
+        ]
+      },
+      {
+        "claim": "The flagged amount of $39.08 sits inside the card's baseline as of opening: 5,860 prior transactions, prior median amount $86.91, prior maximum amount $4,438.01, so the amount itself is not anomalous for this card.",
+        "source": "graph",
+        "ref": "query:case_context(t=3491361, as_of=2016-11-27 14:41:26)",
+        "entity_ids": [
+          "3491361",
+          "C02354-K2"
+        ]
+      },
+      {
+        "claim": "The case-memory scorer is flagged unreliable for this card: with 5,863 total transactions and the flagged transaction at card sequence position 5861, the calibrated probability (cal_p 0.33) and raw cms_p (0.25) are treated as low-weight evidence rather than a decisive signal, per the scorecard's scorer_unreliable flag.",
+        "source": "graph",
+        "ref": "query:case_context(t=3491361, as_of=2016-11-27 14:41:26)",
+        "entity_ids": [
+          "3491361",
+          "C02354-K2"
+        ]
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-1699",
+      "CC-3537",
+      "CC-5360",
+      "CC-5101"
+    ],
+    "summary": "Uncertain verdict, probability 0.55; pattern out_of_region_use under the bank's convention for card-present activity away from the card's modal region 325.0 (flagged billing region 126.0). The chain-scoped episode (3485990, 3490180, 3491361) totals $197.11 exposure, driven by the customer's denial of 3491361 and 19 prior confirmed-fraud cases on this card, against the alternative reading that region 126.0 is long-used and the amount fits the card's baseline. No further evidence was requested. Recommend CREATE_CASE (auto) and BLOCK_CARD (L1, awaiting approval), plus ESCALATE_TO_ANALYST (auto) given the conflicting evidence.",
+    "written_to_graph": true,
+    "graph_case_id": "AC-HHG-018"
+  },
+  "evidence_requests": [],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a/R2: the customer denies transaction 3491361 and denial opens a case regardless of probability; exposure $197.11."
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: customer denied the charge; exposure $197.11 ≤ $2,500, so a card block is recommended at L1."
+      },
+      {
+        "action": "ESCALATE_TO_ANALYST",
+        "route": "auto",
+        "reason": "R8: evidence conflicts (a denial plus 19 prior confirmed-fraud cases on this card point to fraud, while the known billing region 126.0, an in-baseline $39.08 amount, and an unreliable scorer on a 5,863-transaction card point to legitimacy), so the uncertain verdict is escalated to an analyst."
+      }
+    ],
+    "final": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a/R2: the customer denies transaction 3491361 and denial opens a case regardless of probability; exposure $197.11."
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: customer denied the charge; exposure $197.11 ≤ $2,500, so a card block is recommended at L1."
+      },
+      {
+        "action": "ESCALATE_TO_ANALYST",
+        "route": "auto",
+        "reason": "R8: evidence conflicts (a denial plus 19 prior confirmed-fraud cases on this card point to fraud, while the known billing region 126.0, an in-baseline $39.08 amount, and an unreliable scorer on a 5,863-transaction card point to legitimacy), so the uncertain verdict is escalated to an analyst."
+      }
+    ],
+    "what_changed": "nothing"
+  },
+  "sar": {
+    "file": false,
+    "reason": "R2 / 3a not met: the customer denied the transaction, but exposure $197.11 <= $1,000; no device profile shared with other cards' fraud; no other card's fraud connected; documented pattern; no report",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "Policy §6 test 2 fired: the customer's denial in the trigger is itself the verification response, so R2 already fixes the action set (BLOCK_CARD + CREATE_CASE); re-asking the customer would repeat a question already answered, and step-up authentication does not apply to a card-present purchase, so no evidence request was made and the conflicting graph facts were escalated instead.",
+  "tool_calls": 17,
+  "tokens": 418595,
+  "latency_s": 182.2
+}

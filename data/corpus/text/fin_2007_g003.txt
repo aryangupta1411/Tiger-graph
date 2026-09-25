@@ -1,0 +1,131 @@
+                                                   Guidance
+
+FIN-2007-G003
+Issued: June 13, 2007
+Subject: Suspicious Activity Report Supporting Documentation
+The Financial Crimes Enforcement Network (FinCEN) 1 is issuing this guidance to
+clarify:
+
+         (1) The Bank Secrecy Act (BSA) requirement that financial institutions provide
+         Suspicious Activity Report (SAR) supporting documentation in response to
+         requests by FinCEN and appropriate law enforcement or supervisory agencies; 2
+
+         (2) What constitutes “supporting documentation” under SAR regulations; 3 and
+
+         (3) When legal process is required for disclosure of supporting documentation.
+
+    (1) Disclosure of Supporting Documentation to FinCEN and Appropriate Law
+        Enforcement or Supervisory Agencies
+
+When a financial institution files a SAR, it is required to maintain a copy of the SAR and
+the original or business record equivalent of any supporting documentation for a period
+of five years from the date of filing the SAR. 4 Financial institutions must provide all
+documentation supporting the filing of a SAR upon request by FinCEN or an appropriate
+law enforcement 5 or supervisory agency. 6
+
+When requested to provide supporting documentation, financial institutions should take
+special care to verify that a requestor of information is, in fact, a representative of
+
+1
+  FinCEN consulted with staffs of the Department of Justice, the Federal Bureau of Investigation, the Internal Revenue
+Service’s Criminal Investigation Division, the United States Secret Service, the Department of Homeland Security’s
+Immigration and Customs Enforcement, the Drug Enforcement Administration, the Board of Governors of the Federal
+Reserve System, the Office of the Comptroller of the Currency, the Federal Deposit Insurance Corporation, the Office
+of Thrift Supervision, the National Credit Union Administration, the Commodity Futures Trading Commission, and the
+Securities and Exchange Commission prior to issuing this guidance.
+2
+  See 31 C.F.R. § 103.15(c); 31 C.F.R. § 103.16(e); 31 C.F.R. § 103.17(d); 31 C.F.R. § 103.18(d); 31 C.F.R. §
+103.19(d); 31 C.F.R. § 103.20(c); and 31 C.F.R. § 103.21(d).
+3
+  Id.
+4
+  Id.
+5
+  See “Providing Suspicious Activity Reports to Appropriate Law Enforcement,” SAR Activity Review: Trends, Tips
+& Issues, Issue 9 (Oct. 2005), p.43, http://www.fincen.gov/sarreviewissue9.pdf.
+6
+  Supervisory agencies have independent statutory authority to examine all books and records of the financial
+institutions for which they are the appropriate regulator.
+FinCEN or an appropriate law enforcement or supervisory agency. A financial institution
+should incorporate procedures for such verification into its BSA compliance or anti-
+money laundering program. These procedures may include, for example, independent
+employment verification with the requestor’s field office or face-to-face review of the
+requestor’s credentials.
+
+Disclosure of SARs to appropriate law enforcement and supervisory agencies is protected
+by the safe harbor provisions applicable to both voluntary and mandatory suspicious
+activity reporting by financial institutions. 7
+
+     (2) What Constitutes Supporting Documentation
+
+“Supporting documentation” refers to all documents or records that assisted a financial
+institution in making the determination that certain activity required a SAR filing. A
+financial institution must identify supporting documentation at the time the SAR is filed, 8
+and this documentation must be maintained by the institution as such. The manner in
+which a financial institution maintains supporting documentation may vary from
+institution to institution, but each institution should prescribe its own method in its anti-
+money laundering program written procedures. For instance, a financial institution’s
+procedures may require that all supporting documentation for a particular SAR be
+segregated in a single file folder or scanned and maintained in a data file.
+
+What qualifies as supporting documentation depends on the facts and circumstances of
+each filing. As indicated in each of the SAR forms, financial institutions should identify
+in the SAR narrative the supporting documentation, which may include, for example,
+transaction records, new account information, tape recordings, e-mail messages, and
+correspondence. While items identified in the narrative of the SAR generally constitute
+supporting documentation, a document or record may qualify as supporting
+documentation even if not identified in the narrative.
+
+     (3) No Legal Process is Required for Disclosure of Supporting Documentation
+
+The Right to Financial Privacy Act (RFPA) generally prohibits financial institutions from
+disclosing a customer’s financial records to a Government agency without service of
+legal process, notice to the customer and an opportunity to challenge the disclosure. 9
+
+7
+  The BSA provides protection from civil liability for all reports of suspicious transactions made to appropriate
+authorities, including supporting documentation, regardless of whether such reports are mandatory. Specifically, the
+BSA provides that a financial institution, or a director, officer, employee, or agent of a financial institution, that makes
+a “voluntary disclosure of any possible violation of law or regulation to a government agency” shall not be liable to any
+person under “any law or regulation of the United States, any constitution, law, or regulation of any State or political
+subdivision of any State, or under any contract or other legally enforceable agreement (including any arbitration
+agreement), for such disclosure or for any failure to provide notice of such disclosure to the person who is the subject
+of such disclosure or any other person identified in the disclosure.” 31 U.S.C. § 5318(g)(3).
+8
+  Suspicious Transactions Reporting Requirements, 61 Fed. Reg. 4326, 4330 (February 5, 1996). Supporting
+documentation should not be attached to the SAR filing.
+9
+  This guidance is only applicable to financial records or information that constitute supporting documentation pursuant
+to provisions in the Bank Secrecy Act that govern the reporting of suspicious transactions. Consequently, nothing in
+this guidance is intended to alter or modify the duties or obligations of financial institutions subject to the Right to
+Financial Privacy Act (12 U.S.C. § 3401, et seq.), 18 U.S.C. § 1510, or similar provisions of law. When responding to
+However, no such requirement applies when the financial institution provides the
+financial records or information to FinCEN or a supervisory agency in the exercise of its
+“supervisory, regulatory or monetary functions.” 10 In addition, no such requirement
+applies when FinCEN or an appropriate law enforcement or supervisory agency requests
+either a copy of a SAR or supporting documentation underlying the SAR.
+
+With respect to supporting documentation, rules under the BSA state explicitly that
+financial institutions must retain copies of supporting documentation, that supporting
+documentation is “deemed to have been filed with” the SAR, and that financial
+institutions must provide supporting documentation upon request. 11 FinCEN has
+interpreted these regulations under the BSA as requiring a financial institution to provide
+supporting documentation even in the absence of legal process. FinCEN understands that
+this is in accord with the RFPA, which states that nothing in the act “authorize(s) the
+withholding of financial records or information required to be reported in accordance
+with any Federal statute or rule promulgated thereunder.” 12
+
+
+
+
+law enforcement requests for customer financial records or information other than SAR supporting documentation,
+financial institutions subject to the RFPA must still comply with that statute’s notice and challenge provisions in the
+absence of an applicable exception, e.g. service of a grand jury subpoena or a national security letter.
+10
+   See 12 U.S.C. § 3413(b).
+11
+   See 31 C.F.R. § 103.15(c); 31 C.F.R. § 103.16(e); 31 C.F.R. § 103.17(d); 31 C.F.R. § 103.18(d); 31 C.F.R. §
+103.19(d); 31 C.F.R. § 103.20(c); and 31 C.F.R. § 103.21(d).
+12
+   See 12 U.S.C. 3413(d).
+

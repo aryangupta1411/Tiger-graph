@@ -1,0 +1,1 @@
+No SAR. 3a not met: exposure $166.97 <= $1,000; the profile `NULL | NULL | chrome 66.0 | NULL` is a common, non-distinctive profile (not a strong device profile), so it is not a shared-origin signal; no shared region cluster; no other customer's fraud connected; documented pattern

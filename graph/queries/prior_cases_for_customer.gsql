@@ -1,0 +1,23 @@
+// prior_cases_for_customer — case memory across ALL of the customer's cards: closed cases opened <= as_of and
+// agent-written cases opened strictly before as_of (the case being investigated is excluded).
+// Newest first, capped at 40 each (HHG-018's card alone has 20 closed cases).
+USE GRAPH FraudGraph
+CREATE OR REPLACE QUERY prior_cases_for_customer(VERTEX<Customer> cu, DATETIME as_of) FOR GRAPH FraudGraph SYNTAX v3 {
+  TYPEDEF TUPLE<STRING opened_at, STRING id, STRING card_id, STRING outcome, STRING pattern, FLOAT exposure_usd,
+                BOOL report_filed, INT n_txns, STRING template_id> ClosedRow;
+  TYPEDEF TUPLE<STRING opened_at, STRING id, STRING card_id, STRING verdict, STRING pattern, FLOAT exposure_usd> AgentRow;
+  HeapAccum<ClosedRow>(40, opened_at DESC, id ASC) @@closed_cases;
+  HeapAccum<AgentRow>(40, opened_at DESC, id ASC) @@agent_cases;
+
+  S = {cu};
+  P = SELECT p FROM (s:S)-[:OWNS]->(c:Card)-[:REV_ON_CARD]->(p:ClosedCase)
+      WHERE p.opened_at <= as_of
+      POST-ACCUM @@closed_cases += ClosedRow(datetime_format(p.opened_at), p.id, p.card_id, p.outcome, p.pattern,
+                                             p.exposure_usd, p.report_filed, p.n_txns, p.template_id);
+  A = SELECT a FROM (s:S)-[:OWNS]->(c:Card)-[:REV_CASE_ON_CARD]->(a:AgentCase)
+      WHERE a.opened_at < as_of
+      POST-ACCUM @@agent_cases += AgentRow(datetime_format(a.opened_at), a.id, a.card_id, a.verdict, a.pattern,
+                                           a.exposure_usd);
+
+  PRINT @@closed_cases AS closed_cases, @@agent_cases AS agent_cases;
+}

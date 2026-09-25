@@ -1,0 +1,57 @@
+{
+ "query": "case_context",
+ "case": "HHG-001",
+ "params": {
+  "t": "3514030",
+  "as_of": "2016-12-05 01:55:28"
+ },
+ "expected": {
+  "txn": {
+   "id": "3514030",
+   "ts": "2016-12-04 19:55:28",
+   "amt": 77.07,
+   "product_cd": "W",
+   "channel": "in_person",
+   "addr1": "444.0",
+   "addr2": "87.0",
+   "p_email": "",
+   "r_email": "",
+   "risk_score": 0.61,
+   "has_identity": false,
+   "device_new": "",
+   "proxy": "",
+   "device_type": "",
+   "device_id": "",
+   "cms_p": 0.224542,
+   "card_seq": 359,
+   "prior_in_region": 10,
+   "prior_on_dev": 0,
+   "prior_pem": 0,
+   "prior_pcd": 356,
+   "prior_med_amt": 83.945,
+   "prior_max_amt": 845.01,
+   "ring_hit": false,
+   "burst_id": ""
+  },
+  "card": {
+   "id": "C12382-K1",
+   "card_type": "debit",
+   "card_network": "visa",
+   "modal_region": "204.0",
+   "n_txns": 360,
+   "ring_id": ""
+  },
+  "customer": {
+   "id": "C12382",
+   "n_cards": 1
+  },
+  "device": {
+   "id": "",
+   "is_strong": false,
+   "n_cards_alltime": 0,
+   "n_cards_30d": 0,
+   "n_proxy": 0,
+   "n_fraud_cases": 0
+  }
+ }
+}

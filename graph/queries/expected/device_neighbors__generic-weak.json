@@ -1,0 +1,24 @@
+{
+ "query": "device_neighbors",
+ "case": "generic-weak",
+ "params": {
+  "d": "NULL | NULL | chrome 66.0 | NULL",
+  "from_ts": "2016-11-01 00:00:00",
+  "to_ts": "2016-12-31 23:59:59",
+  "max_cards": 60
+ },
+ "expected": {
+  "device": {
+   "id": "NULL | NULL | chrome 66.0 | NULL",
+   "is_strong": false,
+   "n_cards_alltime": 175,
+   "n_cards_30d": 175,
+   "n_proxy": 4,
+   "n_fraud_cases": 0
+  },
+  "cards": [],
+  "closed_cases": [],
+  "agent_cases": [],
+  "_n_cards_in_window": 0
+ }
+}

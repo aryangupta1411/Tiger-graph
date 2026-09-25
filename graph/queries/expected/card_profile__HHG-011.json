@@ -1,0 +1,269 @@
+{
+ "query": "card_profile",
+ "case": "HHG-011",
+ "params": {
+  "c": "C11923-K2",
+  "as_of": "2016-12-29 06:27:44"
+ },
+ "expected": {
+  "card": {
+   "id": "C11923-K2",
+   "customer_id": "C11923",
+   "card_type": "debit",
+   "card_network": "visa",
+   "n_txns": 10312,
+   "first_ts": "2016-07-02 00:06:21",
+   "last_ts": "2016-12-29 05:04:18",
+   "median_amt": 28.55,
+   "p90_amt": 80.13,
+   "max_amt": 486.52,
+   "max_in_person_amt": -1.0,
+   "n_online": 10312,
+   "n_in_person": 0,
+   "modal_region": "",
+   "n_regions": 32,
+   "home_regions": "[{\"addr1\":\"284.0\",\"n\":94,\"days\":49},{\"addr1\":\"465.0\",\"n\":71,\"days\":18},{\"addr1\":\"130.0\",\"n\":54,\"days\":12},{\"addr1\":\"161.0\",\"n\":51,\"days\":9},{\"addr1\":\"511.0\",\"n\":34,\"days\":9}]",
+   "usual_products": "[{\"product_cd\":\"C\",\"n\":10331},{\"product_cd\":\"R\",\"n\":1}]",
+   "usual_p_email": "hotmail.com",
+   "n_devices_seen": 1480,
+   "known_device_ids": "[{\"device_id\":\"Windows | NULL | chrome 63.0 | NULL\",\"first_seen\":\"2016-07-07 02:27:32\",\"n\":972},{\"device_id\":\"NULL | NULL | mobile safari generic | NULL\",\"first_seen\":\"2016-07-02 00:54:56\",\"n\":677},{\"device_id\":\"NULL | NULL | chrome 63.0 | NULL\",\"first_seen\":\"2016-07-08 02:26:07\",\"n\":480},{\"device_id\":\"NULL | NULL | mobile safari 11.0 | NULL\",\"first_seen\":\"2016-07-02 01:01:12\",\"n\":460},{\"device_id\":\"Windows | NULL | chrome 64.0 | NULL\",\"first_seen\":\"2016-09-01 21:59:55\",\"n\":440},{\"device_id\":\"Windows | NULL | chrome 65.0 | NULL\",\"first_seen\":\"2016-10-20 02:16:57\",\"n\":376},{\"device_id\":\"Windows | NULL | chrome 66.0 | NULL\",\"first_seen\":\"2016-12-05 04:44:41\",\"n\":239},{\"device_id\":\"Trident/7.0 | NULL | ie 11.0 for desktop | NULL\",\"first_seen\":\"2016-07-02 22:23:36\",\"n\":192},{\"device_id\":\"Windows | NULL | chrome 62.0 | NULL\",\"first_seen\":\"2016-07-02 00:06:21\",\"n\":191},{\"device_id\":\"NULL | NULL | chrome 65.0 | NULL\",\"first_seen\":\"2016-10-20 01:20:41\",\"n\":170},{\"device_id\":\"NULL | NULL | chrome 64.0 | NULL\",\"first_seen\":\"2016-09-01 21:56:38\",\"n\":163},{\"device_id\":\"Windows | NULL | chrome generic | NULL\",\"first_seen\":\"2016-07-23 04:49:34\",\"n\":118},{\"device_id\":\"NULL | NULL | chrome 62.0 | NULL\",\"first_seen\":\"2016-07-02 04:49:23\",\"n\":87},{\"device_id\":\"NULL | NULL | safari generic | NULL\",\"first_seen\":\"2016-07-03 04:30:09\",\"n\":85},{\"device_id\":\"NULL | NULL | chrome 66.0 | NULL\",\"first_seen\":\"2016-12-05 15:33:31\",\"n\":81},{\"device_id\":\"NULL | NULL | mobile safari 10.0 | NULL\",\"first_seen\":\"2016-07-02 00:54:57\",\"n\":79},{\"device_id\":\"Windows | NULL | firefox 57.0 | NULL\",\"first_seen\":\"2016-07-02 20:17:14\",\"n\":77},{\"device_id\":\"Windows | NULL | edge 16.0 | NULL\",\"first_seen\":\"2016-07-04 01:16:56\",\"n\":68},{\"device_id\":\"NULL | NULL | chrome generic | NULL\",\"first_seen\":\"2016-08-08 04:36:28\",\"n\":64},{\"device_id\":\"Windows | NULL | firefox 58.0 | NULL\",\"first_seen\":\"2016-09-01 15:55:59\",\"n\":46},{\"device_id\":\"Windows | NULL | firefox 59.0 | NULL\",\"first_seen\":\"2016-10-14 03:55:42\",\"n\":45},{\"device_id\":\"Moto G (4) Build/NPJ25.93-14.7 | NULL | chrome generic | NULL\",\"first_seen\":\"2016-08-18 21:06:40\",\"n\":43},{\"device_id\":\"CRO-L03 Build/HUAWEICRO-L03 | NULL | chrome 52.0 for android | NULL\",\"first_seen\":\"2016-12-10 03:25:01\",\"n\":41},{\"device_id\":\"Moto E (4) Plus Build/NMA26.42-69 | NULL | chrome generic | NULL\",\"first_seen\":\"2016-07-03 19:02:11\",\"n\":39},{\"device_id\":\"Moto G (5) Plus Build/NPN25.137-72 | NULL | chrome generic | NULL\",\"first_seen\":\"2016-07-11 07:21:56\",\"n\":39},{\"device_id\":\"NULL | NULL | chrome 49.0 | NULL\",\"first_seen\":\"2016-07-03 14:58:36\",\"n\":32},{\"device_id\":\"rv:11.0 | NULL | ie 11.0 for desktop | NULL\",\"first_seen\":\"2016-07-12 21:00:14\",\"n\":31},{\"device_id\":\"SM-G610M Build/MMB29K | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-07-18 21:27:23\",\"n\":29},{\"device_id\":\"SM-J700M Build/MMB29K | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-07-10 02:56:26\",\"n\":28},{\"device_id\":\"SM-G532M Build/MMB29T | NULL | Samsung/SM-G532M | NULL\",\"first_seen\":\"2016-07-03 15:44:36\",\"n\":27},{\"device_id\":\"NULL | NULL | chrome 66.0 for ios | NULL\",\"first_seen\":\"2016-12-06 00:28:59\",\"n\":27},{\"device_id\":\"Moto G (5) Build/NPP25.137-93 | NULL | chrome generic | NULL\",\"first_seen\":\"2016-09-06 02:44:14\",\"n\":26},{\"device_id\":\"SM-G935F Build/NRD90M | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-07-15 01:55:47\",\"n\":25},{\"device_id\":\"Moto G (4) Build/NPJ25.93-14.5 | NULL | chrome generic | NULL\",\"first_seen\":\"2016-07-02 02:19:56\",\"n\":23},{\"device_id\":\"NULL | NULL | mobile safari 9.0 | NULL\",\"first_seen\":\"2016-07-09 00:37:22\",\"n\":23},{\"device_id\":\"Moto G (4) Build/NPJS25.93-14-13 | NULL | chrome 66.0 for android | NULL\",\"first_seen\":\"2016-12-07 08:30:28\",\"n\":23},{\"device_id\":\"Moto G (5) Build/NPP25.137-72 | NULL | chrome generic | NULL\",\"first_seen\":\"2016-07-02 00:40:53\",\"n\":22},{\"device_id\":\"SAMSUNG SM-G532M Build/MMB29T | NULL | Samsung/SM-G532M | NULL\",\"first_seen\":\"2016-07-24 00:59:04\",\"n\":22},{\"device_id\":\"Moto C Build/NRD90M.063 | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-07-21 19:30:20\",\"n\":20},{\"device_id\":\"ALE-L23 Build/HuaweiALE-L23 | NULL | chrome 64.0 for android | NULL\",\"first_seen\":\"2016-09-03 04:10:51\",\"n\":20},{\"device_id\":\"SM-G610M Build/MMB29K | NULL | chrome 64.0 for android | NULL\",\"first_seen\":\"2016-09-10 02:03:47\",\"n\":20},{\"device_id\":\"ALE-L23 Build/HuaweiALE-L23 | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-07-13 04:36:52\",\"n\":19},{\"device_id\":\"SM-G531H Build/LMY48B | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-07-17 01:07:32\",\"n\":19},{\"device_id\":\"SM-A520F Build/NRD90M | NULL | chrome 64.0 for android | NULL\",\"first_seen\":\"2016-09-16 22:52:05\",\"n\":19},{\"device_id\":\"Moto G (4) Build/NPJ25.93-14.7 | NULL | chrome 66.0 for android | NULL\",\"first_seen\":\"2016-12-08 06:58:44\",\"n\":19},{\"device_id\":\"Windows | NULL | edge 15.0 | NULL\",\"first_seen\":\"2016-07-03 17:26:40\",\"n\":18},{\"device_id\":\"NULL | NULL | chrome | NULL\",\"first_seen\":\"2016-08-02 19:58:29\",\"n\":18},{\"device_id\":\"MOT-A6020l37 Build/LMY47V | NULL | other | NULL\",\"first_seen\":\"2016-08-04 00:50:47\",\"n\":18},{\"device_id\":\"Lenovo-A6020l36 Build/LMY47V | NULL | other | NULL\",\"first_seen\":\"2016-08-27 05:49:19\",\"n\":18},{\"device_id\":\"rv:57.0 | NULL | firefox 57.0 | NULL\",\"first_seen\":\"2016-07-04 02:17:07\",\"n\":17},{\"device_id\":\"Moto E (4) Build/NMA26.42-69 | NULL | chrome generic | NULL\",\"first_seen\":\"2016-07-15 16:25:50\",\"n\":17},{\"device_id\":\"SM-J700M Build/MMB29K | NULL | chrome 62.0 for android | NULL\",\"first_seen\":\"2016-07-03 22:58:36\",\"n\":16},{\"device_id\":\"NULL | NULL | chrome 63.0 for ios | NULL\",\"first_seen\":\"2016-07-16 03:19:24\",\"n\":16},{\"device_id\":\"SM-J730GM Build/NRD90M | NULL | chrome 64.0 for android | NULL\",\"first_seen\":\"2016-09-02 18:50:23\",\"n\":16},{\"device_id\":\"SAMSUNG SM-J700M Build/MMB29K | NULL | samsung browser 6.4 | NULL\",\"first_seen\":\"2016-10-30 18:53:29\",\"n\":16},{\"device_id\":\"Moto E (4) Build/NMA26.42-19 | NULL | chrome generic | NULL\",\"first_seen\":\"2016-07-03 04:27:32\",\"n\":15},{\"device_id\":\"Moto G (5) Plus Build/NPN25.137-92 | NULL | chrome generic | NULL\",\"first_seen\":\"2016-10-06 02:57:46\",\"n\":15},{\"device_id\":\"Moto G (4) Build/NPJS25.93-14-10 | NULL | chrome generic | NULL\",\"first_seen\":\"2016-07-09 00:57:56\",\"n\":14},{\"device_id\":\"SAMSUNG SM-G531H Build/LMY48B | NULL | Samsung/SM-G531H | NULL\",\"first_seen\":\"2016-07-09 03:05:36\",\"n\":14},{\"device_id\":\"SM-G925I Build/NRD90M | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-07-24 19:17:24\",\"n\":14},{\"device_id\":\"SM-J510MN Build/MMB29M | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-08-05 04:11:28\",\"n\":14},{\"device_id\":\"HUAWEI TAG-L13 Build/HUAWEITAG-L13 | NULL | chrome 64.0 for android | NULL\",\"first_seen\":\"2016-09-01 17:01:40\",\"n\":14},{\"device_id\":\"SAMSUNG SM-J700M Build/MMB29K | NULL | samsung browser 6.2 | NULL\",\"first_seen\":\"2016-07-02 05:24:55\",\"n\":13},{\"device_id\":\"Windows | NULL | edge 14.0 | NULL\",\"first_seen\":\"2016-07-06 20:25:45\",\"n\":13},{\"device_id\":\"NULL | NULL | chrome 58.0 | NULL\",\"first_seen\":\"2016-07-07 01:43:35\",\"n\":13},{\"device_id\":\"SM-G570M Build/MMB29K | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-07-12 22:42:54\",\"n\":13},{\"device_id\":\"Moto G (4) Build/NPJS25.93-14-13 | NULL | chrome generic | NULL\",\"first_seen\":\"2016-08-18 23:13:17\",\"n\":13},{\"device_id\":\"SM-G531H Build/LMY48B | NULL | chrome 64.0 for android | NULL\",\"first_seen\":\"2016-09-05 19:04:43\",\"n\":13},{\"device_id\":\"rv:58.0 | NULL | firefox 58.0 | NULL\",\"first_seen\":\"2016-09-05 22:38:12\",\"n\":13},{\"device_id\":\"SM-G950F Build/NRD90M | NULL | chrome 65.0 for android | NULL\",\"first_seen\":\"2016-10-22 17:18:40\",\"n\":13},{\"device_id\":\"SM-G532M Build/MMB29T | NULL | chrome 55.0 for android | NULL\",\"first_seen\":\"2016-12-09 17:55:10\",\"n\":13},{\"device_id\":\"Moto X Play Build/NPD26.48-24-1 | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-07-18 20:14:48\",\"n\":12},{\"device_id\":\"SM-G610M Build/MMB29K | NULL | other | NULL\",\"first_seen\":\"2016-08-02 03:11:36\",\"n\":12},{\"device_id\":\"SM-G610M Build/MMB29K | NULL | chrome 65.0 for android | NULL\",\"first_seen\":\"2016-10-22 04:06:32\",\"n\":12},{\"device_id\":\"SM-J700M Build/MMB29K | NULL | chrome 65.0 for android | NULL\",\"first_seen\":\"2016-10-24 22:02:30\",\"n\":12},{\"device_id\":\"NULL | NULL | firefox 59.0 | NULL\",\"first_seen\":\"2016-10-25 07:15:13\",\"n\":12},{\"device_id\":\"SAMSUNG SM-G955F Build/NRD90M | NULL | samsung browser 6.4 | NULL\",\"first_seen\":\"2016-10-28 17:24:12\",\"n\":12},{\"device_id\":\"NULL | NULL | firefox 57.0 | NULL\",\"first_seen\":\"2016-07-03 00:41:43\",\"n\":11},{\"device_id\":\"NULL | NULL | firefox 52.0 | NULL\",\"first_seen\":\"2016-07-13 17:52:11\",\"n\":11},{\"device_id\":\"SM-G532M Build/MMB29T | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-07-26 18:46:16\",\"n\":11},{\"device_id\":\"NULL | NULL | chrome 57.0 | NULL\",\"first_seen\":\"2016-08-05 20:21:06\",\"n\":11},{\"device_id\":\"LG-K410 Build/LRX22G | NULL | chrome 64.0 for android | NULL\",\"first_seen\":\"2016-09-04 16:04:11\",\"n\":11},{\"device_id\":\"SM-J700M Build/MMB29K | NULL | chrome 64.0 for android | NULL\",\"first_seen\":\"2016-09-04 23:47:07\",\"n\":11},{\"device_id\":\"CAM-L03 Build/HUAWEICAM-L03 | NULL | chrome 64.0 for android | NULL\",\"first_seen\":\"2016-09-16 23:20:55\",\"n\":11},{\"device_id\":\"SM-G531H Build/LMY48B | NULL | chrome 65.0 for android | NULL\",\"first_seen\":\"2016-10-22 13:50:25\",\"n\":11},{\"device_id\":\"LG-M700 Build/NMF26X | NULL | chrome 65.0 for android | NULL\",\"first_seen\":\"2016-10-22 17:20:28\",\"n\":11},{\"device_id\":\"ALE-L23 Build/HuaweiALE-L23 | NULL | chrome 66.0 for android | NULL\",\"first_seen\":\"2016-12-06 02:34:59\",\"n\":11},{\"device_id\":\"Moto E (4) Build/NMA26.42-69 | NULL | chrome 66.0 for android | NULL\",\"first_seen\":\"2016-12-09 21:41:45\",\"n\":11},{\"device_id\":\"Windows | NULL | chrome 61.0 | NULL\",\"first_seen\":\"2016-07-02 02:53:29\",\"n\":10},{\"device_id\":\"SM-G531H Build/LMY48B | NULL | chrome 62.0 for android | NULL\",\"first_seen\":\"2016-07-02 06:49:29\",\"n\":10},{\"device_id\":\"Blade V6 Plus Build/MRA58K | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-07-16 00:49:25\",\"n\":10},{\"device_id\":\"F3213 Build/36.1.A.1.86 | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-07-19 03:55:21\",\"n\":10},{\"device_id\":\"SAMSUNG SM-G950F Build/NRD90M | NULL | samsung browser 6.2 | NULL\",\"first_seen\":\"2016-07-30 14:30:04\",\"n\":10},{\"device_id\":\"SM-J700M Build/MMB29K | NULL | chrome generic for android | NULL\",\"first_seen\":\"2016-08-31 23:11:37\",\"n\":10},{\"device_id\":\"SM-G532M Build/MMB29T | NULL | chrome 64.0 for android | NULL\",\"first_seen\":\"2016-09-16 21:07:28\",\"n\":10},{\"device_id\":\"SM-G570M Build/MMB29K | NULL | chrome 65.0 for android | NULL\",\"first_seen\":\"2016-10-19 19:49:39\",\"n\":10},{\"device_id\":\"ALE-L23 Build/HuaweiALE-L23 | NULL | chrome 65.0 for android | NULL\",\"first_seen\":\"2016-10-19 22:39:00\",\"n\":10},{\"device_id\":\"rv:59.0 | NULL | firefox 59.0 | NULL\",\"first_seen\":\"2016-10-20 03:35:26\",\"n\":10},{\"device_id\":\"PRA-LX3 Build/HUAWEIPRA-LX3 | NULL | chrome 65.0 for android | NULL\",\"first_seen\":\"2016-10-20 06:07:32\",\"n\":10},{\"device_id\":\"SAMSUNG SM-G532M Build/MMB29T | NULL | samsung browser 6.4 | NULL\",\"first_seen\":\"2016-11-03 22:07:12\",\"n\":10},{\"device_id\":\"Moto G (5) Plus Build/NPN25.137-92 | NULL | chrome 66.0 for android | NULL\",\"first_seen\":\"2016-12-06 16:15:41\",\"n\":10},{\"device_id\":\"CAM-L03 Build/HUAWEICAM-L03 | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-07-12 22:20:27\",\"n\":9},{\"device_id\":\"Moto G (5) Build/NPP25.137-82 | NULL | chrome generic | NULL\",\"first_seen\":\"2016-07-13 06:07:34\",\"n\":9},{\"device_id\":\"Android 5.1 | NULL | android browser 4.0 | NULL\",\"first_seen\":\"2016-07-20 22:55:14\",\"n\":9},{\"device_id\":\"SM-J730GM Build/NRD90M | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-07-23 23:46:45\",\"n\":9},{\"device_id\":\"MotoG3 Build/MPI24.65-33.1-2 | NULL | chrome 62.0 for android | NULL\",\"first_seen\":\"2016-07-26 22:44:10\",\"n\":9},{\"device_id\":\"Moto G (5) Plus Build/NPN25.137-82 | NULL | chrome generic | NULL\",\"first_seen\":\"2016-08-26 01:00:45\",\"n\":9},{\"device_id\":\"SM-J320M Build/LMY47V | NULL | chrome 57.0 for android | NULL\",\"first_seen\":\"2016-08-29 01:06:20\",\"n\":9},{\"device_id\":\"SM-G610M Build/MMB29K | NULL | chrome generic for android | NULL\",\"first_seen\":\"2016-08-31 21:34:42\",\"n\":9},{\"device_id\":\"SM-G935F Build/NRD90M | NULL | chrome 64.0 for android | NULL\",\"first_seen\":\"2016-09-02 19:43:12\",\"n\":9},{\"device_id\":\"SM-G955F Build/NRD90M | NULL | chrome 64.0 for android | NULL\",\"first_seen\":\"2016-09-07 15:25:56\",\"n\":9},{\"device_id\":\"SAMSUNG SM-J730GM Build/NRD90M | NULL | samsung browser 6.4 | NULL\",\"first_seen\":\"2016-10-26 23:36:50\",\"n\":9},{\"device_id\":\"SM-J320M Build/LMY47V | NULL | chrome 66.0 for android | NULL\",\"first_seen\":\"2016-12-08 21:41:59\",\"n\":9},{\"device_id\":\"SM-A500M Build/KTU84P | NULL | chrome 66.0 for android | NULL\",\"first_seen\":\"2016-12-13 02:32:47\",\"n\":9},{\"device_id\":\"ALE-L23 Build/HuaweiALE-L23 | NULL | chrome 62.0 for android | NULL\",\"first_seen\":\"2016-07-03 19:50:20\",\"n\":8},{\"device_id\":\"SAMSUNG-SGH-I337 Build/KOT49H | NULL | chrome 62.0 for android | NULL\",\"first_seen\":\"2016-07-08 23:08:56\",\"n\":8},{\"device_id\":\"Trident/7.0 | NULL | ie 11.0 for tablet | NULL\",\"first_seen\":\"2016-07-15 17:28:33\",\"n\":8},{\"device_id\":\"M4 SS4453 Build/MMB29M | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-07-20 04:56:21\",\"n\":8},{\"device_id\":\"Lenovo K33b36 Build/MMB29M | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-07-22 04:34:15\",\"n\":8},{\"device_id\":\"SAMSUNG SM-G900M Build/LRX21T | NULL | chrome generic | NULL\",\"first_seen\":\"2016-07-23 17:28:21\",\"n\":8},{\"device_id\":\"5056A Build/MMB29M | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-07-31 17:59:24\",\"n\":8},{\"device_id\":\"Moto Z2 Play Build/NPSS26.118-19-14 | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-08-10 21:19:41\",\"n\":8},{\"device_id\":\"LG-H500 Build/LRX21Y | NULL | chrome 55.0 for android | NULL\",\"first_seen\":\"2016-08-12 18:27:16\",\"n\":8},{\"device_id\":\"RNE-L03 Build/HUAWEIRNE-L03 | NULL | chrome 64.0 for android | NULL\",\"first_seen\":\"2016-09-09 19:59:12\",\"n\":8},{\"device_id\":\"SM-G531H Build/LMY48B | NULL | chrome 55.0 for android | NULL\",\"first_seen\":\"2016-10-13 17:48:07\",\"n\":8},{\"device_id\":\"TRT-L53 Build/HUAWEITRT-L53 | NULL | chrome 65.0 for android | NULL\",\"first_seen\":\"2016-10-22 23:17:45\",\"n\":8},{\"device_id\":\"SM-J700M Build/MMB29K | NULL | chrome 66.0 for android | NULL\",\"first_seen\":\"2016-12-06 21:07:47\",\"n\":8},{\"device_id\":\"Moto G (5) Plus Build/NPNS25.137-15-11 | NULL | chrome generic | NULL\",\"first_seen\":\"2016-07-04 02:24:49\",\"n\":7},{\"device_id\":\"LG-K500 Build/MMB29M | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-07-17 17:45:52\",\"n\":7},{\"device_id\":\"Moto G (5) Build/NPPS25.137-15-11 | NULL | chrome generic | NULL\",\"first_seen\":\"2016-07-18 01:46:49\",\"n\":7},{\"device_id\":\"HUAWEI TAG-L13 Build/HUAWEITAG-L13 | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-07-22 16:58:15\",\"n\":7},{\"device_id\":\"PRA-LX3 Build/HUAWEIPRA-LX3 | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-07-26 22:17:40\",\"n\":7},{\"device_id\":\"HUAWEI VNS-L23 Build/HUAWEIVNS-L23 | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-08-15 12:48:23\",\"n\":7},{\"device_id\":\"NULL | NULL | edge 16.0 | NULL\",\"first_seen\":\"2016-08-25 21:44:45\",\"n\":7},{\"device_id\":\"SM-G530H Build/LRX22G | NULL | chrome 64.0 for android | NULL\",\"first_seen\":\"2016-09-08 16:25:03\",\"n\":7},{\"device_id\":\"SLA-L03 Build/HUAWEISLA-L03 | NULL | chrome 64.0 for android | NULL\",\"first_seen\":\"2016-09-10 01:16:12\",\"n\":7},{\"device_id\":\"HUAWEI RIO-L03 Build/HUAWEIRIO-L03 | NULL | chrome 64.0 for android | NULL\",\"first_seen\":\"2016-09-13 01:56:56\",\"n\":7},{\"device_id\":\"5080A Build/MRA58K | NULL | chrome generic for android | NULL\",\"first_seen\":\"2016-10-17 22:58:39\",\"n\":7},{\"device_id\":\"4047G Build/NRD90M | NULL | chrome 64.0 for android | NULL\",\"first_seen\":\"2016-10-22 19:46:22\",\"n\":7},{\"device_id\":\"Moto Z2 Play Build/NPSS26.118-19-14 | NULL | chrome 65.0 for android | NULL\",\"first_seen\":\"2016-10-26 14:40:03\",\"n\":7},{\"device_id\":\"SM-G532M Build/MMB29T | NULL | chrome 65.0 for android | NULL\",\"first_seen\":\"2016-10-28 20:51:46\",\"n\":7},{\"device_id\":\"Hisense F23 Build/NRD90M | NULL | chrome 66.0 for android | NULL\",\"first_seen\":\"2016-12-05 21:14:14\",\"n\":7},{\"device_id\":\"SM-G955F Build/R16NW | NULL | chrome 66.0 for android | NULL\",\"first_seen\":\"2016-12-06 04:07:34\",\"n\":7},{\"device_id\":\"NULL | NULL | safari 11.0 | NULL\",\"first_seen\":\"2016-12-12 20:10:10\",\"n\":7},{\"device_id\":\"HTC Desire 650 Build/MMB29M | NULL | chrome 66.0 for android | NULL\",\"first_seen\":\"2016-12-13 17:02:51\",\"n\":7},{\"device_id\":\"Moto Z2 Play Build/NPSS26.118-19-14 | NULL | chrome 66.0 for android | NULL\",\"first_seen\":\"2016-12-14 03:59:29\",\"n\":7},{\"device_id\":\"HTC One A9s Build/MRA58K | NULL | chrome 66.0 for android | NULL\",\"first_seen\":\"2016-12-18 16:45:50\",\"n\":7},{\"device_id\":\"SAMSUNG | NULL | chrome generic | NULL\",\"first_seen\":\"2016-07-02 02:33:09\",\"n\":6},{\"device_id\":\"rv:38.0 | NULL | firefox | NULL\",\"first_seen\":\"2016-07-03 06:26:37\",\"n\":6},{\"device_id\":\"SM-G610M Build/MMB29K | NULL | chrome 62.0 for android | NULL\",\"first_seen\":\"2016-07-10 07:20:34\",\"n\":6},{\"device_id\":\"TRT-L53 Build/HUAWEITRT-L53 | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-07-13 22:54:13\",\"n\":6},{\"device_id\":\"Moto G Play Build/MPIS24.241-15.3-7 | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-07-14 02:43:12\",\"n\":6},{\"device_id\":\"XT1635-02 Build/NPN26.118-22-2 | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-07-14 02:46:32\",\"n\":6},{\"device_id\":\"SM-G950F Build/NRD90M | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-07-17 01:25:35\",\"n\":6},{\"device_id\":\"LG-K580 Build/MRA58K | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-07-17 01:34:46\",\"n\":6},{\"device_id\":\"Hisense F23 Build/NRD90M | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-07-18 02:18:56\",\"n\":6},{\"device_id\":\"SM-J701M Build/NRD90M | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-07-18 16:52:28\",\"n\":6},{\"device_id\":\"LG-K200 Build/MXB48T | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-07-19 00:33:10\",\"n\":6},{\"device_id\":\"CHC-U03 Build/HuaweiCHC-U03 | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-07-19 22:13:12\",\"n\":6},{\"device_id\":\"HUAWEI VNS-L53 Build/HUAWEIVNS-L53 | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-07-19 23:31:54\",\"n\":6},{\"device_id\":\"moto x4 Build/NPW26.83-18-2-0-4 | NULL | chrome 58.0 for android | NULL\",\"first_seen\":\"2016-07-22 15:01:28\",\"n\":6},{\"device_id\":\"F5121 Build/34.3.A.0.252 | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-07-23 00:38:29\",\"n\":6},{\"device_id\":\"LG-K410 Build/LRX22G | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-07-27 07:18:51\",\"n\":6},{\"device_id\":\"SAMSUNG SM-A520F Build/NRD90M | NULL | samsung browser 6.2 | NULL\",\"first_seen\":\"2016-07-31 13:22:31\",\"n\":6},{\"device_id\":\"5085B Build/MRA58K | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-08-15 02:15:27\",\"n\":6},{\"device_id\":\"rv:48.0 | NULL | firefox 48.0 | NULL\",\"first_seen\":\"2016-08-26 04:06:51\",\"n\":6},{\"device_id\":\"HTC One A9s Build/MRA58K | NULL | chrome generic for android | NULL\",\"first_seen\":\"2016-08-28 05:33:36\",\"n\":6},{\"device_id\":\"SM-J701M Build/NRD90M | NULL | chrome 60.0 for android | NULL\",\"first_seen\":\"2016-08-31 06:03:07\",\"n\":6},{\"device_id\":\"TA-1039 Build/NMF26F | NULL | chrome 64.0 for android | NULL\",\"first_seen\":\"2016-09-03 22:09:53\",\"n\":6},{\"device_id\":\"PRA-LX3 Build/HUAWEIPRA-LX3 | NULL | chrome 64.0 for android | NULL\",\"first_seen\":\"2016-09-05 22:02:43\",\"n\":6},{\"device_id\":\"SM-G570M Build/MMB29K | NULL | chrome 64.0 for android | NULL\",\"first_seen\":\"2016-09-05 23:10:11\",\"n\":6},{\"device_id\":\"Ilium X710 Build/MRA58K | NULL | chrome 64.0 for android | NULL\",\"first_seen\":\"2016-09-09 02:29:56\",\"n\":6},{\"device_id\":\"SM-J510MN Build/MMB29M | NULL | chrome 64.0 for android | NULL\",\"first_seen\":\"2016-09-11 20:11:41\",\"n\":6},{\"device_id\":\"5080A Build/MRA58K | NULL | chrome 64.0 for android | NULL\",\"first_seen\":\"2016-09-12 01:27:03\",\"n\":6},{\"device_id\":\"Hisense F102 Build/NRD90M | NULL | chrome 64.0 for android | NULL\",\"first_seen\":\"2016-09-13 23:01:48\",\"n\":6},{\"device_id\":\"H1711 Build/HUAWEIH1711 | NULL | chrome 64.0 for android | NULL\",\"first_seen\":\"2016-09-24 00:01:50\",\"n\":6},{\"device_id\":\"rv:39.0 | NULL | firefox | NULL\",\"first_seen\":\"2016-09-29 02:17:26\",\"n\":6},{\"device_id\":\"VTR-L09 Build/HUAWEIVTR-L09 | NULL | chrome 63.0 for android | NULL\",\"first_seen\":\"2016-09-30 04:00:34\",\"n\":6},{\"device_id\":\"SAMSUNG SM-J700M Build/MMB29K | NULL | samsung browser generic | NULL\",\"first_seen\":\"2016-10-03 02:38:19\",\"n\":6},{\"device_id\":\"ALE-L23 Build/HuaweiALE-L23 | NULL | chrome generic | NULL\",\"first_seen\":\"2016-10-11 02:50:45\",\"n\":6},{\"device_id\":\"SM-G610M Build/NRD90M | NULL | chrome 64.0 for android | NULL\",\"first_seen\":\"2016-10-11 22:40:25\",\"n\":6},{\"device_id\":\"SM-G935F Build/NRD90M | NULL | chrome 65.0 for android | NULL\",\"first_seen\":\"2016-10-20 02:38:28\",\"n\":6},{\"device_id\":\"Moto X Play Build/NPD26.48-24-1 | NULL | chrome 65.0 for android | NULL\",\"first_seen\":\"2016-10-22 06:16:52\",\"n\":6},{\"device_id\":\"HUAWEI VNS-L53 Build/HUAWEIVNS-L53 | NULL | chrome 65.0 for android | NULL\",\"first_seen\":\"2016-10-24 02:52:45\",\"n\":6},{\"device_id\":\"HTC Desire 10 lifestyle Build/MMB29M | NULL | chrome 65.0 for android | NULL\",\"first_seen\":\"2016-10-27 04:38:58\",\"n\":6},{\"device_id\":\"Moto G (5) Build/NPPS25.137-93-4 | NULL | chrome generic | NULL\",\"first_seen\":\"2016-10-30 03:09:01\",\"n\":6},{\"device_id\":\"LG-D680 Build/KOT49I | NULL | chrome 64.0 for android | NULL\",\"first_seen\":\"2016-11-09 03:58:19\",\"n\":6},{\"device_id\":\"SM-J701M Build/NRD90M | NULL | chrome 65.0 for android | NULL\",\"first_seen\":\"2016-11-13 02:48:49\",\"n\":6},{\"device_id\":\"LG-M700 Build/NMF26X | NULL | chrome generic for android | NULL\",\"first_seen\":\"2016-11-17 17:53:05\",\"n\":6},{\"device_id\":\"SM-P355M Build/MMB29M | NULL | chrome 65.0 for android | NULL\",\"first_seen\":\"2016-11-19 04:16:58\",\"n\":6},{\"device_id\":\"MYA-L13 Build/HUAWEIMYA-L13 | NULL | chrome 66.0 for android | NULL\",\"first_seen\":\"2016-12-08 00:22:41\",\"n\":6},{\"device_id\":\"Moto G (5) Build/NPP25.137-93 | NULL | chrome 66.0 for android | NULL\",\"first_seen\":\"2016-12-09 14:44:14\",\"n\":6},{\"device_id\":\"Blade A465 Build/LMY47D | NULL | chrome 66.0 for android | NULL\",\"first_seen\":\"2016-12-12 18:22:30\",\"n\":6},{\"device_id\":\"SM-J700M Build/LMY48B | NULL | chrome 66.0 for android | NULL\",\"first_seen\":\"2016-12-17 03:24:38\",\"n\":6},{\"device_id\":\"Moto G (5) Build/NPP25.137-33 | NULL | chrome 66.0 for android | NULL\",\"first_seen\":\"2016-12-18 17:48:16\",\"n\":6},{\"device_id\":\"es-us | NULL | android webview 4.0 | NULL\",\"first_seen\":\"2016-07-03 18:20:21\",\"n\":5},{\"device_id\":\"SM-J320M Build/LMY47V | NULL | chrome 62.0 for android | NULL\",\"first_seen\":\"2016-07-04 05:27:59\",\"n\":5},{\"device_id\":\"NULL | NULL | opera 49.0 | NULL\",\"first_seen\":\"2016-07-05 00:32:32\",\"n\":5},{\"device_id\":\"NULL | NULL | chrome 61.0 | NULL\",\"first_seen\":\"2016-07-05 15:09:33\",\"n\":5},{\"device_id\":\"LG-H650 Build/MRA58K | NULL | chrome 62.0 for android | NULL\",\"first_seen\":\"2016-07-08 22:36:55\",\"n\":5}]",
+   "recurring_amounts": "[{\"amt\":32.47,\"product_cd\":\"C\",\"place\":\"hotmail.com\",\"n\":71,\"median_gap_days\":1.006,\"gap_cv\":1.648},{\"amt\":25.74,\"product_cd\":\"C\",\"place\":\"gmail.com\",\"n\":64,\"median_gap_days\":1.022,\"gap_cv\":1.3},{\"amt\":30.24,\"product_cd\":\"C\",\"place\":\"hotmail.com\",\"n\":64,\"median_gap_days\":1.169,\"gap_cv\":1.345},{\"amt\":34.07,\"product_cd\":\"C\",\"place\":\"hotmail.com\",\"n\":63,\"median_gap_days\":0.559,\"gap_cv\":1.66},{\"amt\":26.31,\"product_cd\":\"C\",\"place\":\"gmail.com\",\"n\":62,\"median_gap_days\":1.534,\"gap_cv\":1.616},{\"amt\":20.61,\"product_cd\":\"C\",\"place\":\"hotmail.com\",\"n\":60,\"median_gap_days\":0.945,\"gap_cv\":1.562},{\"amt\":42.37,\"product_cd\":\"C\",\"place\":\"gmail.com\",\"n\":59,\"median_gap_days\":1.01,\"gap_cv\":1.548},{\"amt\":25.72,\"product_cd\":\"C\",\"place\":\"hotmail.com\",\"n\":57,\"median_gap_days\":1.332,\"gap_cv\":1.335},{\"amt\":26.79,\"product_cd\":\"C\",\"place\":\"gmail.com\",\"n\":57,\"median_gap_days\":1.49,\"gap_cv\":1.324},{\"amt\":28.32,\"product_cd\":\"C\",\"place\":\"hotmail.com\",\"n\":56,\"median_gap_days\":1.037,\"gap_cv\":1.663},{\"amt\":23.85,\"product_cd\":\"C\",\"place\":\"hotmail.com\",\"n\":55,\"median_gap_days\":0.944,\"gap_cv\":1.424},{\"amt\":25.31,\"product_cd\":\"C\",\"place\":\"gmail.com\",\"n\":54,\"median_gap_days\":1.769,\"gap_cv\":1.248},{\"amt\":44.06,\"product_cd\":\"C\",\"place\":\"gmail.com\",\"n\":53,\"median_gap_days\":1.115,\"gap_cv\":1.469},{\"amt\":24.77,\"product_cd\":\"C\",\"place\":\"gmail.com\",\"n\":52,\"median_gap_days\":0.984,\"gap_cv\":1.627},{\"amt\":30.8,\"product_cd\":\"C\",\"place\":\"hotmail.com\",\"n\":52,\"median_gap_days\":2.136,\"gap_cv\":1.099},{\"amt\":33.45,\"product_cd\":\"C\",\"place\":\"gmail.com\",\"n\":51,\"median_gap_days\":0.864,\"gap_cv\":1.648},{\"amt\":27.81,\"product_cd\":\"C\",\"place\":\"gmail.com\",\"n\":50,\"median_gap_days\":1.175,\"gap_cv\":1.496},{\"amt\":35.33,\"product_cd\":\"C\",\"place\":\"gmail.com\",\"n\":50,\"median_gap_days\":2.171,\"gap_cv\":1.022},{\"amt\":21.13,\"product_cd\":\"C\",\"place\":\"gmail.com\",\"n\":49,\"median_gap_days\":0.732,\"gap_cv\":1.833},{\"amt\":29.05,\"product_cd\":\"C\",\"place\":\"hotmail.com\",\"n\":49,\"median_gap_days\":2.02,\"gap_cv\":1.342},{\"amt\":34.04,\"product_cd\":\"C\",\"place\":\"gmail.com\",\"n\":49,\"median_gap_days\":1.239,\"gap_cv\":1.392},{\"amt\":41.24,\"product_cd\":\"C\",\"place\":\"hotmail.com\",\"n\":48,\"median_gap_days\":2.388,\"gap_cv\":1.163},{\"amt\":28.32,\"product_cd\":\"C\",\"place\":\"gmail.com\",\"n\":47,\"median_gap_days\":1.905,\"gap_cv\":1.15},{\"amt\":22.01,\"product_cd\":\"C\",\"place\":\"hotmail.com\",\"n\":46,\"median_gap_days\":2.198,\"gap_cv\":1.276},{\"amt\":22.32,\"product_cd\":\"C\",\"place\":\"hotmail.com\",\"n\":46,\"median_gap_days\":1.142,\"gap_cv\":1.354},{\"amt\":30.18,\"product_cd\":\"C\",\"place\":\"gmail.com\",\"n\":46,\"median_gap_days\":2.054,\"gap_cv\":1.278},{\"amt\":31.39,\"product_cd\":\"C\",\"place\":\"gmail.com\",\"n\":46,\"median_gap_days\":1.603,\"gap_cv\":1.6},{\"amt\":32.1,\"product_cd\":\"C\",\"place\":\"hotmail.com\",\"n\":46,\"median_gap_days\":1.701,\"gap_cv\":1.316},{\"amt\":32.45,\"product_cd\":\"C\",\"place\":\"gmail.com\",\"n\":46,\"median_gap_days\":2.038,\"gap_cv\":1.36},{\"amt\":23.73,\"product_cd\":\"C\",\"place\":\"gmail.com\",\"n\":45,\"median_gap_days\":1.533,\"gap_cv\":1.275},{\"amt\":26.8,\"product_cd\":\"C\",\"place\":\"hotmail.com\",\"n\":45,\"median_gap_days\":2.811,\"gap_cv\":1.098},{\"amt\":29.57,\"product_cd\":\"C\",\"place\":\"hotmail.com\",\"n\":45,\"median_gap_days\":2.662,\"gap_cv\":1.243},{\"amt\":21.53,\"product_cd\":\"C\",\"place\":\"gmail.com\",\"n\":44,\"median_gap_days\":1.965,\"gap_cv\":1.384},{\"amt\":38.17,\"product_cd\":\"C\",\"place\":\"gmail.com\",\"n\":43,\"median_gap_days\":0.906,\"gap_cv\":1.592},{\"amt\":21.09,\"product_cd\":\"C\",\"place\":\"hotmail.com\",\"n\":42,\"median_gap_days\":1.59,\"gap_cv\":1.454},{\"amt\":21.93,\"product_cd\":\"C\",\"place\":\"gmail.com\",\"n\":42,\"median_gap_days\":1.952,\"gap_cv\":1.096},{\"amt\":23.25,\"product_cd\":\"C\",\"place\":\"hotmail.com\",\"n\":42,\"median_gap_days\":2.058,\"gap_cv\":1.284},{\"amt\":24.28,\"product_cd\":\"C\",\"place\":\"gmail.com\",\"n\":42,\"median_gap_days\":2.914,\"gap_cv\":1.152},{\"amt\":31.34,\"product_cd\":\"C\",\"place\":\"hotmail.com\",\"n\":42,\"median_gap_days\":2.006,\"gap_cv\":1.3},{\"amt\":31.98,\"product_cd\":\"C\",\"place\":\"gmail.com\",\"n\":42,\"median_gap_days\":2.175,\"gap_cv\":1.281},{\"amt\":39.03,\"product_cd\":\"C\",\"place\":\"hotmail.com\",\"n\":42,\"median_gap_days\":2.839,\"gap_cv\":1.103},{\"amt\":39.82,\"product_cd\":\"C\",\"place\":\"hotmail.com\",\"n\":42,\"median_gap_days\":3.03,\"gap_cv\":1.046},{\"amt\":47.56,\"product_cd\":\"C\",\"place\":\"hotmail.com\",\"n\":42,\"median_gap_days\":1.713,\"gap_cv\":1.39},{\"amt\":15.69,\"product_cd\":\"C\",\"place\":\"hotmail.com\",\"n\":41,\"median_gap_days\":1.838,\"gap_cv\":1.349},{\"amt\":28.98,\"product_cd\":\"C\",\"place\":\"gmail.com\",\"n\":41,\"median_gap_days\":3.045,\"gap_cv\":1.152},{\"amt\":62.66,\"product_cd\":\"C\",\"place\":\"hotmail.com\",\"n\":41,\"median_gap_days\":1.808,\"gap_cv\":1.212},{\"amt\":20.67,\"product_cd\":\"C\",\"place\":\"gmail.com\",\"n\":40,\"median_gap_days\":0.854,\"gap_cv\":1.704},{\"amt\":23.3,\"product_cd\":\"C\",\"place\":\"gmail.com\",\"n\":40,\"median_gap_days\":1.997,\"gap_cv\":1.283},{\"amt\":24.23,\"product_cd\":\"C\",\"place\":\"hotmail.com\",\"n\":40,\"median_gap_days\":2.434,\"gap_cv\":1.049},{\"amt\":35.26,\"product_cd\":\"C\",\"place\":\"hotmail.com\",\"n\":40,\"median_gap_days\":3.185,\"gap_cv\":0.967}]",
+   "n_prior_fraud_cases": 10,
+   "n_prior_cleared_cases": 1,
+   "ring_id": "",
+   "burst_lookalike_ids": "[]",
+   "region_cluster_30d": "[]",
+   "wcc_id": -1,
+   "device_degree": 0,
+   "fraud_ppr": 0.0
+  },
+  "last30": {
+   "n": 1454,
+   "sum_amt": 56161.76,
+   "n_online": 1454,
+   "n_regions": 4,
+   "n_devices": 348,
+   "n_products": 2
+  },
+  "regions": [
+   {
+    "addr1": "284.0",
+    "n": 94,
+    "days": 49,
+    "first_ts": "2016-10-04 21:49:33",
+    "last_ts": "2016-12-15 17:37:24"
+   },
+   {
+    "addr1": "465.0",
+    "n": 71,
+    "days": 18,
+    "first_ts": "2016-07-05 04:38:41",
+    "last_ts": "2016-12-11 14:46:32"
+   },
+   {
+    "addr1": "130.0",
+    "n": 54,
+    "days": 12,
+    "first_ts": "2016-07-05 00:09:53",
+    "last_ts": "2016-11-25 18:04:11"
+   },
+   {
+    "addr1": "161.0",
+    "n": 51,
+    "days": 9,
+    "first_ts": "2016-07-05 15:28:26",
+    "last_ts": "2016-07-13 17:35:34"
+   },
+   {
+    "addr1": "511.0",
+    "n": 34,
+    "days": 9,
+    "first_ts": "2016-07-05 01:07:38",
+    "last_ts": "2016-10-30 21:49:01"
+   }
+  ],
+  "devices": [
+   {
+    "device_id": "Windows | NULL | chrome 63.0 | NULL",
+    "n": 972,
+    "first_ts": "2016-07-07 02:27:32",
+    "is_strong": false
+   },
+   {
+    "device_id": "NULL | NULL | mobile safari generic | NULL",
+    "n": 677,
+    "first_ts": "2016-07-02 00:54:56",
+    "is_strong": false
+   },
+   {
+    "device_id": "NULL | NULL | chrome 63.0 | NULL",
+    "n": 480,
+    "first_ts": "2016-07-08 02:26:07",
+    "is_strong": false
+   },
+   {
+    "device_id": "NULL | NULL | mobile safari 11.0 | NULL",
+    "n": 459,
+    "first_ts": "2016-07-02 01:01:12",
+    "is_strong": false
+   },
+   {
+    "device_id": "Windows | NULL | chrome 64.0 | NULL",
+    "n": 440,
+    "first_ts": "2016-09-01 21:59:55",
+    "is_strong": false
+   }
+  ],
+  "emails": [
+   {
+    "domain": "hotmail.com",
+    "n": 4174
+   },
+   {
+    "domain": "gmail.com",
+    "n": 3970
+   },
+   {
+    "domain": "anonymous.com",
+    "n": 773
+   },
+   {
+    "domain": "outlook.com",
+    "n": 370
+   },
+   {
+    "domain": "yahoo.com.mx",
+    "n": 191
+   },
+   {
+    "domain": "live.com.mx",
+    "n": 151
+   },
+   {
+    "domain": "yahoo.com",
+    "n": 105
+   },
+   {
+    "domain": "icloud.com",
+    "n": 73
+   },
+   {
+    "domain": "outlook.es",
+    "n": 72
+   },
+   {
+    "domain": "hotmail.es",
+    "n": 48
+   }
+  ],
+  "other_cards": [
+   {
+    "id": "C11923-K1",
+    "card_type": "unknown",
+    "n_txns": 29
+   }
+  ],
+  "prior_closed_cases": [
+   {
+    "id": "CC-4743",
+    "opened_at": "2016-10-12 10:17:15",
+    "outcome": "cleared",
+    "pattern": "none",
+    "exposure_usd": 0.0,
+    "report_filed": false,
+    "template_id": "cleared_new_phone"
+   },
+   {
+    "id": "CC-4501",
+    "opened_at": "2016-10-07 12:05:47",
+    "outcome": "confirmed_fraud",
+    "pattern": "card_testing",
+    "exposure_usd": 1508.58,
+    "report_filed": true,
+    "template_id": "fraud_reported"
+   },
+   {
+    "id": "CC-3905",
+    "opened_at": "2016-09-24 21:43:58",
+    "outcome": "confirmed_fraud",
+    "pattern": "card_not_present_new_device",
+    "exposure_usd": 1397.53,
+    "report_filed": true,
+    "template_id": "fraud_reported"
+   },
+   {
+    "id": "CC-3206",
+    "opened_at": "2016-09-08 09:12:22",
+    "outcome": "confirmed_fraud",
+    "pattern": "card_not_present_new_device",
+    "exposure_usd": 100.24,
+    "report_filed": false,
+    "template_id": "fraud_reported"
+   },
+   {
+    "id": "CC-3039",
+    "opened_at": "2016-09-04 17:18:26",
+    "outcome": "confirmed_fraud",
+    "pattern": "card_not_present_new_device",
+    "exposure_usd": 108.85,
+    "report_filed": false,
+    "template_id": "fraud_reported"
+   },
+   {
+    "id": "CC-2799",
+    "opened_at": "2016-08-30 19:24:37",
+    "outcome": "confirmed_fraud",
+    "pattern": "card_not_present_new_device",
+    "exposure_usd": 36.14,
+    "report_filed": false,
+    "template_id": "fraud_reported"
+   },
+   {
+    "id": "CC-2673",
+    "opened_at": "2016-08-27 18:54:07",
+    "outcome": "confirmed_fraud",
+    "pattern": "card_testing",
+    "exposure_usd": 1334.96,
+    "report_filed": true,
+    "template_id": "fraud_reported"
+   },
+   {
+    "id": "CC-2247",
+    "opened_at": "2016-08-17 14:07:24",
+    "outcome": "confirmed_fraud",
+    "pattern": "card_testing",
+    "exposure_usd": 4886.18,
+    "report_filed": true,
+    "template_id": "fraud_reported"
+   },
+   {
+    "id": "CC-1056",
+    "opened_at": "2016-07-24 02:41:55",
+    "outcome": "confirmed_fraud",
+    "pattern": "card_not_present_new_device",
+    "exposure_usd": 1557.95,
+    "report_filed": true,
+    "template_id": "fraud_reported"
+   },
+   {
+    "id": "CC-0290",
+    "opened_at": "2016-07-09 19:59:09",
+    "outcome": "confirmed_fraud",
+    "pattern": "card_testing",
+    "exposure_usd": 144.56,
+    "report_filed": false,
+    "template_id": "fraud_reported"
+   },
+   {
+    "id": "CC-0031",
+    "opened_at": "2016-07-04 01:23:36",
+    "outcome": "confirmed_fraud",
+    "pattern": "card_not_present_new_device",
+    "exposure_usd": 20.36,
+    "report_filed": false,
+    "template_id": "fraud_reported"
+   }
+  ],
+  "prior_agent_cases": []
+ }
+}

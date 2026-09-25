@@ -1,0 +1,251 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 830" width="1200" height="830" role="img" aria-labelledby="t d">
+  <title id="t">HHGOA agentic fraud investigation: architecture</title>
+  <desc id="d">One alert from case_pack.csv is run by agent/bench.py through the phase machine P0 to P10. The LLM (claude-agent-sdk) investigates through typed tools that reach TigerGraph Savanna FraudGraph via the tigergraph-mcp server: GSQL queries, graph algorithms and TigerVector GraphRAG. The deterministic engine scores, applies the fraud policy gate and simulates evidence replies. The case is written back to the graph, the answer lands in cases/, and a Streamlit UI shows runs and approvals. An offline pipeline builds the data, graph, embeddings and queries once.</desc>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#57606a"/>
+    </marker>
+    <marker id="ap" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8250df"/>
+    </marker>
+    <marker id="ao" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#bc4c00"/>
+    </marker>
+    <marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1a7f37"/>
+    </marker>
+    <style>
+      text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: #1f2328; }
+      .h  { font-size: 14px; font-weight: 700; }
+      .hs { font-size: 12.5px; font-weight: 700; }
+      .b  { font-size: 11.5px; fill: #424a53; }
+      .s  { font-size: 10.5px; fill: #57606a; }
+      .m  { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+      .tag { font-size: 10px; font-weight: 700; }
+      .lbl { font-size: 10.5px; fill: #57606a; }
+    </style>
+  </defs>
+
+  <!-- explicit background so the diagram reads the same on light and dark GitHub themes -->
+  <rect x="0" y="0" width="1200" height="830" rx="10" fill="#ffffff"/>
+  <rect x="0.5" y="0.5" width="1199" height="829" rx="10" fill="none" stroke="#d0d7de"/>
+
+  <!-- title -->
+  <text x="24" y="36" class="h" style="font-size:18px">Agentic fraud investigation on TigerGraph: one alert, end to end</text>
+  <text x="24" y="58" class="b">The deterministic engine decides and the policy gate routes; the LLM investigates, explains and writes the SAR draft.</text>
+  <rect x="820" y="20" width="356" height="44" rx="6" fill="#f6f8fa" stroke="#d0d7de"/>
+  <text x="832" y="38" class="tag" style="fill:#1a7f37">FREE STACK, NO PAID API KEYS</text>
+  <text x="832" y="55" class="s">claude-agent-sdk on a Claude subscription + local BGE embeddings</text>
+
+  <!-- ================= column A: input, driver, engine ================= -->
+  <rect x="24" y="84" width="280" height="54" rx="6" fill="#f6f8fa" stroke="#57606a"/>
+  <text x="36" y="104" class="hs m">data/raw/case_pack.csv</text>
+  <text x="36" y="124" class="s">20 alerts: risk_score · customer_report · analyst_request</text>
+
+  <line x1="164" y1="138" x2="164" y2="154" stroke="#57606a" stroke-width="1.5" marker-end="url(#a)"/>
+
+  <rect x="24" y="156" width="280" height="64" rx="6" fill="#ddf4ff" stroke="#0969da"/>
+  <text x="36" y="176" class="hs m">agent/bench.py</text>
+  <text x="36" y="194" class="s">one case at a time, in opened_at order</text>
+  <text x="36" y="209" class="s">every read is bounded by as_of = opened_at</text>
+  <path d="M304,188 H332 V100 H358" fill="none" stroke="#57606a" stroke-width="1.5" marker-end="url(#a)"/>
+
+  <!-- engine -->
+  <rect x="24" y="240" width="280" height="212" rx="6" fill="#dafbe1" stroke="#1a7f37"/>
+  <text x="36" y="262" class="hs">engine/: deterministic decision gate</text>
+  <text x="36" y="282" class="b">scorecard · pattern_rule · episode</text>
+  <text x="36" y="299" class="b">policy.py over policy/fraud_policy.yaml</text>
+  <text x="36" y="316" class="b">rules R1–R10 · routes auto / L1 / L2</text>
+  <text x="36" y="333" class="b">voi · stop rule · LLM may move p by ≤ 0.10</text>
+  <rect x="36" y="350" width="256" height="58" rx="5" fill="#ffffff" stroke="#1a7f37"/>
+  <text x="46" y="368" class="hs m" style="font-size:11.5px">engine/simulator.py</text>
+  <text x="46" y="384" class="s">evidence simulator: the assumed reply to</text>
+  <text x="46" y="398" class="s">a customer / step-up request (never sent)</text>
+  <text x="36" y="432" class="b">answer_writer · validator (strict README JSON)</text>
+
+  <!-- engine <-> phases: P3, P5, P7 ; simulator <-> P6 -->
+  <line x1="304" y1="264" x2="358" y2="264" stroke="#1a7f37" stroke-width="1.5" marker-start="url(#ag)" marker-end="url(#ag)"/>
+  <line x1="304" y1="344" x2="358" y2="344" stroke="#1a7f37" stroke-width="1.5" marker-start="url(#ag)" marker-end="url(#ag)"/>
+  <line x1="292" y1="384" x2="358" y2="384" stroke="#1a7f37" stroke-width="1.5" marker-start="url(#ag)" marker-end="url(#ag)"/>
+  <line x1="304" y1="424" x2="358" y2="424" stroke="#1a7f37" stroke-width="1.5" marker-start="url(#ag)" marker-end="url(#ag)"/>
+
+  <!-- ================= column B: phase machine ================= -->
+  <rect x="360" y="84" width="380" height="484" rx="8" fill="#ffffff" stroke="#0969da" stroke-width="1.5"/>
+  <rect x="360" y="84" width="380" height="32" rx="8" fill="#ddf4ff" stroke="#0969da" stroke-width="1.5"/>
+  <text x="372" y="105" class="hs"><tspan class="m">agent/phase_machine.py</tspan>: phases P0–P10</text>
+
+  <g>
+    <!-- row template: y = 124 + 40*i -->
+    <rect x="368" y="126" width="36" height="20" rx="4" fill="#0969da"/><text x="386" y="140" class="tag" style="fill:#ffffff" text-anchor="middle">P0</text>
+    <text x="414" y="139" class="hs">Intake</text><text x="414" y="155" class="s">CaseContext; open_case creates AC-HHG-0nn</text>
+    <rect x="666" y="128" width="66" height="16" rx="8" fill="#f6f8fa" stroke="#57606a"/><text x="699" y="140" class="tag" style="fill:#57606a" text-anchor="middle">code</text>
+
+    <rect x="368" y="166" width="36" height="20" rx="4" fill="#0969da"/><text x="386" y="180" class="tag" style="fill:#ffffff" text-anchor="middle">P1</text>
+    <text x="414" y="179" class="hs">Memory</text><text x="414" y="195" class="s">similar prior cases + policy chunks (vector)</text>
+    <rect x="666" y="168" width="66" height="16" rx="8" fill="#f6f8fa" stroke="#57606a"/><text x="699" y="180" class="tag" style="fill:#57606a" text-anchor="middle">code</text>
+
+    <rect x="368" y="206" width="36" height="20" rx="4" fill="#0969da"/><text x="386" y="220" class="tag" style="fill:#ffffff" text-anchor="middle">P2</text>
+    <text x="414" y="219" class="hs">Investigate</text><text x="414" y="235" class="s">≤ 12 typed read tools, per-trigger playbook</text>
+    <rect x="666" y="208" width="66" height="16" rx="8" fill="#fbefff" stroke="#8250df"/><text x="699" y="220" class="tag" style="fill:#8250df" text-anchor="middle">LLM</text>
+
+    <rect x="368" y="246" width="36" height="20" rx="4" fill="#0969da"/><text x="386" y="260" class="tag" style="fill:#ffffff" text-anchor="middle">P3</text>
+    <text x="414" y="259" class="hs">Scorecard</text><text x="414" y="275" class="s">p_engine, evidence families, pattern, episode</text>
+    <rect x="666" y="248" width="66" height="16" rx="8" fill="#dafbe1" stroke="#1a7f37"/><text x="699" y="260" class="tag" style="fill:#1a7f37" text-anchor="middle">engine</text>
+
+    <rect x="368" y="286" width="36" height="20" rx="4" fill="#0969da"/><text x="386" y="300" class="tag" style="fill:#ffffff" text-anchor="middle">P4</text>
+    <text x="414" y="299" class="hs">Assess</text><text x="414" y="315" class="s">verdict, p within p_engine ± 0.10, cited claims</text>
+    <rect x="666" y="288" width="66" height="16" rx="8" fill="#fbefff" stroke="#8250df"/><text x="699" y="300" class="tag" style="fill:#8250df" text-anchor="middle">LLM</text>
+
+    <rect x="368" y="326" width="36" height="20" rx="4" fill="#0969da"/><text x="386" y="340" class="tag" style="fill:#ffffff" text-anchor="middle">P5</text>
+    <text x="414" y="339" class="hs">Decide (initial)</text><text x="414" y="355" class="s">admissible actions under R1–R10, with routes</text>
+    <rect x="666" y="328" width="66" height="16" rx="8" fill="#dafbe1" stroke="#1a7f37"/><text x="699" y="340" class="tag" style="fill:#1a7f37" text-anchor="middle">engine+LLM</text>
+
+    <rect x="368" y="366" width="36" height="20" rx="4" fill="#0969da"/><text x="386" y="380" class="tag" style="fill:#ffffff" text-anchor="middle">P6</text>
+    <text x="414" y="379" class="hs">Evidence</text><text x="414" y="395" class="s">ask only if a reply can change the actions</text>
+    <rect x="666" y="368" width="66" height="16" rx="8" fill="#dafbe1" stroke="#1a7f37"/><text x="699" y="380" class="tag" style="fill:#1a7f37" text-anchor="middle">engine</text>
+
+    <rect x="368" y="406" width="36" height="20" rx="4" fill="#0969da"/><text x="386" y="420" class="tag" style="fill:#ffffff" text-anchor="middle">P7</text>
+    <text x="414" y="419" class="hs">Reassess + decide</text><text x="414" y="435" class="s">final actions, what_changed, stop_reason</text>
+    <rect x="666" y="408" width="66" height="16" rx="8" fill="#dafbe1" stroke="#1a7f37"/><text x="699" y="420" class="tag" style="fill:#1a7f37" text-anchor="middle">engine+LLM</text>
+
+    <rect x="368" y="446" width="36" height="20" rx="4" fill="#0969da"/><text x="386" y="460" class="tag" style="fill:#ffffff" text-anchor="middle">P8</text>
+    <text x="414" y="459" class="hs">SAR</text><text x="414" y="475" class="s">draft on FinCEN chunks; rag/validate_sar.py</text>
+    <rect x="666" y="448" width="66" height="16" rx="8" fill="#fbefff" stroke="#8250df"/><text x="699" y="460" class="tag" style="fill:#8250df" text-anchor="middle">LLM</text>
+
+    <rect x="368" y="486" width="36" height="20" rx="4" fill="#0969da"/><text x="386" y="500" class="tag" style="fill:#ffffff" text-anchor="middle">P9</text>
+    <text x="414" y="499" class="hs">Explain + write</text><text x="414" y="515" class="s">summary; answer_writer; validator</text>
+    <rect x="666" y="488" width="66" height="16" rx="8" fill="#fbefff" stroke="#8250df"/><text x="699" y="500" class="tag" style="fill:#8250df" text-anchor="middle">LLM</text>
+
+    <rect x="368" y="526" width="36" height="20" rx="4" fill="#0969da"/><text x="386" y="540" class="tag" style="fill:#ffffff" text-anchor="middle">P10</text>
+    <text x="414" y="539" class="hs">Persist (write-back)</text><text x="414" y="555" class="s">AgentCase + note_emb, events, approvals, edges</text>
+    <rect x="666" y="528" width="66" height="16" rx="8" fill="#f6f8fa" stroke="#57606a"/><text x="699" y="540" class="tag" style="fill:#57606a" text-anchor="middle">code</text>
+  </g>
+
+  <!-- ================= column C: LLM, MCP, TigerGraph ================= -->
+  <rect x="800" y="84" width="376" height="84" rx="6" fill="#fbefff" stroke="#8250df"/>
+  <text x="812" y="104" class="hs">LLM: claude-agent-sdk (LLM_BACKEND=cli)</text>
+  <text x="812" y="122" class="b">claude-sonnet-5 via the bundled Claude Code CLI</text>
+  <text x="812" y="139" class="s">subscription auth, no API key; built-in tools off, setting_sources=[]</text>
+  <text x="812" y="155" class="s">sees only our typed query tools (in-process SDK MCP server)</text>
+  <!-- phase machine <-> LLM for the purple phases -->
+  <line x1="740" y1="126" x2="798" y2="126" stroke="#8250df" stroke-width="1.5" marker-start="url(#ap)" marker-end="url(#ap)"/>
+  <text x="769" y="119" class="lbl" text-anchor="middle">LLM</text>
+  <text x="769" y="142" class="lbl" text-anchor="middle">phases</text>
+
+  <!-- LLM tool calls -> MCP -->
+  <line x1="900" y1="168" x2="900" y2="194" stroke="#8250df" stroke-width="1.5" marker-end="url(#ap)"/>
+  <text x="908" y="186" class="lbl">P2 tool calls</text>
+
+  <rect x="800" y="196" width="376" height="80" rx="6" fill="#fff8c5" stroke="#9a6700"/>
+  <text x="812" y="216" class="hs">tigergraph-mcp 1.0.3 (stdio)</text>
+  <text x="812" y="234" class="b"><tspan class="m">mcp/tg_mcp_launcher.py</tspan> · allowlist</text>
+  <text x="812" y="251" class="s">run_installed_query, get_*, add_node(s), add_edge(s)</text>
+  <text x="812" y="266" class="s">blocked: gsql, run_query, install/drop/delete, schema changes</text>
+  <!-- phases P0-P1 mandatory reads -> MCP -->
+  <path d="M740,184 H770 V236 H798" fill="none" stroke="#57606a" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="746" y="178" class="lbl">P0–P1</text>
+
+  <!-- MCP -> TigerGraph -->
+  <line x1="988" y1="276" x2="988" y2="302" stroke="#bc4c00" stroke-width="1.5" marker-start="url(#ao)" marker-end="url(#ao)"/>
+  <text x="996" y="294" class="lbl">HTTPS, Database Secret</text>
+
+  <rect x="800" y="304" width="376" height="264" rx="8" fill="#fff1e5" stroke="#bc4c00" stroke-width="1.5"/>
+  <text x="812" y="325" class="hs">TigerGraph Savanna · FraudGraph (4.2.x)</text>
+
+  <rect x="812" y="336" width="352" height="50" rx="5" fill="#ffffff" stroke="#bc4c00"/>
+  <text x="822" y="353" class="hs" style="font-size:11.5px">GSQL query library (installed queries)</text>
+  <text x="822" y="368" class="s">case_context · card_window · device_neighbors · episode_candidates</text>
+  <text x="822" y="381" class="s">shared_origin_scan · region_history … and 4 writer queries</text>
+
+  <rect x="812" y="392" width="352" height="50" rx="5" fill="#ffffff" stroke="#bc4c00"/>
+  <text x="822" y="409" class="hs" style="font-size:11.5px">Graph algorithms (graph/run_algos.py)</text>
+  <text x="822" y="424" class="s">SHARES_DEVICE projection · tg_wcc · tg_degree_cent</text>
+  <text x="822" y="437" class="s">into Card.wcc_id and Card.device_degree</text>
+
+  <rect x="812" y="448" width="352" height="50" rx="5" fill="#ffffff" stroke="#bc4c00"/>
+  <text x="822" y="465" class="hs" style="font-size:11.5px">TigerVector GraphRAG (vectorSearch)</text>
+  <text x="822" y="480" class="s">ClosedCase + AgentCase note_emb · PolicyChunk (README policy,</text>
+  <text x="822" y="493" class="s">FinCEN · FFIEC · FATF) · BAAI/bge-large-en-v1.5, 1024-d</text>
+
+  <rect x="812" y="504" width="352" height="54" rx="5" fill="#ffffff" stroke="#bc4c00"/>
+  <text x="822" y="521" class="hs" style="font-size:11.5px">Case memory (agent write-back)</text>
+  <text x="822" y="536" class="s">AgentCase · CaseEvent · Approval</text>
+  <text x="822" y="549" class="s">CASE_SIMILAR_TO · CASE_CONNECTED_TO · CASE_DEVICE …</text>
+  <!-- memory compounds: later cases retrieve earlier ones -->
+  <path d="M1165,526 C1175,520 1175,488 1166,482" fill="none" stroke="#bc4c00" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#ao)"/>
+
+  <!-- P10 write-back -> case memory -->
+  <line x1="740" y1="536" x2="810" y2="536" stroke="#bc4c00" stroke-width="1.5" marker-end="url(#ao)"/>
+  <text x="746" y="530" class="lbl">P10 write</text>
+
+  <!-- ================= outputs ================= -->
+  <rect x="24" y="604" width="280" height="62" rx="6" fill="#f6f8fa" stroke="#57606a"/>
+  <text x="36" y="624" class="hs m">cases/HHG-0nn.json</text>
+  <text x="36" y="642" class="s">strict README answer format; every id</text>
+  <text x="36" y="656" class="s">resolved against data/ids.duckdb</text>
+
+  <rect x="360" y="604" width="380" height="62" rx="6" fill="#f6f8fa" stroke="#57606a"/>
+  <text x="372" y="624" class="hs m">runs/&lt;run_id&gt;/&lt;case&gt;/</text>
+  <text x="372" y="642" class="s">answer.json · calls.jsonl · phases.jsonl · sar.md</text>
+  <text x="372" y="656" class="s">tool_calls, tokens, latency_s come from this run log</text>
+
+  <rect x="800" y="604" width="376" height="62" rx="6" fill="#ddf4ff" stroke="#0969da"/>
+  <text x="812" y="624" class="hs">Streamlit UI <tspan class="m" style="font-weight:400;font-size:11px">ui/ (make ui)</tspan></text>
+  <text x="812" y="642" class="s">queue · case · approvals · graph · runs</text>
+  <text x="812" y="656" class="s">approving an L1/L2 action writes an Approval</text>
+
+  <line x1="550" y1="568" x2="550" y2="602" stroke="#57606a" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="558" y="590" class="lbl">P9 answer + run log</text>
+  <line x1="360" y1="635" x2="306" y2="635" stroke="#57606a" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="332" y="628" class="lbl" text-anchor="middle">promote</text>
+  <line x1="740" y1="635" x2="798" y2="635" stroke="#57606a" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="769" y="628" class="lbl" text-anchor="middle">read</text>
+  <line x1="1120" y1="604" x2="1120" y2="570" stroke="#bc4c00" stroke-width="1.5" marker-end="url(#ao)"/>
+  <text x="1112" y="590" class="lbl" text-anchor="end">record_approval</text>
+
+  <!-- ================= offline build ================= -->
+  <rect x="24" y="690" width="1152" height="120" rx="8" fill="#f6f8fa" stroke="#d0d7de"/>
+  <text x="36" y="710" class="hs">Offline, once (make db features cms facts chunks · load algos · corpus embed vectors · install-queries)</text>
+
+  <rect x="36" y="724" width="170" height="72" rx="5" fill="#ffffff" stroke="#57606a"/>
+  <text x="46" y="743" class="hs m" style="font-size:11px">data/raw/*.csv</text>
+  <text x="46" y="760" class="s">4 dataset CSVs + README</text>
+  <text x="46" y="774" class="s">(gitignored, never</text>
+  <text x="46" y="788" class="s">committed)</text>
+
+  <rect x="228" y="724" width="170" height="72" rx="5" fill="#ffffff" stroke="#57606a"/>
+  <text x="238" y="743" class="hs m" style="font-size:11px">etl/</text>
+  <text x="238" y="760" class="s">DuckDB · card_id rule</text>
+  <text x="238" y="774" class="s">features · LightGBM</text>
+  <text x="238" y="788" class="s">case-memory scorer</text>
+
+  <rect x="420" y="724" width="170" height="72" rx="5" fill="#dafbe1" stroke="#1a7f37"/>
+  <text x="430" y="743" class="hs m" style="font-size:11px">engine/facts_from_etl</text>
+  <text x="430" y="760" class="s">facts DuckDB for the</text>
+  <text x="430" y="774" class="s">engine, the replay and</text>
+  <text x="430" y="788" class="s">RUN_MODE=mock</text>
+
+  <rect x="612" y="724" width="170" height="72" rx="5" fill="#fff1e5" stroke="#bc4c00"/>
+  <text x="622" y="743" class="hs m" style="font-size:11px">graph/load_all.py</text>
+  <text x="622" y="760" class="s">schema + loading jobs,</text>
+  <text x="622" y="774" class="s">590,742 transactions;</text>
+  <text x="622" y="788" class="s">then run_algos.py</text>
+
+  <rect x="804" y="724" width="170" height="72" rx="5" fill="#fff1e5" stroke="#bc4c00"/>
+  <text x="814" y="743" class="hs m" style="font-size:11px">rag/</text>
+  <text x="814" y="760" class="s">chunk policy + guidance,</text>
+  <text x="814" y="774" class="s">embed locally (BGE),</text>
+  <text x="814" y="788" class="s">load into TigerVector</text>
+
+  <rect x="996" y="724" width="170" height="72" rx="5" fill="#fff1e5" stroke="#bc4c00"/>
+  <text x="1006" y="743" class="hs m" style="font-size:11px">graph/install_all.py</text>
+  <text x="1006" y="760" class="s">CREATE + INSTALL the</text>
+  <text x="1006" y="774" class="s">GSQL queries; MCP</text>
+  <text x="1006" y="788" class="s">descriptions registered</text>
+
+  <line x1="206" y1="760" x2="226" y2="760" stroke="#57606a" stroke-width="1.5" marker-end="url(#a)"/>
+  <line x1="398" y1="760" x2="418" y2="760" stroke="#57606a" stroke-width="1.5" marker-end="url(#a)"/>
+  <line x1="590" y1="760" x2="610" y2="760" stroke="#57606a" stroke-width="1.5" marker-end="url(#a)"/>
+  <line x1="782" y1="760" x2="802" y2="760" stroke="#57606a" stroke-width="1.5" marker-end="url(#a)"/>
+  <line x1="974" y1="760" x2="994" y2="760" stroke="#57606a" stroke-width="1.5" marker-end="url(#a)"/>
+</svg>

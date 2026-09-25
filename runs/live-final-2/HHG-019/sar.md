@@ -1,0 +1,1 @@
+No SAR. 3a not met: exposure $99.92 <= $1,000; the New profile `Windows | other | chrome 61.0 | 1280x720` is used by 3 cards (this one included) in the 30 days before the case opened, with no fraud linkage strong enough to be a shared-origin signal; no shared region cluster; no other customer's fraud connected; documented pattern

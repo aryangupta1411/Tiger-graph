@@ -1,0 +1,153 @@
+{
+  "case_id": "HHG-002",
+  "case": {
+    "status": "closed_fraud",
+    "verdict": "fraud",
+    "fraud_probability": 0.92,
+    "pattern": "card_not_present_fraud",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3478782"
+    ],
+    "first_suspicious_txn_id": "3478782",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 292.36,
+    "evidence": [
+      {
+        "claim": "The flagged transaction 3478782 ($292.36, online, product C, 2016-11-22 17:27:07) is about 2.4x the card's prior maximum amount ($121.32) and about 6x its prior median ($47.29) computed over the 35 transactions before opening.",
+        "source": "graph",
+        "ref": "query:case_context(t=3478782, as_of=2016-11-22 23:27:07)",
+        "entity_ids": [
+          "3478782",
+          "C11891-K1"
+        ]
+      },
+      {
+        "claim": "The card was dormant for about 16 days before the flagged transaction (the only entry in the 72h card_window is the flagged transaction itself, gap_seconds 1,446,851 from the prior transaction), then jumped straight to $292.36 with no smaller online purchases in between.",
+        "source": "graph",
+        "ref": "query:card_window(c=C11891-K1, from_ts=2016-11-19 17:27:07, to_ts=2016-11-22 23:27:07)",
+        "entity_ids": [
+          "3478782",
+          "C11891-K1"
+        ]
+      },
+      {
+        "claim": "Card C11891-K1 has one prior confirmed-fraud closed case, CC-4160 (pattern card_not_present_fraud, exposure $90.54, closed 2016-09-30), the same channel as the flagged transaction and within about 53 days of it.",
+        "source": "graph",
+        "ref": "query:prior_cases_for_customer(cu=C11891, as_of=2016-11-22 23:27:07)",
+        "entity_ids": [
+          "CC-4160",
+          "C11891-K1"
+        ]
+      },
+      {
+        "claim": "The case-memory calibration scores the flagged transaction at cms_p 0.6595 (calibrated 0.7533), and after the prior-fraud adjustment the engine probability is 0.8343, close to but distinct from the real-time model's risk_score of 0.79.",
+        "source": "graph",
+        "ref": "query:case_context(t=3478782, as_of=2016-11-22 23:27:07)",
+        "entity_ids": [
+          "3478782"
+        ]
+      },
+      {
+        "claim": "The purchaser/recipient email domain hotmail.com has been used 7 times before on this card out of the 35 prior transactions, so it is a familiar domain rather than a brand-new one.",
+        "source": "graph",
+        "ref": "query:case_context(t=3478782, as_of=2016-11-22 23:27:07)",
+        "entity_ids": [
+          "3478782"
+        ]
+      },
+      {
+        "claim": "card_testing_check found only 1 chain member with 0 small (<$5) authorizations before the flagged transaction and no cleared purchase over $100, so the R5 card-testing shape does not apply here.",
+        "source": "graph",
+        "ref": "query:card_testing_check(c=C11891-K1, as_of=2016-11-22 23:27:07, small=5, window_min=60, min_n=3, big=100, lookahead_h=48)",
+        "entity_ids": [
+          "C11891-K1"
+        ]
+      },
+      {
+        "claim": "episode_candidates over a 48-hour window found only the flagged transaction 3478782 in the chain, so the episode is a single unusual online purchase rather than a multi-transaction spree.",
+        "source": "graph",
+        "ref": "query:episode_candidates(t=3478782, as_of=2016-11-22 23:27:07, gap_h=48)",
+        "entity_ids": [
+          "3478782"
+        ]
+      },
+      {
+        "claim": "shared_origin_scan over the 30 days before opening found no strong shared device profile on this card (both returned devices, Trident/7.0 | NULL | ie 11.0 for tablet | NULL and NULL | NULL | mobile safari generic | NULL, are is_strong=false), and the flagged transaction itself carries no device identity, so there is no shared-origin ring evidence to name.",
+        "source": "graph",
+        "ref": "query:shared_origin_scan(c=C11891-K1, as_of=2016-11-22 23:27:07, days=30)",
+        "entity_ids": [
+          "C11891-K1",
+          "Trident/7.0 | NULL | ie 11.0 for tablet | NULL",
+          "NULL | NULL | mobile safari generic | NULL"
+        ]
+      },
+      {
+        "claim": "Assumed reply: customer states they did not make these purchases and still has the card",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": [
+          "3478782"
+        ]
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-4160"
+    ],
+    "summary": "Verdict: fraud, probability 0.92, pattern card_not_present_fraud - a single $292.36 online purchase (txn 3478782, sole member of the episode, exposure $292.36) far above the card's prior baseline, on a card with a prior confirmed CNP-fraud case. A customer_validation request was sent and the customer denied making the purchase, which settled the question under R2; without that denial the amount jump alone would read as ambiguous single-purchase CNP activity. Recommended: CREATE_CASE (auto) and BLOCK_CARD (L1, awaiting approval).",
+    "written_to_graph": true,
+    "graph_case_id": "AC-HHG-002"
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 17,
+      "assumed_response": "ASSUMED (simulated): customer states they did not make these purchases and still has the card"
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: probability 0.80 ≥ 0.30, so a case is opened on the flagged transaction 3478782 to record the amount anomaly and prior-fraud history evidence."
+      },
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "§3b/§5: probability 0.80 is below the 0.85 stop-high threshold and the episode is a single unusual online purchase, so a customer verification request is issued before any block is finalized; the reply needs no approval and will be recorded."
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "§3b: recommending a hold on card C11891-K1 while the verification reply is pending, given exposure $292.36 ≤ $2,500, subject to team-lead approval."
+      }
+    ],
+    "final": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R2: the customer denied transaction 3478782, so a case is opened to record the denial alongside the amount-anomaly and prior-fraud evidence."
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: customer denied; exposure $292.36 ≤ $2,500, recommended for team-lead approval on card C11891-K1."
+      }
+    ],
+    "what_changed": "The assumed customer validation reply (deny) moved the probability from 0.80 to 0.92 and kept the verdict fraud, removing VERIFY_WITH_CUSTOMER. Counterfactual: had the customer confirmed the purchase, R3 would have applied: CLOSE_NO_FRAUD."
+  },
+  "sar": {
+    "file": false,
+    "reason": "3a not met: exposure $292.36 <= $1,000; no device profile shared with other cards' fraud; no shared region cluster; no other customer's fraud connected; documented pattern",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "Policy §6 test 2 fired: the assumed customer denial settled the question (R2). Test 1 was also met, since probability rose to 0.92 with three evidence families (customer, history, memory).",
+  "tool_calls": 17,
+  "tokens": 238885,
+  "latency_s": 203.7
+}

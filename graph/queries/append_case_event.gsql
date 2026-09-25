@@ -1,0 +1,13 @@
+// append_case_event (writer, harness-only) — adds one CaseEvent (id = case_id + "-" + seq zero-padded to 3)
+// and the HAS_EVENT edge. kind ∈ evidence, assessment, nba_initial, evidence_request, assumed_response,
+// nba_final, approval, sar, policy_override, executed. payload is a JSON string built by the harness.
+// Parameter `event_at` fills the vertex attribute `at`.
+USE GRAPH FraudGraph
+CREATE OR REPLACE QUERY append_case_event(STRING case_id, INT seq, STRING kind, DATETIME event_at, STRING payload)
+                                          FOR GRAPH FraudGraph SYNTAX v3 {
+  STRING id = case_id + "-" + lpad(to_string(seq), 3, "0");
+  INSERT INTO CaseEvent (PRIMARY_ID, case_id, seq, at, kind, payload) VALUES (id, case_id, seq, event_at, kind, payload);
+  INSERT INTO HAS_EVENT (FROM, TO) VALUES (case_id AgentCase, id CaseEvent);
+  BOOL ok = true;
+  PRINT ok, id;
+}

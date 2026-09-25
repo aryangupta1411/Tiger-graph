@@ -1,0 +1,98 @@
+{
+ "query": "post_open_activity",
+ "case": "HHG-009",
+ "params": {
+  "c": "C08299-K1",
+  "opened_at": "2016-12-28 17:10:53",
+  "days": 7
+ },
+ "expected": {
+  "txns": [
+   {
+    "ts": "2016-12-30 18:21:41",
+    "id": "3586980",
+    "amt": 20.01,
+    "channel": "online",
+    "addr1": "330.0",
+    "device_new": "Found",
+    "cms_p": 0.886969
+   },
+   {
+    "ts": "2016-12-30 18:41:54",
+    "id": "3587042",
+    "amt": 20.02,
+    "channel": "online",
+    "addr1": "330.0",
+    "device_new": "Found",
+    "cms_p": 0.270006
+   },
+   {
+    "ts": "2016-12-30 18:41:57",
+    "id": "3587043",
+    "amt": 20.08,
+    "channel": "online",
+    "addr1": "330.0",
+    "device_new": "Found",
+    "cms_p": 0.762563
+   },
+   {
+    "ts": "2016-12-31 13:29:09",
+    "id": "3588859",
+    "amt": 49.97,
+    "channel": "online",
+    "addr1": "204.0",
+    "device_new": "New",
+    "cms_p": 0.055101
+   },
+   {
+    "ts": "2016-12-31 13:35:52",
+    "id": "3588874",
+    "amt": 49.96,
+    "channel": "online",
+    "addr1": "204.0",
+    "device_new": "Found",
+    "cms_p": 0.017045
+   },
+   {
+    "ts": "2016-12-31 13:36:32",
+    "id": "3588876",
+    "amt": 50.08,
+    "channel": "online",
+    "addr1": "204.0",
+    "device_new": "Found",
+    "cms_p": 0.008348
+   },
+   {
+    "ts": "2016-12-31 13:46:47",
+    "id": "3588905",
+    "amt": 49.92,
+    "channel": "online",
+    "addr1": "204.0",
+    "device_new": "Found",
+    "cms_p": 0.004825
+   },
+   {
+    "ts": "2016-12-31 13:52:59",
+    "id": "3588919",
+    "amt": 50.09,
+    "channel": "online",
+    "addr1": "204.0",
+    "device_new": "Found",
+    "cms_p": 0.009255
+   },
+   {
+    "ts": "2016-12-31 14:01:58",
+    "id": "3588950",
+    "amt": 50.09,
+    "channel": "online",
+    "addr1": "204.0",
+    "device_new": "Found",
+    "cms_p": 0.013417
+   }
+  ],
+  "summary": {
+   "n": 9,
+   "sum_amt": 360.22
+  }
+ }
+}

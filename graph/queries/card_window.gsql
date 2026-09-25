@@ -1,0 +1,38 @@
+// card_window — the card's transactions in [from_ts, to_ts], oldest first, at most max_rows (the LAST max_rows
+// of the window, i.e. the ones closest to to_ts), each with the NEXT-edge gap from the previous transaction.
+// Two heaps: @@latest keeps the last max_rows (ts DESC), then they are popped into @@txns (ts ASC) so the
+// printed list is chronological. ts strings are ISO so lexical order == chronological order.
+// summary{} counts the WHOLE window, not only the printed rows.
+USE GRAPH FraudGraph
+CREATE OR REPLACE QUERY card_window(VERTEX<Card> c, DATETIME from_ts, DATETIME to_ts, INT max_rows) FOR GRAPH FraudGraph SYNTAX v3 {
+  TYPEDEF TUPLE<STRING ts, STRING id, FLOAT amt, STRING product_cd, STRING channel, STRING addr1, STRING p_email,
+                STRING r_email, FLOAT risk_score, FLOAT cms_p, STRING device_id, STRING device_new, STRING proxy,
+                INT gap_seconds> Row;
+  TYPEDEF TUPLE<INT n, FLOAT sum_amt, INT n_online, INT n_in_person> Summary;
+  HeapAccum<Row>(max_rows, ts DESC, id DESC) @@latest;
+  HeapAccum<Row>(max_rows, ts ASC, id ASC) @@txns;
+  MaxAccum<Summary> @@summary;
+  SumAccum<INT> @@n, @@n_online, @@n_in_person;
+  SumAccum<FLOAT> @@sum_amt;
+  MaxAccum<INT> @gap = -1;      // -1 = first transaction on the card (no incoming NEXT edge)
+
+  S = {c};
+  T = SELECT t FROM (s:S)-[:MADE]->(t:Transaction)
+      WHERE t.ts >= from_ts AND t.ts <= to_ts
+      ACCUM @@n += 1, @@sum_amt += t.amt,
+            IF t.channel == "online" THEN @@n_online += 1 ELSE @@n_in_person += 1 END;
+
+  G = SELECT t FROM (t:T)-[e:REV_NEXT]->(p:Transaction)
+      ACCUM t.@gap += e.gap_seconds;
+
+  X = SELECT t FROM (t:T)
+      POST-ACCUM @@latest += Row(t.ts_str, t.id, t.amt, t.product_cd, t.channel, t.addr1, t.p_email, t.r_email,
+                                 t.risk_score, t.cms_p, t.device_id, t.device_new, t.proxy_type, t.@gap);
+
+  WHILE @@latest.size() > 0 DO
+    @@txns += @@latest.pop();
+  END;
+  @@summary += Summary(@@n, @@sum_amt, @@n_online, @@n_in_person);
+
+  PRINT @@txns AS txns, @@summary AS summary;
+}

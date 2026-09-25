@@ -1,0 +1,13 @@
+// record_approval (writer, harness-only) — upserts an Approval vertex (id = "AP-" + case_id + "-" + action)
+// and the HAS_APPROVAL edge. status ∈ pending / approved / rejected; decided_by "" while pending.
+USE GRAPH FraudGraph
+CREATE OR REPLACE QUERY record_approval(STRING case_id, STRING action, STRING route, STRING status,
+                                        STRING decided_by, DATETIME decided_at, STRING reason)
+                                        FOR GRAPH FraudGraph SYNTAX v3 {
+  STRING id = "AP-" + case_id + "-" + action;
+  INSERT INTO Approval (PRIMARY_ID, case_id, action, route, status, decided_by, decided_at, reason)
+         VALUES (id, case_id, action, route, status, decided_by, decided_at, reason);
+  INSERT INTO HAS_APPROVAL (FROM, TO) VALUES (case_id AgentCase, id Approval);
+  BOOL ok = true;
+  PRINT ok, id;
+}

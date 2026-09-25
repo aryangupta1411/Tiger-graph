@@ -1,0 +1,25 @@
+// device_history — has this card used device profile d before? prior_n counts the card's transactions on d
+// with ts <= as_of (this INCLUDES the flagged transaction when it is on d; the engine subtracts one for
+// "uses before the flagged one"). device_new_values lists the distinct id_15 values seen on those uses.
+USE GRAPH FraudGraph
+CREATE OR REPLACE QUERY device_history(VERTEX<Card> c, VERTEX<DeviceProfile> d, DATETIME as_of) FOR GRAPH FraudGraph SYNTAX v3 {
+  SumAccum<INT> @@prior_n;
+  MinAccum<INT> @@first_e = 9999999999;
+  SetAccum<STRING> @@device_new_values;
+  MaxAccum<STRING> @@did;
+
+  D = {d};
+  D = SELECT x FROM (x:D) POST-ACCUM @@did += x.id;
+
+  S = {c};
+  T = SELECT t FROM (s:S)-[:MADE]->(t:Transaction)
+      WHERE t.ts <= as_of AND t.device_id == @@did
+      ACCUM @@prior_n += 1, @@first_e += datetime_to_epoch(t.ts), @@device_new_values += t.device_new;
+
+  STRING first_ts = "";
+  IF @@prior_n > 0 THEN
+    first_ts = datetime_format(epoch_to_datetime(@@first_e));
+  END;
+
+  PRINT @@prior_n AS prior_n, first_ts, @@device_new_values AS device_new_values;
+}

@@ -1,0 +1,112 @@
+{
+ "query": "ring_profile",
+ "case": "HHG-014",
+ "params": {
+  "c": "C13487-K1",
+  "as_of": "2016-11-22 20:11:00"
+ },
+ "expected": {
+  "ring_id": "SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080",
+  "device": {
+   "id": "SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080",
+   "is_strong": true,
+   "n_cards_alltime": 52,
+   "n_cards_30d": 28,
+   "n_proxy": 114,
+   "n_fraud_cases": 4
+  },
+  "wave_cards": [
+   "C01289-K1",
+   "C01996-K2",
+   "C02910-K1",
+   "C02975-K1",
+   "C03676-K2",
+   "C04108-K2",
+   "C04274-K1",
+   "C05448-K2",
+   "C06031-K2",
+   "C06650-K2",
+   "C06710-K1",
+   "C07472-K1",
+   "C08168-K1",
+   "C08972-K2",
+   "C09049-K1",
+   "C09195-K1",
+   "C09906-K1",
+   "C09975-K1",
+   "C10020-K1",
+   "C10193-K2",
+   "C10326-K1",
+   "C11082-K1",
+   "C11670-K2",
+   "C11702-K1",
+   "C12645-K1",
+   "C12796-K1",
+   "C13291-K1"
+  ],
+  "pre_open_cards": [
+   "C01289-K1",
+   "C01996-K2",
+   "C02910-K1",
+   "C02975-K1",
+   "C03676-K2",
+   "C04108-K2",
+   "C04274-K1",
+   "C05448-K2",
+   "C06710-K1",
+   "C08168-K1",
+   "C09049-K1",
+   "C09906-K1",
+   "C09975-K1",
+   "C10193-K2",
+   "C10326-K1",
+   "C11082-K1",
+   "C11670-K2",
+   "C12796-K1",
+   "C13291-K1"
+  ],
+  "n_cards_alltime": 52,
+  "card_txns_on_ring": [
+   {
+    "ts": "2016-11-15 20:30:00",
+    "id": "3460634",
+    "amt": 112.37
+   },
+   {
+    "ts": "2016-11-22 16:11:00",
+    "id": "3478561",
+    "amt": 74.96
+   }
+  ],
+  "closed_cases": [
+   {
+    "id": "CC-2649",
+    "card_id": "C03528-K1",
+    "pattern": "undocumented",
+    "outcome": "confirmed_fraud",
+    "report_filed": true
+   },
+   {
+    "id": "CC-2971",
+    "card_id": "C09998-K1",
+    "pattern": "undocumented",
+    "outcome": "confirmed_fraud",
+    "report_filed": true
+   },
+   {
+    "id": "CC-2985",
+    "card_id": "C06617-K1",
+    "pattern": "undocumented",
+    "outcome": "confirmed_fraud",
+    "report_filed": true
+   },
+   {
+    "id": "CC-3035",
+    "card_id": "C09733-K1",
+    "pattern": "undocumented",
+    "outcome": "confirmed_fraud",
+    "report_filed": true
+   }
+  ]
+ }
+}

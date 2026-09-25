@@ -1,0 +1,57 @@
+{
+ "query": "case_context",
+ "case": "HHG-014",
+ "params": {
+  "t": "3478561",
+  "as_of": "2016-11-22 20:11:00"
+ },
+ "expected": {
+  "txn": {
+   "id": "3478561",
+   "ts": "2016-11-22 16:11:00",
+   "amt": 74.96,
+   "product_cd": "C",
+   "channel": "online",
+   "addr1": "191.0",
+   "addr2": "87.0",
+   "p_email": "yahoo.com",
+   "r_email": "gmail.com",
+   "risk_score": 0.05,
+   "has_identity": true,
+   "device_new": "New",
+   "proxy": "IP_PROXY:ANONYMOUS",
+   "device_type": "mobile",
+   "device_id": "SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080",
+   "cms_p": 0.071308,
+   "card_seq": 72,
+   "prior_in_region": 36,
+   "prior_on_dev": 1,
+   "prior_pem": 2,
+   "prior_pcd": 1,
+   "prior_med_amt": 55.92,
+   "prior_max_amt": 225.94,
+   "ring_hit": true,
+   "burst_id": ""
+  },
+  "card": {
+   "id": "C13487-K1",
+   "card_type": "debit",
+   "card_network": "mastercard",
+   "modal_region": "272.0",
+   "n_txns": 73,
+   "ring_id": "SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080"
+  },
+  "customer": {
+   "id": "C13487",
+   "n_cards": 1
+  },
+  "device": {
+   "id": "SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080",
+   "is_strong": true,
+   "n_cards_alltime": 52,
+   "n_cards_30d": 28,
+   "n_proxy": 114,
+   "n_fraud_cases": 4
+  }
+ }
+}

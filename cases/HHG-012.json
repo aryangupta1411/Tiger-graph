@@ -1,0 +1,139 @@
+{
+  "case_id": "HHG-012",
+  "case": {
+    "status": "closed_legitimate",
+    "verdict": "legitimate",
+    "fraud_probability": 0.03,
+    "pattern": "none",
+    "pattern_description": "",
+    "affected_txn_ids": [],
+    "first_suspicious_txn_id": "",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 0.0,
+    "evidence": [
+      {
+        "claim": "The flagged amount $30.91 sits inside the card's baseline as of opening: prior median amount $49.08 and prior maximum $2,681.01 over 910 prior transactions on card C05876-K2.",
+        "source": "graph",
+        "ref": "query:case_context(t=3553342)",
+        "entity_ids": [
+          "3553342",
+          "C05876-K2"
+        ]
+      },
+      {
+        "claim": "Billing region 494.0 is known to card C05876-K2: 21 prior purchases across 17 distinct days since 2016-07-05, on a card that has used 42 regions total (hint=known, home_activity_48h shows the card active in 12 other regions but 0 in its modal region, consistent with its usual multi-region roaming rather than a sudden new-region excursion).",
+        "source": "graph",
+        "ref": "query:region_history(c=C05876-K2, addr1=494.0, as_of=2016-12-18 04:00:30)",
+        "entity_ids": [
+          "C05876-K2"
+        ]
+      },
+      {
+        "claim": "recurring_charge_check found 23 prior W-product purchases within 1% of $30.91 on this card, 2 of them in region 494.0 with a median gap of 88.8 days (gap CV 0.00, only 2 occurrences), which does not meet the R7 monthly-cadence recurrence bar but shows this price point is not unusual for the card.",
+        "source": "graph",
+        "ref": "query:recurring_charge_check(t=3553342, tol=0.01, as_of=2016-12-18 05:00:31)",
+        "entity_ids": [
+          "3553342",
+          "C05876-K2"
+        ]
+      },
+      {
+        "claim": "The case-memory calibrated score for this transaction is cms_p=0.0249 (cal_p=0.0346), far below the triggering real-time risk_score of 0.55, reflecting the bank's own closed-case history rather than the model alone.",
+        "source": "graph",
+        "ref": "query:case_context(t=3553342)",
+        "entity_ids": [
+          "3553342"
+        ]
+      },
+      {
+        "claim": "The customer has one prior confirmed-fraud case on this card, CC-2370 (card_not_present_fraud, opened 2016-08-20), an online-channel episode unrelated to this in-person, known-region purchase.",
+        "source": "graph",
+        "ref": "query:prior_cases_for_customer(cu=C05876, as_of=2016-12-18 05:00:31)",
+        "entity_ids": [
+          "CC-2370",
+          "C05876-K2"
+        ]
+      },
+      {
+        "claim": "The customer also has one prior risk-score alert on this card, CC-0003, that was cleared after confirmation as travel activity (template cleared_travel) with the same in-person, roaming shape as the current alert.",
+        "source": "graph",
+        "ref": "query:prior_cases_for_customer(cu=C05876, as_of=2016-12-18 05:00:31)",
+        "entity_ids": [
+          "CC-0003",
+          "C05876-K2"
+        ]
+      },
+      {
+        "claim": "Assumed reply: customer confirmed travel to billing region 494.0 and recognises the $30.91 purchase",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": [
+          "3553342"
+        ]
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-4686",
+      "CC-5402",
+      "CC-4544",
+      "CC-3152",
+      "CC-4961",
+      "CC-2837"
+    ],
+    "summary": "Verdict legitimate at probability 0.03; pattern none, no episode formed, exposure $0.00. The $30.91 in-person purchase fell in billing region 494.0, a region the card has visited 21 times over 17 prior days, and the case-memory score (0.02) sat far below the triggering risk score (0.55). A customer_validation request was made and the assumed reply confirmed the purchase, settling the review. Recommend CREATE_CASE, ALLOW_TRANSACTION and CLOSE_NO_FRAUD (all auto); had the customer instead denied it, R2 would have called for BLOCK_CARD (L1) and CREATE_CASE.",
+    "written_to_graph": true,
+    "graph_case_id": "AC-HHG-012"
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 15,
+      "assumed_response": "ASSUMED (simulated): customer confirmed travel to billing region 494.0 and recognises the $30.91 purchase"
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: an evidence request (customer_validation) is being made on this risk-score alert, so a case is opened even though the probability (0.03) is below the 0.30 threshold."
+      },
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1: the only evidence family pointing toward fraud is the single risk-score signal (0.55) itself and probability 0.03 is well below 0.70, so verify with the customer before any block is considered."
+      }
+    ],
+    "final": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: a customer_validation evidence request was made on this risk-score alert, so a case is opened to record the review even though probability (0.03) is well under 0.30."
+      },
+      {
+        "action": "ALLOW_TRANSACTION",
+        "route": "auto",
+        "reason": "R3: the customer confirmed the $30.91 in-person purchase in billing region 494.0, a region already known to the card, so the transaction is allowed."
+      },
+      {
+        "action": "CLOSE_NO_FRAUD",
+        "route": "auto",
+        "reason": "R3: the customer's confirmation settles the alert, and with probability 0.03 and two independent legitimacy-leaning families (history, memory) plus the confirmation itself, §6's stop condition is met, so the case is closed as no fraud."
+      }
+    ],
+    "what_changed": "The assumed customer validation reply (confirm) left the probability at 0.03 and kept the verdict legitimate, adding ALLOW_TRANSACTION, CLOSE_NO_FRAUD, removing VERIFY_WITH_CUSTOMER. Counterfactual: had the customer denied the purchase, R2 would have applied: BLOCK_CARD (L1) and CREATE_CASE."
+  },
+  "sar": {
+    "file": false,
+    "reason": "3a not met: verdict legitimate (fraud not confirmed or strongly suspected), exposure $0.00; no report",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "Policy §6 test 2 fired: the assumed customer confirmation settled the question, closing the case as no fraud. Probability 0.03 with three evidence families (customer, history, memory) independently meets §6 test 1 as well.",
+  "tool_calls": 15,
+  "tokens": 294239,
+  "latency_s": 112.8
+}

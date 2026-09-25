@@ -1,0 +1,89 @@
+{
+  "case_id": "HHG-009",
+  "case": {
+    "status": "closed_fraud",
+    "verdict": "fraud",
+    "fraud_probability": 0.91,
+    "pattern": "card_not_present_fraud",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3581141"
+    ],
+    "first_suspicious_txn_id": "3581141",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 30.02,
+    "evidence": [
+      {
+        "claim": "Amount $30.02 sits inside the card's baseline (prior median $49.97, prior maximum $343.94 over 46 transactions)",
+        "source": "graph",
+        "ref": "query:case_context(txn=3581141)",
+        "entity_ids": [
+          "3581141",
+          "C08299-K1"
+        ]
+      },
+      {
+        "claim": "Case-memory scorer (LightGBM over the bank's 5,565 closed cases; October holdout AUC 0.956) puts the flagged transaction at 0.86 (calibrated 0.78); the real-time risk score was 0.28",
+        "source": "graph",
+        "ref": "query:case_context(txn=3581141)",
+        "entity_ids": [
+          "3581141"
+        ]
+      },
+      {
+        "claim": "Customer C08299 reports they did not make the $30.02 purchase 3581141 (the denial is evidence: 4,665/4,665 customer-reported closed cases were confirmed fraud, 0 denials were cleared)",
+        "source": "customer",
+        "ref": "trigger",
+        "entity_ids": [
+          "3581141",
+          "C08299"
+        ]
+      }
+    ],
+    "similar_prior_cases": [],
+    "summary": "Customer C08299 disputed transaction 3581141 ($30.02, online) on card C08299-K1. Customer C08299 reports they did not make the $30.02 purchase 3581141 (the denial is evidence: 4,665/4,665 customer-reported closed cases were confirmed fraud, 0 denials were cleared). Verdict fraud at probability 0.91, pattern card_not_present_fraud, 1 affected transaction(s) worth $30.02. Final actions: CREATE_CASE, BLOCK_CARD; no evidence request was needed; status closed_fraud.",
+    "written_to_graph": false,
+    "graph_case_id": "AC-HHG-009"
+  },
+  "evidence_requests": [],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: customer dispute; case opened and written to the graph"
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: customer denied the transaction; exposure $30.02 is at or under $2,500 so route L1"
+      }
+    ],
+    "final": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: customer dispute; case opened and written to the graph"
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: customer denied the transaction; exposure $30.02 is at or under $2,500 so route L1"
+      }
+    ],
+    "what_changed": "nothing"
+  },
+  "sar": {
+    "file": false,
+    "reason": "3a not met: exposure $30.02 <= $1,000; no device profile shared with other cards' fraud; no shared region cluster; no other customer's fraud connected; documented pattern",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0.0,
+    "activity_dates": []
+  },
+  "stop_reason": "Policy \u00a76 test 1: fraud probability 0.91 is at or above 0.85 with 2 independent evidence families (customer, memory); no request could change the action set, so the initial recommendation is final.",
+  "tool_calls": 15,
+  "tokens": 0,
+  "latency_s": 0.04
+}

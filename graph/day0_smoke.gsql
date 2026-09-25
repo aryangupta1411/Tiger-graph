@@ -1,0 +1,185 @@
+// graph/day0_smoke.gsql — PLAN §6 day-0 items 8 (CREATE VERTEX smoke for every planned name), 9 (vector attribute +
+// vectorSearch, including a two-vertex-type search with a mixed candidate_set) and 10 (IMPORT PACKAGE GDBMS_ALGO),
+// plus the tab-separator loading job the whole ETL file format depends on (module A open issue 1).
+//
+// Run it with graph/day0_smoke.py (sends one `// ==== STEP` block at a time, reports each, then does the REST parts:
+// toy vector upserts, the index poll, the two-type search, a 3-row tab load, optional 150 MB POST) or paste the
+// blocks into the GSQL shell one by one. Everything lands on the throw-away graph SmokeGraph; the last block
+// (DROP ALL) is sent only with `--drop-all`, so day 2 starts from an empty workspace.
+//
+// STEP ddl_all_names is graph/schema.gsql verbatim (comments stripped, graph renamed) — tests/unit/test_graph_contracts.py
+// asserts every CREATE VERTEX / CREATE ... EDGE of schema.gsql appears here, so the smoke and the real DDL cannot drift.
+
+// ==== STEP ddl_all_names
+USE GLOBAL
+CREATE VERTEX Customer (
+  PRIMARY_ID id STRING,
+  n_cards INT, n_txns INT, n_closed_cases INT
+) WITH primary_id_as_attribute="true"
+CREATE VERTEX Card (
+  PRIMARY_ID id STRING,
+  customer_id STRING, card_type STRING, card_network STRING, n_txns INT,
+  first_ts DATETIME, last_ts DATETIME,
+  median_amt FLOAT, p90_amt FLOAT, max_amt FLOAT, max_in_person_amt FLOAT,
+  n_online INT, n_in_person INT, modal_region STRING, n_regions INT,
+  home_regions STRING, usual_products STRING, usual_p_email STRING,
+  n_devices_seen INT, known_device_ids STRING, recurring_amounts STRING,
+  n_prior_fraud_cases INT, n_prior_cleared_cases INT,
+  ring_id STRING, burst_lookalike_ids STRING, region_cluster_30d STRING,
+  wcc_id INT, device_degree INT, fraud_ppr FLOAT
+) WITH primary_id_as_attribute="true"
+CREATE VERTEX Transaction (
+  PRIMARY_ID id STRING,
+  card_id STRING, customer_id STRING, ts DATETIME, ts_str STRING, amt FLOAT,
+  product_cd STRING, channel STRING, addr1 STRING, addr2 STRING, dist1 FLOAT, dist2 FLOAT,
+  p_email STRING, r_email STRING, risk_score FLOAT, has_identity BOOL,
+  device_new STRING, proxy_type STRING, device_type STRING, device_id STRING,
+  c_counts STRING, d_deltas STRING, m_flags STRING,
+  cms_p FLOAT, card_seq INT, prior_in_region INT, prior_on_dev INT, prior_pem INT, prior_pcd INT,
+  prior_med_amt FLOAT, prior_max_amt FLOAT, ring_hit BOOL, burst_id STRING
+) WITH primary_id_as_attribute="true"
+CREATE VERTEX DeviceProfile (
+  PRIMARY_ID id STRING,
+  device_info STRING, os STRING, browser STRING, screen STRING,
+  n_txns INT, n_cards_alltime INT, n_cards_30d INT, n_proxy INT,
+  first_seen DATETIME, last_seen DATETIME, n_fraud_cases INT, is_strong BOOL
+) WITH primary_id_as_attribute="true"
+CREATE VERTEX EmailDomain (
+  PRIMARY_ID id STRING,
+  n_txns INT, n_cards INT
+) WITH primary_id_as_attribute="true"
+CREATE VERTEX BillingRegion (
+  PRIMARY_ID id STRING,
+  country STRING, n_txns INT, n_cards INT
+) WITH primary_id_as_attribute="true"
+CREATE VERTEX ClosedCase (
+  PRIMARY_ID id STRING,
+  customer_id STRING, card_id STRING, opened_at DATETIME, closed_at DATETIME,
+  outcome STRING, pattern STRING, first_fraud_txn_id STRING, n_txns INT, exposure_usd FLOAT,
+  actions_taken STRING, report_filed BOOL, analyst_notes STRING,
+  template_id STRING, note_region STRING, note_device STRING, note_evidence_type STRING, embed_text STRING
+) WITH primary_id_as_attribute="true"
+CREATE VERTEX AgentCase (
+  PRIMARY_ID id STRING,
+  source_case_id STRING, customer_id STRING, card_id STRING, trigger_type STRING,
+  opened_at DATETIME, updated_at DATETIME, status STRING, verdict STRING, fraud_probability FLOAT,
+  pattern STRING, pattern_description STRING, exposure_usd FLOAT, summary STRING,
+  sar_filed BOOL, sar_narrative STRING, initial_actions STRING, final_actions STRING,
+  what_changed STRING, stop_reason STRING, run_id STRING
+) WITH primary_id_as_attribute="true"
+CREATE VERTEX CaseEvent (
+  PRIMARY_ID id STRING,
+  case_id STRING, seq INT, at DATETIME, kind STRING, payload STRING
+) WITH primary_id_as_attribute="true"
+CREATE VERTEX Approval (
+  PRIMARY_ID id STRING,
+  case_id STRING, action STRING, route STRING, status STRING,
+  decided_by STRING, decided_at DATETIME, reason STRING
+) WITH primary_id_as_attribute="true"
+CREATE VERTEX Document (
+  PRIMARY_ID id STRING,
+  title STRING, url STRING, sha256 STRING, kind STRING
+) WITH primary_id_as_attribute="true"
+CREATE VERTEX PolicyChunk (
+  PRIMARY_ID id STRING,
+  doc_id STRING, section STRING, page INT, kind STRING, text STRING
+) WITH primary_id_as_attribute="true"
+CREATE VERTEX FraudPattern (
+  PRIMARY_ID id STRING,
+  description STRING, rule_refs STRING
+) WITH primary_id_as_attribute="true"
+CREATE DIRECTED EDGE OWNS (FROM Customer, TO Card) WITH REVERSE_EDGE="REV_OWNS"
+CREATE DIRECTED EDGE MADE (FROM Card, TO Transaction) WITH REVERSE_EDGE="REV_MADE"
+CREATE DIRECTED EDGE NEXT (FROM Transaction, TO Transaction, gap_seconds INT) WITH REVERSE_EDGE="REV_NEXT"
+CREATE DIRECTED EDGE FROM_DEVICE (FROM Transaction, TO DeviceProfile, device_new STRING, proxy_type STRING) WITH REVERSE_EDGE="REV_FROM_DEVICE"
+CREATE DIRECTED EDGE PURCHASER_EMAIL (FROM Transaction, TO EmailDomain) WITH REVERSE_EDGE="REV_PURCHASER_EMAIL"
+CREATE DIRECTED EDGE RECIPIENT_EMAIL (FROM Transaction, TO EmailDomain) WITH REVERSE_EDGE="REV_RECIPIENT_EMAIL"
+CREATE DIRECTED EDGE BILLED_IN (FROM Transaction, TO BillingRegion) WITH REVERSE_EDGE="REV_BILLED_IN"
+CREATE DIRECTED EDGE INVOLVES (FROM ClosedCase, TO Transaction) WITH REVERSE_EDGE="REV_INVOLVES"
+CREATE DIRECTED EDGE ON_CARD (FROM ClosedCase, TO Card) WITH REVERSE_EDGE="REV_ON_CARD"
+CREATE DIRECTED EDGE CONNECTED_TO (FROM ClosedCase, TO Card) WITH REVERSE_EDGE="REV_CONNECTED_TO"
+CREATE DIRECTED EDGE MATCHES (FROM ClosedCase, TO FraudPattern) WITH REVERSE_EDGE="REV_MATCHES"
+CREATE DIRECTED EDGE CASE_INVOLVES (FROM AgentCase, TO Transaction) WITH REVERSE_EDGE="REV_CASE_INVOLVES"
+CREATE DIRECTED EDGE CASE_ON_CARD (FROM AgentCase, TO Card) WITH REVERSE_EDGE="REV_CASE_ON_CARD"
+CREATE DIRECTED EDGE CASE_CONNECTED_TO (FROM AgentCase, TO Card) WITH REVERSE_EDGE="REV_CASE_CONNECTED_TO"
+CREATE DIRECTED EDGE CASE_DEVICE (FROM AgentCase, TO DeviceProfile) WITH REVERSE_EDGE="REV_CASE_DEVICE"
+CREATE DIRECTED EDGE CASE_SIMILAR_TO (FROM AgentCase, TO ClosedCase, score FLOAT) WITH REVERSE_EDGE="REV_CASE_SIMILAR_TO"
+CREATE DIRECTED EDGE CASE_SIMILAR_TO_AGENT (FROM AgentCase, TO AgentCase, score FLOAT) WITH REVERSE_EDGE="REV_CASE_SIMILAR_TO_AGENT"
+CREATE DIRECTED EDGE CASE_CITES (FROM AgentCase, TO PolicyChunk) WITH REVERSE_EDGE="REV_CASE_CITES"
+CREATE DIRECTED EDGE CASE_MATCHES (FROM AgentCase, TO FraudPattern) WITH REVERSE_EDGE="REV_CASE_MATCHES"
+CREATE DIRECTED EDGE HAS_EVENT (FROM AgentCase, TO CaseEvent) WITH REVERSE_EDGE="REV_HAS_EVENT"
+CREATE DIRECTED EDGE HAS_APPROVAL (FROM AgentCase, TO Approval) WITH REVERSE_EDGE="REV_HAS_APPROVAL"
+CREATE DIRECTED EDGE ABOUT (FROM PolicyChunk, TO FraudPattern) WITH REVERSE_EDGE="REV_ABOUT"
+CREATE DIRECTED EDGE CHUNK_OF (FROM PolicyChunk, TO Document) WITH REVERSE_EDGE="REV_CHUNK_OF"
+CREATE UNDIRECTED EDGE SHARES_DEVICE (FROM Card, TO Card, n_shared INT, weight FLOAT, via STRING)
+CREATE GRAPH SmokeGraph (*)
+
+// ==== STEP probe_reserved_proxy
+// Expected to FAIL: `proxy` (contracts/schema.md Transaction.proxy) is on the 4.2 DDL reserved-word list, which is why
+// schema.gsql stores it as proxy_type. If this statement is ACCEPTED, record it in 20-graph.md (the rename could be undone).
+USE GLOBAL
+CREATE VERTEX SmokeProxy (PRIMARY_ID id STRING, proxy STRING) WITH primary_id_as_attribute="true"
+
+// ==== STEP vectors_global_job
+// Same statement shape as graph/schema_change_vectors.gsql, 4 dimensions (toy vectors below).
+USE GLOBAL
+CREATE GLOBAL SCHEMA_CHANGE JOB smoke_add_vec {
+  ALTER VERTEX ClosedCase  ADD VECTOR ATTRIBUTE note_emb(DIMENSION=4, METRIC="COSINE");
+  ALTER VERTEX AgentCase   ADD VECTOR ATTRIBUTE note_emb(DIMENSION=4, METRIC="COSINE");
+  ALTER VERTEX PolicyChunk ADD VECTOR ATTRIBUTE emb(DIMENSION=4, METRIC="COSINE");
+}
+RUN GLOBAL SCHEMA_CHANGE JOB smoke_add_vec
+DROP JOB smoke_add_vec
+
+// ==== STEP two_type_vector_query
+// smoke_two_type is the construct similar_prior_cases.gsql relies on (PLAN §3.7: "not shown in any TigerGraph example");
+// smoke_one_type is the documented single-type form (ecosys VectorSearch.md) = the fallback's shape.
+USE GRAPH SmokeGraph
+CREATE OR REPLACE QUERY smoke_two_type (LIST<FLOAT> q, INT k) SYNTAX v3 {
+  MapAccum<VERTEX, FLOAT> @@d;
+  cand = {ClosedCase.*, AgentCase.*};
+  v = vectorSearch({ClosedCase.note_emb, AgentCase.note_emb}, q, k, {candidate_set: cand, distance_map: @@d});
+  PRINT v;
+  PRINT @@d;
+}
+CREATE OR REPLACE QUERY smoke_one_type (LIST<FLOAT> q, INT k) SYNTAX v3 {
+  MapAccum<VERTEX, FLOAT> @@d;
+  cand = {ClosedCase.*};
+  v = vectorSearch({ClosedCase.note_emb}, q, k, {candidate_set: cand, distance_map: @@d});
+  PRINT v;
+  PRINT @@d;
+}
+INSTALL QUERY smoke_two_type, smoke_one_type
+
+// ==== STEP loading_jobs
+// smoke_load_tab: the exact USING clause of graph/loading_jobs.gsql (tab, no QUOTE) on a vertex with a free-text
+// attribute, so the runner can prove `"` `,` `'` and `|#|` survive inside a field and that sep="\t" reaches RESTPP.
+// smoke_load_csv: comma-separated, for the optional 150 MB POST size test (Nginx.ClientMaxBodySize, default 200 MB).
+USE GRAPH SmokeGraph
+CREATE LOADING JOB smoke_load_tab FOR GRAPH SmokeGraph {
+  DEFINE FILENAME f;
+  LOAD f TO VERTEX CaseEvent VALUES ($0, $1, $2, $3, $4, $5)
+       USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}
+CREATE LOADING JOB smoke_load_csv FOR GRAPH SmokeGraph {
+  DEFINE FILENAME f;
+  LOAD f TO VERTEX Customer VALUES ($0, $1, $2, $3)
+       USING SEPARATOR=",", HEADER="false", EOL="\n";
+}
+
+// ==== STEP gdbms_algo_import
+// Packaged template queries (TigerGraph 3.8+; research/gap2). Informational: plain graph/algos/tg_*.gsql is the baseline.
+USE GRAPH SmokeGraph
+IMPORT PACKAGE GDBMS_ALGO
+SHOW PACKAGE GDBMS_ALGO.community
+
+// ==== STEP gdbms_algo_call
+// Argument list mirrors graph/algos/tg_wcc.gsql (v_type_set, e_type_set, print_limit, print_results, result_attribute,
+// file_path); adjust to the SHOW PACKAGE output above if the packaged signature differs. Empty graph -> empty result.
+USE GRAPH SmokeGraph
+CALL GDBMS_ALGO.community.wcc(["Card"], ["SHARES_DEVICE"], 10, true, "", "")
+
+// ==== STEP drop_all
+// Sent only by `graph/day0_smoke.py --drop-all` (or by hand) once the records are written down.
+USE GLOBAL
+DROP ALL

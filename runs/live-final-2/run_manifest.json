@@ -1,0 +1,904 @@
+{
+  "case_runs": {
+    "HHG-001": {
+      "finished": "2026-09-24T23:05:32",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "invocation_started": "2026-09-24T23:03:19",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336",
+        "explain.md": "9580d7143059",
+        "investigate.md": "a929aacba6f0",
+        "nba.md": "67043e265092",
+        "sar.md": "b68538088664",
+        "system.md": "be81bd123234"
+      },
+      "sar_model": "claude-sonnet-5",
+      "tokens": 232932,
+      "tool_calls": 16
+    },
+    "HHG-002": {
+      "finished": "2026-09-24T22:50:23",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "invocation_started": "2026-09-24T22:46:57",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336",
+        "explain.md": "9580d7143059",
+        "investigate.md": "a929aacba6f0",
+        "nba.md": "67043e265092",
+        "sar.md": "b68538088664",
+        "system.md": "be81bd123234"
+      },
+      "sar_model": "claude-sonnet-5",
+      "tokens": 238885,
+      "tool_calls": 17
+    },
+    "HHG-003": {
+      "finished": "2026-09-24T23:17:56",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "invocation_started": "2026-09-24T23:14:50",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336",
+        "explain.md": "9580d7143059",
+        "investigate.md": "a929aacba6f0",
+        "nba.md": "67043e265092",
+        "sar.md": "b68538088664",
+        "system.md": "be81bd123234"
+      },
+      "sar_model": "claude-sonnet-5",
+      "tokens": 308253,
+      "tool_calls": 17
+    },
+    "HHG-004": {
+      "finished": "2026-09-24T23:33:53",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "invocation_started": "2026-09-24T23:31:25",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336",
+        "explain.md": "9580d7143059",
+        "investigate.md": "a929aacba6f0",
+        "nba.md": "67043e265092",
+        "sar.md": "b68538088664",
+        "system.md": "be81bd123234"
+      },
+      "sar_model": "claude-sonnet-5",
+      "tokens": 305455,
+      "tool_calls": 20
+    },
+    "HHG-005": {
+      "finished": "2026-09-24T23:12:07",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "invocation_started": "2026-09-24T23:09:26",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336",
+        "explain.md": "9580d7143059",
+        "investigate.md": "a929aacba6f0",
+        "nba.md": "67043e265092",
+        "sar.md": "b68538088664",
+        "system.md": "be81bd123234"
+      },
+      "sar_model": "claude-sonnet-5",
+      "tokens": 244752,
+      "tool_calls": 20
+    },
+    "HHG-006": {
+      "finished": "2026-09-24T22:44:43",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "invocation_started": "2026-09-24T22:41:39",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336",
+        "explain.md": "9580d7143059",
+        "investigate.md": "a929aacba6f0",
+        "nba.md": "67043e265092",
+        "sar.md": "b68538088664",
+        "system.md": "be81bd123234"
+      },
+      "sar_model": "claude-sonnet-5",
+      "tokens": 294362,
+      "tool_calls": 24
+    },
+    "HHG-007": {
+      "finished": "2026-09-24T23:09:24",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "invocation_started": "2026-09-24T23:05:34",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336",
+        "explain.md": "9580d7143059",
+        "investigate.md": "a929aacba6f0",
+        "nba.md": "67043e265092",
+        "sar.md": "b68538088664",
+        "system.md": "be81bd123234"
+      },
+      "sar_model": "claude-sonnet-5",
+      "tokens": 483760,
+      "tool_calls": 16
+    },
+    "HHG-008": {
+      "finished": "2026-09-24T23:25:06",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "invocation_started": "2026-09-24T23:22:26",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336",
+        "explain.md": "9580d7143059",
+        "investigate.md": "a929aacba6f0",
+        "nba.md": "67043e265092",
+        "sar.md": "b68538088664",
+        "system.md": "be81bd123234"
+      },
+      "sar_model": "claude-sonnet-5",
+      "tokens": 310639,
+      "tool_calls": 18
+    },
+    "HHG-009": {
+      "finished": "2026-09-24T23:27:56",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "invocation_started": "2026-09-24T23:25:07",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336",
+        "explain.md": "9580d7143059",
+        "investigate.md": "a929aacba6f0",
+        "nba.md": "67043e265092",
+        "sar.md": "b68538088664",
+        "system.md": "be81bd123234"
+      },
+      "sar_model": "claude-sonnet-5",
+      "tokens": 242452,
+      "tool_calls": 17
+    },
+    "HHG-010": {
+      "finished": "2026-09-24T23:00:50",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "invocation_started": "2026-09-24T22:56:36",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336",
+        "explain.md": "9580d7143059",
+        "investigate.md": "a929aacba6f0",
+        "nba.md": "67043e265092",
+        "sar.md": "b68538088664",
+        "system.md": "be81bd123234"
+      },
+      "sar_model": "claude-sonnet-5",
+      "tokens": 311261,
+      "tool_calls": 20
+    },
+    "HHG-011": {
+      "finished": "2026-09-24T23:31:23",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "invocation_started": "2026-09-24T23:27:58",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336",
+        "explain.md": "9580d7143059",
+        "investigate.md": "a929aacba6f0",
+        "nba.md": "67043e265092",
+        "sar.md": "b68538088664",
+        "system.md": "be81bd123234"
+      },
+      "sar_model": "claude-sonnet-5",
+      "tokens": 616283,
+      "tool_calls": 21
+    },
+    "HHG-012": {
+      "finished": "2026-09-24T23:22:24",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "invocation_started": "2026-09-24T23:20:30",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336",
+        "explain.md": "9580d7143059",
+        "investigate.md": "a929aacba6f0",
+        "nba.md": "67043e265092",
+        "sar.md": "b68538088664",
+        "system.md": "be81bd123234"
+      },
+      "sar_model": "claude-sonnet-5",
+      "tokens": 294239,
+      "tool_calls": 15
+    },
+    "HHG-013": {
+      "finished": "2026-09-24T23:14:48",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "invocation_started": "2026-09-24T23:12:09",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336",
+        "explain.md": "9580d7143059",
+        "investigate.md": "a929aacba6f0",
+        "nba.md": "67043e265092",
+        "sar.md": "b68538088664",
+        "system.md": "be81bd123234"
+      },
+      "sar_model": "claude-sonnet-5",
+      "tokens": 359953,
+      "tool_calls": 19
+    },
+    "HHG-014": {
+      "finished": "2026-09-24T22:46:55",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "invocation_started": "2026-09-24T22:44:46",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336",
+        "explain.md": "9580d7143059",
+        "investigate.md": "a929aacba6f0",
+        "nba.md": "67043e265092",
+        "sar.md": "b68538088664",
+        "system.md": "be81bd123234"
+      },
+      "sar_model": "claude-sonnet-5",
+      "tokens": 284222,
+      "tool_calls": 22
+    },
+    "HHG-015": {
+      "finished": "2026-09-24T22:41:37",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "invocation_started": "2026-09-24T22:38:22",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336",
+        "explain.md": "9580d7143059",
+        "investigate.md": "a929aacba6f0",
+        "nba.md": "67043e265092",
+        "sar.md": "b68538088664",
+        "system.md": "be81bd123234"
+      },
+      "sar_model": "claude-sonnet-5",
+      "tokens": 314210,
+      "tool_calls": 19
+    },
+    "HHG-016": {
+      "finished": "2026-09-24T23:20:28",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "invocation_started": "2026-09-24T23:17:58",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336",
+        "explain.md": "9580d7143059",
+        "investigate.md": "a929aacba6f0",
+        "nba.md": "67043e265092",
+        "sar.md": "b68538088664",
+        "system.md": "be81bd123234"
+      },
+      "sar_model": "claude-sonnet-5",
+      "tokens": 264901,
+      "tool_calls": 21
+    },
+    "HHG-017": {
+      "finished": "2026-09-24T22:38:20",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "invocation_started": "2026-09-24T22:35:54",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336",
+        "explain.md": "9580d7143059",
+        "investigate.md": "a929aacba6f0",
+        "nba.md": "67043e265092",
+        "sar.md": "b68538088664",
+        "system.md": "be81bd123234"
+      },
+      "sar_model": "claude-sonnet-5",
+      "tokens": 239841,
+      "tool_calls": 20
+    },
+    "HHG-018": {
+      "finished": "2026-09-24T22:53:29",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "invocation_started": "2026-09-24T22:50:25",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336",
+        "explain.md": "9580d7143059",
+        "investigate.md": "a929aacba6f0",
+        "nba.md": "67043e265092",
+        "sar.md": "b68538088664",
+        "system.md": "be81bd123234"
+      },
+      "sar_model": "claude-sonnet-5",
+      "tokens": 418595,
+      "tool_calls": 17
+    },
+    "HHG-019": {
+      "finished": "2026-09-24T22:56:34",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "invocation_started": "2026-09-24T22:53:31",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336",
+        "explain.md": "9580d7143059",
+        "investigate.md": "a929aacba6f0",
+        "nba.md": "67043e265092",
+        "sar.md": "b68538088664",
+        "system.md": "be81bd123234"
+      },
+      "sar_model": "claude-sonnet-5",
+      "tokens": 291206,
+      "tool_calls": 22
+    },
+    "HHG-020": {
+      "finished": "2026-09-24T23:03:17",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "invocation_started": "2026-09-24T23:00:52",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336",
+        "explain.md": "9580d7143059",
+        "investigate.md": "a929aacba6f0",
+        "nba.md": "67043e265092",
+        "sar.md": "b68538088664",
+        "system.md": "be81bd123234"
+      },
+      "sar_model": "claude-sonnet-5",
+      "tokens": 236845,
+      "tool_calls": 21
+    }
+  },
+  "cases": [
+    "HHG-017",
+    "HHG-015",
+    "HHG-006",
+    "HHG-014",
+    "HHG-002",
+    "HHG-018",
+    "HHG-019",
+    "HHG-010",
+    "HHG-020",
+    "HHG-001",
+    "HHG-007",
+    "HHG-005",
+    "HHG-013",
+    "HHG-003",
+    "HHG-016",
+    "HHG-012",
+    "HHG-008",
+    "HHG-009",
+    "HHG-011",
+    "HHG-004"
+  ],
+  "effort": "high",
+  "embed_dim": 1024,
+  "embed_model": "BAAI/bge-large-en-v1.5",
+  "engine": "engine",
+  "first_started": "2026-09-24T22:35:54",
+  "git_dirty": false,
+  "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+  "git_shas": [
+    "be035338a08c5fd960be2311786659bfb67ade55"
+  ],
+  "invocations": [
+    {
+      "cases_selected": [
+        "HHG-017"
+      ],
+      "effort": "high",
+      "engine": "engine",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336644797f00c236ad719052c06a709d022443bdd10f5c23344a208",
+        "explain.md": "9580d7143059b075f17c61e0a1245cdd144dd8e4d16afecb95411baaf38153d0",
+        "investigate.md": "a929aacba6f0667a26e3477f71f767e1a355b41bc21cdf6d2c52880ed842a7e2",
+        "nba.md": "67043e26509238a8074f3fd65c2443cfeb1776db00e37cccc1e11ceef2a43ef3",
+        "sar.md": "b68538088664e25e8c622c0b3a351e0d6a263858490b03e6a250309d5e7c1e60",
+        "system.md": "be81bd12323417c0e0edbe368f8e0961ce20f6cf32939312eb00794ccbcf67f4"
+      },
+      "resume": true,
+      "run_mode": "live",
+      "sar_model": "claude-sonnet-5",
+      "started": "2026-09-24T22:35:54"
+    },
+    {
+      "cases_selected": [
+        "HHG-015"
+      ],
+      "effort": "high",
+      "engine": "engine",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336644797f00c236ad719052c06a709d022443bdd10f5c23344a208",
+        "explain.md": "9580d7143059b075f17c61e0a1245cdd144dd8e4d16afecb95411baaf38153d0",
+        "investigate.md": "a929aacba6f0667a26e3477f71f767e1a355b41bc21cdf6d2c52880ed842a7e2",
+        "nba.md": "67043e26509238a8074f3fd65c2443cfeb1776db00e37cccc1e11ceef2a43ef3",
+        "sar.md": "b68538088664e25e8c622c0b3a351e0d6a263858490b03e6a250309d5e7c1e60",
+        "system.md": "be81bd12323417c0e0edbe368f8e0961ce20f6cf32939312eb00794ccbcf67f4"
+      },
+      "resume": true,
+      "run_mode": "live",
+      "sar_model": "claude-sonnet-5",
+      "started": "2026-09-24T22:38:22"
+    },
+    {
+      "cases_selected": [
+        "HHG-006"
+      ],
+      "effort": "high",
+      "engine": "engine",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336644797f00c236ad719052c06a709d022443bdd10f5c23344a208",
+        "explain.md": "9580d7143059b075f17c61e0a1245cdd144dd8e4d16afecb95411baaf38153d0",
+        "investigate.md": "a929aacba6f0667a26e3477f71f767e1a355b41bc21cdf6d2c52880ed842a7e2",
+        "nba.md": "67043e26509238a8074f3fd65c2443cfeb1776db00e37cccc1e11ceef2a43ef3",
+        "sar.md": "b68538088664e25e8c622c0b3a351e0d6a263858490b03e6a250309d5e7c1e60",
+        "system.md": "be81bd12323417c0e0edbe368f8e0961ce20f6cf32939312eb00794ccbcf67f4"
+      },
+      "resume": true,
+      "run_mode": "live",
+      "sar_model": "claude-sonnet-5",
+      "started": "2026-09-24T22:41:39"
+    },
+    {
+      "cases_selected": [
+        "HHG-014"
+      ],
+      "effort": "high",
+      "engine": "engine",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336644797f00c236ad719052c06a709d022443bdd10f5c23344a208",
+        "explain.md": "9580d7143059b075f17c61e0a1245cdd144dd8e4d16afecb95411baaf38153d0",
+        "investigate.md": "a929aacba6f0667a26e3477f71f767e1a355b41bc21cdf6d2c52880ed842a7e2",
+        "nba.md": "67043e26509238a8074f3fd65c2443cfeb1776db00e37cccc1e11ceef2a43ef3",
+        "sar.md": "b68538088664e25e8c622c0b3a351e0d6a263858490b03e6a250309d5e7c1e60",
+        "system.md": "be81bd12323417c0e0edbe368f8e0961ce20f6cf32939312eb00794ccbcf67f4"
+      },
+      "resume": true,
+      "run_mode": "live",
+      "sar_model": "claude-sonnet-5",
+      "started": "2026-09-24T22:44:46"
+    },
+    {
+      "cases_selected": [
+        "HHG-002"
+      ],
+      "effort": "high",
+      "engine": "engine",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336644797f00c236ad719052c06a709d022443bdd10f5c23344a208",
+        "explain.md": "9580d7143059b075f17c61e0a1245cdd144dd8e4d16afecb95411baaf38153d0",
+        "investigate.md": "a929aacba6f0667a26e3477f71f767e1a355b41bc21cdf6d2c52880ed842a7e2",
+        "nba.md": "67043e26509238a8074f3fd65c2443cfeb1776db00e37cccc1e11ceef2a43ef3",
+        "sar.md": "b68538088664e25e8c622c0b3a351e0d6a263858490b03e6a250309d5e7c1e60",
+        "system.md": "be81bd12323417c0e0edbe368f8e0961ce20f6cf32939312eb00794ccbcf67f4"
+      },
+      "resume": true,
+      "run_mode": "live",
+      "sar_model": "claude-sonnet-5",
+      "started": "2026-09-24T22:46:57"
+    },
+    {
+      "cases_selected": [
+        "HHG-018"
+      ],
+      "effort": "high",
+      "engine": "engine",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336644797f00c236ad719052c06a709d022443bdd10f5c23344a208",
+        "explain.md": "9580d7143059b075f17c61e0a1245cdd144dd8e4d16afecb95411baaf38153d0",
+        "investigate.md": "a929aacba6f0667a26e3477f71f767e1a355b41bc21cdf6d2c52880ed842a7e2",
+        "nba.md": "67043e26509238a8074f3fd65c2443cfeb1776db00e37cccc1e11ceef2a43ef3",
+        "sar.md": "b68538088664e25e8c622c0b3a351e0d6a263858490b03e6a250309d5e7c1e60",
+        "system.md": "be81bd12323417c0e0edbe368f8e0961ce20f6cf32939312eb00794ccbcf67f4"
+      },
+      "resume": true,
+      "run_mode": "live",
+      "sar_model": "claude-sonnet-5",
+      "started": "2026-09-24T22:50:25"
+    },
+    {
+      "cases_selected": [
+        "HHG-019"
+      ],
+      "effort": "high",
+      "engine": "engine",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336644797f00c236ad719052c06a709d022443bdd10f5c23344a208",
+        "explain.md": "9580d7143059b075f17c61e0a1245cdd144dd8e4d16afecb95411baaf38153d0",
+        "investigate.md": "a929aacba6f0667a26e3477f71f767e1a355b41bc21cdf6d2c52880ed842a7e2",
+        "nba.md": "67043e26509238a8074f3fd65c2443cfeb1776db00e37cccc1e11ceef2a43ef3",
+        "sar.md": "b68538088664e25e8c622c0b3a351e0d6a263858490b03e6a250309d5e7c1e60",
+        "system.md": "be81bd12323417c0e0edbe368f8e0961ce20f6cf32939312eb00794ccbcf67f4"
+      },
+      "resume": true,
+      "run_mode": "live",
+      "sar_model": "claude-sonnet-5",
+      "started": "2026-09-24T22:53:31"
+    },
+    {
+      "cases_selected": [
+        "HHG-010"
+      ],
+      "effort": "high",
+      "engine": "engine",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336644797f00c236ad719052c06a709d022443bdd10f5c23344a208",
+        "explain.md": "9580d7143059b075f17c61e0a1245cdd144dd8e4d16afecb95411baaf38153d0",
+        "investigate.md": "a929aacba6f0667a26e3477f71f767e1a355b41bc21cdf6d2c52880ed842a7e2",
+        "nba.md": "67043e26509238a8074f3fd65c2443cfeb1776db00e37cccc1e11ceef2a43ef3",
+        "sar.md": "b68538088664e25e8c622c0b3a351e0d6a263858490b03e6a250309d5e7c1e60",
+        "system.md": "be81bd12323417c0e0edbe368f8e0961ce20f6cf32939312eb00794ccbcf67f4"
+      },
+      "resume": true,
+      "run_mode": "live",
+      "sar_model": "claude-sonnet-5",
+      "started": "2026-09-24T22:56:36"
+    },
+    {
+      "cases_selected": [
+        "HHG-020"
+      ],
+      "effort": "high",
+      "engine": "engine",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336644797f00c236ad719052c06a709d022443bdd10f5c23344a208",
+        "explain.md": "9580d7143059b075f17c61e0a1245cdd144dd8e4d16afecb95411baaf38153d0",
+        "investigate.md": "a929aacba6f0667a26e3477f71f767e1a355b41bc21cdf6d2c52880ed842a7e2",
+        "nba.md": "67043e26509238a8074f3fd65c2443cfeb1776db00e37cccc1e11ceef2a43ef3",
+        "sar.md": "b68538088664e25e8c622c0b3a351e0d6a263858490b03e6a250309d5e7c1e60",
+        "system.md": "be81bd12323417c0e0edbe368f8e0961ce20f6cf32939312eb00794ccbcf67f4"
+      },
+      "resume": true,
+      "run_mode": "live",
+      "sar_model": "claude-sonnet-5",
+      "started": "2026-09-24T23:00:52"
+    },
+    {
+      "cases_selected": [
+        "HHG-001"
+      ],
+      "effort": "high",
+      "engine": "engine",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336644797f00c236ad719052c06a709d022443bdd10f5c23344a208",
+        "explain.md": "9580d7143059b075f17c61e0a1245cdd144dd8e4d16afecb95411baaf38153d0",
+        "investigate.md": "a929aacba6f0667a26e3477f71f767e1a355b41bc21cdf6d2c52880ed842a7e2",
+        "nba.md": "67043e26509238a8074f3fd65c2443cfeb1776db00e37cccc1e11ceef2a43ef3",
+        "sar.md": "b68538088664e25e8c622c0b3a351e0d6a263858490b03e6a250309d5e7c1e60",
+        "system.md": "be81bd12323417c0e0edbe368f8e0961ce20f6cf32939312eb00794ccbcf67f4"
+      },
+      "resume": true,
+      "run_mode": "live",
+      "sar_model": "claude-sonnet-5",
+      "started": "2026-09-24T23:03:19"
+    },
+    {
+      "cases_selected": [
+        "HHG-007"
+      ],
+      "effort": "high",
+      "engine": "engine",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336644797f00c236ad719052c06a709d022443bdd10f5c23344a208",
+        "explain.md": "9580d7143059b075f17c61e0a1245cdd144dd8e4d16afecb95411baaf38153d0",
+        "investigate.md": "a929aacba6f0667a26e3477f71f767e1a355b41bc21cdf6d2c52880ed842a7e2",
+        "nba.md": "67043e26509238a8074f3fd65c2443cfeb1776db00e37cccc1e11ceef2a43ef3",
+        "sar.md": "b68538088664e25e8c622c0b3a351e0d6a263858490b03e6a250309d5e7c1e60",
+        "system.md": "be81bd12323417c0e0edbe368f8e0961ce20f6cf32939312eb00794ccbcf67f4"
+      },
+      "resume": true,
+      "run_mode": "live",
+      "sar_model": "claude-sonnet-5",
+      "started": "2026-09-24T23:05:34"
+    },
+    {
+      "cases_selected": [
+        "HHG-005"
+      ],
+      "effort": "high",
+      "engine": "engine",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336644797f00c236ad719052c06a709d022443bdd10f5c23344a208",
+        "explain.md": "9580d7143059b075f17c61e0a1245cdd144dd8e4d16afecb95411baaf38153d0",
+        "investigate.md": "a929aacba6f0667a26e3477f71f767e1a355b41bc21cdf6d2c52880ed842a7e2",
+        "nba.md": "67043e26509238a8074f3fd65c2443cfeb1776db00e37cccc1e11ceef2a43ef3",
+        "sar.md": "b68538088664e25e8c622c0b3a351e0d6a263858490b03e6a250309d5e7c1e60",
+        "system.md": "be81bd12323417c0e0edbe368f8e0961ce20f6cf32939312eb00794ccbcf67f4"
+      },
+      "resume": true,
+      "run_mode": "live",
+      "sar_model": "claude-sonnet-5",
+      "started": "2026-09-24T23:09:26"
+    },
+    {
+      "cases_selected": [
+        "HHG-013"
+      ],
+      "effort": "high",
+      "engine": "engine",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336644797f00c236ad719052c06a709d022443bdd10f5c23344a208",
+        "explain.md": "9580d7143059b075f17c61e0a1245cdd144dd8e4d16afecb95411baaf38153d0",
+        "investigate.md": "a929aacba6f0667a26e3477f71f767e1a355b41bc21cdf6d2c52880ed842a7e2",
+        "nba.md": "67043e26509238a8074f3fd65c2443cfeb1776db00e37cccc1e11ceef2a43ef3",
+        "sar.md": "b68538088664e25e8c622c0b3a351e0d6a263858490b03e6a250309d5e7c1e60",
+        "system.md": "be81bd12323417c0e0edbe368f8e0961ce20f6cf32939312eb00794ccbcf67f4"
+      },
+      "resume": true,
+      "run_mode": "live",
+      "sar_model": "claude-sonnet-5",
+      "started": "2026-09-24T23:12:09"
+    },
+    {
+      "cases_selected": [
+        "HHG-003"
+      ],
+      "effort": "high",
+      "engine": "engine",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336644797f00c236ad719052c06a709d022443bdd10f5c23344a208",
+        "explain.md": "9580d7143059b075f17c61e0a1245cdd144dd8e4d16afecb95411baaf38153d0",
+        "investigate.md": "a929aacba6f0667a26e3477f71f767e1a355b41bc21cdf6d2c52880ed842a7e2",
+        "nba.md": "67043e26509238a8074f3fd65c2443cfeb1776db00e37cccc1e11ceef2a43ef3",
+        "sar.md": "b68538088664e25e8c622c0b3a351e0d6a263858490b03e6a250309d5e7c1e60",
+        "system.md": "be81bd12323417c0e0edbe368f8e0961ce20f6cf32939312eb00794ccbcf67f4"
+      },
+      "resume": true,
+      "run_mode": "live",
+      "sar_model": "claude-sonnet-5",
+      "started": "2026-09-24T23:14:50"
+    },
+    {
+      "cases_selected": [
+        "HHG-016"
+      ],
+      "effort": "high",
+      "engine": "engine",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336644797f00c236ad719052c06a709d022443bdd10f5c23344a208",
+        "explain.md": "9580d7143059b075f17c61e0a1245cdd144dd8e4d16afecb95411baaf38153d0",
+        "investigate.md": "a929aacba6f0667a26e3477f71f767e1a355b41bc21cdf6d2c52880ed842a7e2",
+        "nba.md": "67043e26509238a8074f3fd65c2443cfeb1776db00e37cccc1e11ceef2a43ef3",
+        "sar.md": "b68538088664e25e8c622c0b3a351e0d6a263858490b03e6a250309d5e7c1e60",
+        "system.md": "be81bd12323417c0e0edbe368f8e0961ce20f6cf32939312eb00794ccbcf67f4"
+      },
+      "resume": true,
+      "run_mode": "live",
+      "sar_model": "claude-sonnet-5",
+      "started": "2026-09-24T23:17:58"
+    },
+    {
+      "cases_selected": [
+        "HHG-012"
+      ],
+      "effort": "high",
+      "engine": "engine",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336644797f00c236ad719052c06a709d022443bdd10f5c23344a208",
+        "explain.md": "9580d7143059b075f17c61e0a1245cdd144dd8e4d16afecb95411baaf38153d0",
+        "investigate.md": "a929aacba6f0667a26e3477f71f767e1a355b41bc21cdf6d2c52880ed842a7e2",
+        "nba.md": "67043e26509238a8074f3fd65c2443cfeb1776db00e37cccc1e11ceef2a43ef3",
+        "sar.md": "b68538088664e25e8c622c0b3a351e0d6a263858490b03e6a250309d5e7c1e60",
+        "system.md": "be81bd12323417c0e0edbe368f8e0961ce20f6cf32939312eb00794ccbcf67f4"
+      },
+      "resume": true,
+      "run_mode": "live",
+      "sar_model": "claude-sonnet-5",
+      "started": "2026-09-24T23:20:30"
+    },
+    {
+      "cases_selected": [
+        "HHG-008"
+      ],
+      "effort": "high",
+      "engine": "engine",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336644797f00c236ad719052c06a709d022443bdd10f5c23344a208",
+        "explain.md": "9580d7143059b075f17c61e0a1245cdd144dd8e4d16afecb95411baaf38153d0",
+        "investigate.md": "a929aacba6f0667a26e3477f71f767e1a355b41bc21cdf6d2c52880ed842a7e2",
+        "nba.md": "67043e26509238a8074f3fd65c2443cfeb1776db00e37cccc1e11ceef2a43ef3",
+        "sar.md": "b68538088664e25e8c622c0b3a351e0d6a263858490b03e6a250309d5e7c1e60",
+        "system.md": "be81bd12323417c0e0edbe368f8e0961ce20f6cf32939312eb00794ccbcf67f4"
+      },
+      "resume": true,
+      "run_mode": "live",
+      "sar_model": "claude-sonnet-5",
+      "started": "2026-09-24T23:22:26"
+    },
+    {
+      "cases_selected": [
+        "HHG-009"
+      ],
+      "effort": "high",
+      "engine": "engine",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336644797f00c236ad719052c06a709d022443bdd10f5c23344a208",
+        "explain.md": "9580d7143059b075f17c61e0a1245cdd144dd8e4d16afecb95411baaf38153d0",
+        "investigate.md": "a929aacba6f0667a26e3477f71f767e1a355b41bc21cdf6d2c52880ed842a7e2",
+        "nba.md": "67043e26509238a8074f3fd65c2443cfeb1776db00e37cccc1e11ceef2a43ef3",
+        "sar.md": "b68538088664e25e8c622c0b3a351e0d6a263858490b03e6a250309d5e7c1e60",
+        "system.md": "be81bd12323417c0e0edbe368f8e0961ce20f6cf32939312eb00794ccbcf67f4"
+      },
+      "resume": true,
+      "run_mode": "live",
+      "sar_model": "claude-sonnet-5",
+      "started": "2026-09-24T23:25:07"
+    },
+    {
+      "cases_selected": [
+        "HHG-011"
+      ],
+      "effort": "high",
+      "engine": "engine",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336644797f00c236ad719052c06a709d022443bdd10f5c23344a208",
+        "explain.md": "9580d7143059b075f17c61e0a1245cdd144dd8e4d16afecb95411baaf38153d0",
+        "investigate.md": "a929aacba6f0667a26e3477f71f767e1a355b41bc21cdf6d2c52880ed842a7e2",
+        "nba.md": "67043e26509238a8074f3fd65c2443cfeb1776db00e37cccc1e11ceef2a43ef3",
+        "sar.md": "b68538088664e25e8c622c0b3a351e0d6a263858490b03e6a250309d5e7c1e60",
+        "system.md": "be81bd12323417c0e0edbe368f8e0961ce20f6cf32939312eb00794ccbcf67f4"
+      },
+      "resume": true,
+      "run_mode": "live",
+      "sar_model": "claude-sonnet-5",
+      "started": "2026-09-24T23:27:58"
+    },
+    {
+      "cases_selected": [
+        "HHG-004"
+      ],
+      "effort": "high",
+      "engine": "engine",
+      "git_dirty": false,
+      "git_sha": "be035338a08c5fd960be2311786659bfb67ade55",
+      "llm_backend": "cli",
+      "model": "claude-sonnet-5",
+      "prompt_sha256": {
+        "assess.md": "ff8dd8b37336644797f00c236ad719052c06a709d022443bdd10f5c23344a208",
+        "explain.md": "9580d7143059b075f17c61e0a1245cdd144dd8e4d16afecb95411baaf38153d0",
+        "investigate.md": "a929aacba6f0667a26e3477f71f767e1a355b41bc21cdf6d2c52880ed842a7e2",
+        "nba.md": "67043e26509238a8074f3fd65c2443cfeb1776db00e37cccc1e11ceef2a43ef3",
+        "sar.md": "b68538088664e25e8c622c0b3a351e0d6a263858490b03e6a250309d5e7c1e60",
+        "system.md": "be81bd12323417c0e0edbe368f8e0961ce20f6cf32939312eb00794ccbcf67f4"
+      },
+      "resume": true,
+      "run_mode": "live",
+      "sar_model": "claude-sonnet-5",
+      "started": "2026-09-24T23:31:25"
+    }
+  ],
+  "llm_backend": "cli",
+  "max_tool_calls": 12,
+  "model": "claude-sonnet-5",
+  "prompt_sha256": {
+    "assess.md": "ff8dd8b37336644797f00c236ad719052c06a709d022443bdd10f5c23344a208",
+    "explain.md": "9580d7143059b075f17c61e0a1245cdd144dd8e4d16afecb95411baaf38153d0",
+    "investigate.md": "a929aacba6f0667a26e3477f71f767e1a355b41bc21cdf6d2c52880ed842a7e2",
+    "nba.md": "67043e26509238a8074f3fd65c2443cfeb1776db00e37cccc1e11ceef2a43ef3",
+    "sar.md": "b68538088664e25e8c622c0b3a351e0d6a263858490b03e6a250309d5e7c1e60",
+    "system.md": "be81bd12323417c0e0edbe368f8e0961ce20f6cf32939312eb00794ccbcf67f4"
+  },
+  "run_id": "live-final-2",
+  "run_mode": "live",
+  "sar_model": "claude-sonnet-5",
+  "started": "2026-09-24T23:31:25",
+  "versions": {
+    "anthropic": "1.7.0",
+    "claude-agent-sdk": "0.2.157",
+    "mcp": "2.2.0",
+    "pyTigerGraph": "2.0.4",
+    "pydantic": "2.13.5",
+    "sentence-transformers": "6.1.0",
+    "tigergraph-mcp": "1.0.3",
+    "torch": "2.14.0",
+    "voyageai": "0.5.0"
+  }
+}

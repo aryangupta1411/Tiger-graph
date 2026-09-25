@@ -1,0 +1,209 @@
+# contracts/csv_columns.yaml — EXACT column order of every file written by etl/export_graph_csvs.py
+# and what each column loads.  Authoritative for graph/loading_jobs.gsql and graph/load_all.py.
+#
+# FILE FORMAT (deviation from contracts §D "`,` separated, `"` quoted" — see 10-etl-scorer.md, Open issues):
+#   The TigerGraph loader has NO escape character ("the only way to include quotation marks within a string
+#   is for the string body to use one type of quote and to declare the other type as the boundary marker").
+#   JSON attributes contain `"`, one DeviceProfile id contains `'` (F80'S+ | NULL | android webview 4.0 | NULL),
+#   and analyst notes contain `,` `;` and `'`.  The only lossless encoding is therefore:
+format:
+  separator: "\t"            # loading job: USING SEPARATOR="\t"; REST /ddl call: sep="\t"  (fallback: "|#|", never present in data)
+  quote: none                # loading job: NO QUOTE clause — every field is raw text; writers assert no \t \n \r in any field
+  eol: "\n"                  # USING EOL="\n"; REST: eol="\n"
+  header: false              # headerless (the REST header flag is never sent by pyTigerGraph)
+  encoding: utf-8
+  bool: "true|false"         # accepted by the loader (case-insensitive)
+  datetime: "YYYY-MM-DD HH:MM:SS"
+  float: "plain decimal, fixed precision per column (no exponent)"
+  missing_string: ""         # empty field
+  missing_number: -1         # dist1/dist2, prior_med_amt/prior_max_amt at card_seq 1, wcc_id before algos run
+  chunking: "transaction files are split at 45 MB into data/out/txn_000.csv, txn_001.csv, ... (row order = TransactionID)"
+  loader_call: 'conn.runLoadingJobWithFile(path, "f", job, sep="\t", eol="\n", timeout=600000, sizeLimit=128000000)'
+
+files:
+
+  data/out/customer.csv:
+    loads: [Customer]
+    columns:
+      - {name: id, type: STRING, loads: "Customer.PRIMARY_ID (C01234)"}
+      - {name: n_cards, type: INT}
+      - {name: n_txns, type: INT}
+      - {name: n_closed_cases, type: INT}
+
+  data/out/card.csv:
+    loads: [Card]
+    columns:
+      - {name: id, type: STRING, loads: "Card.PRIMARY_ID (C01234-K1)"}
+      - {name: customer_id, type: STRING}
+      - {name: card_type, type: STRING, note: "card6 or 'unknown'"}
+      - {name: card_network, type: STRING, note: "most frequent card4 on the card or 'unknown'"}
+      - {name: n_txns, type: INT}
+      - {name: first_ts, type: DATETIME}
+      - {name: last_ts, type: DATETIME}
+      - {name: median_amt, type: FLOAT, fmt: "%.2f"}
+      - {name: p90_amt, type: FLOAT, fmt: "%.2f"}
+      - {name: max_amt, type: FLOAT, fmt: "%.2f"}
+      - {name: max_in_person_amt, type: FLOAT, fmt: "%.2f", note: "-1 when the card has no in-person txn"}
+      - {name: n_online, type: INT}
+      - {name: n_in_person, type: INT}
+      - {name: modal_region, type: STRING, note: "most frequent addr1 among IN-PERSON txns, ties -> earliest seen; '' if none"}
+      - {name: n_regions, type: INT}
+      - {name: home_regions, type: STRING, note: "JSON top-5 [{addr1,n,days}] by n over all txns"}
+      - {name: usual_products, type: STRING, note: "JSON [{product_cd,n}] by n desc"}
+      - {name: usual_p_email, type: STRING}
+      - {name: n_devices_seen, type: INT}
+      - {name: known_device_ids, type: STRING, note: "JSON [{device_id,first_seen,n}] most-used first, capped at 200 entries"}
+      - {name: recurring_amounts, type: STRING, note: "JSON [{amt,product_cd,place,n,median_gap_days,gap_cv}] n>=5, capped at 50"}
+      - {name: n_prior_fraud_cases, type: INT}
+      - {name: n_prior_cleared_cases, type: INT}
+      - {name: ring_id, type: STRING, note: "DeviceProfile id or ''"}
+      - {name: burst_lookalike_ids, type: STRING, note: "JSON list of card ids, '[]' when none"}
+      - {name: region_cluster_30d, type: STRING, note: "JSON [{addr1,n_txns_card,n_other_cards_30d,n_cards_with_fraud_case_30d}]"}
+      - {name: wcc_id, type: INT, note: "-1 until graph/run_algos.py"}
+      - {name: device_degree, type: INT, note: "0 until graph/run_algos.py"}
+      - {name: fraud_ppr, type: FLOAT, fmt: "%.6f", note: "0 until graph/run_algos.py"}
+
+  data/out/device_profile.csv:
+    loads: [DeviceProfile]
+    columns:
+      - {name: id, type: STRING, loads: "DeviceProfile.PRIMARY_ID  'DeviceInfo | id_30 | id_31 | id_33' with literal NULL parts"}
+      - {name: device_info, type: STRING}
+      - {name: os, type: STRING}
+      - {name: browser, type: STRING}
+      - {name: screen, type: STRING}
+      - {name: n_txns, type: INT}
+      - {name: n_cards_alltime, type: INT}
+      - {name: n_cards_30d, type: INT, note: "max over 30-day windows (day granularity) of distinct cards"}
+      - {name: n_proxy, type: INT, note: "txns with id_23 present (any proxy type)"}
+      - {name: first_seen, type: DATETIME}
+      - {name: last_seen, type: DATETIME}
+      - {name: n_fraud_cases, type: INT, note: "distinct confirmed-fraud closed cases with a txn on the profile"}
+      - {name: is_strong, type: BOOL}
+
+  data/out/email_domain.csv:
+    loads: [EmailDomain]
+    columns:
+      - {name: id, type: STRING, loads: "EmailDomain.PRIMARY_ID (hotmail.com); union of P_ and R_ domains"}
+      - {name: n_txns, type: INT, note: "txns where the domain is purchaser OR recipient"}
+      - {name: n_cards, type: INT}
+
+  data/out/billing_region.csv:
+    loads: [BillingRegion]
+    columns:
+      - {name: id, type: STRING, loads: "BillingRegion.PRIMARY_ID = raw addr1 text ('444.0')"}
+      - {name: country, type: STRING, note: "most frequent addr2 in the region"}
+      - {name: n_txns, type: INT}
+      - {name: n_cards, type: INT}
+
+  data/out/fraud_pattern.csv:
+    loads: [FraudPattern]
+    columns:
+      - {name: id, type: STRING, loads: "FraudPattern.PRIMARY_ID (card_testing ... undocumented, none)"}
+      - {name: description, type: STRING}
+      - {name: rule_refs, type: STRING}
+
+  data/out/closed_case.csv:
+    loads: [ClosedCase]          # note_emb vector is loaded separately from data/out/vec_ClosedCase.psv (GraphRAG module)
+    columns:
+      - {name: id, type: STRING, loads: "ClosedCase.PRIMARY_ID (CC-0001)"}
+      - {name: customer_id, type: STRING}
+      - {name: card_id, type: STRING}
+      - {name: opened_at, type: DATETIME}
+      - {name: closed_at, type: DATETIME}
+      - {name: outcome, type: STRING}
+      - {name: pattern, type: STRING}
+      - {name: first_fraud_txn_id, type: STRING, note: "'' for cleared cases"}
+      - {name: n_txns, type: INT}
+      - {name: exposure_usd, type: FLOAT, fmt: "%.2f"}
+      - {name: actions_taken, type: STRING, note: "pipe-separated as in the source file"}
+      - {name: report_filed, type: BOOL}
+      - {name: analyst_notes, type: STRING}
+      - {name: template_id, type: STRING, note: "fraud_reported|cleared_travel|cleared_new_phone|cleared_amount|undoc_ring|undoc_burst"}
+      - {name: note_region, type: STRING, note: "modal addr1 of the case's in-person txns or ''"}
+      - {name: note_device, type: STRING, note: "device phrase parsed from the note ('Windows on chrome 63.0') or ''"}
+      - {name: note_evidence_type, type: STRING}
+      - {name: embed_text, type: STRING, note: "masked, prefixed text the GraphRAG module embeds into note_emb"}
+
+  data/out/txn_NNN.csv:
+    loads: [Transaction, MADE, FROM_DEVICE, PURCHASER_EMAIL, RECIPIENT_EMAIL, BILLED_IN]
+    edges_from_columns:
+      MADE:            "FROM $card_id TO $id"
+      FROM_DEVICE:     "FROM $id TO $device_id VALUES($device_new, $proxy) WHERE $device_id != \"\""
+      PURCHASER_EMAIL: "FROM $id TO $p_email WHERE $p_email != \"\""
+      RECIPIENT_EMAIL: "FROM $id TO $r_email WHERE $r_email != \"\""
+      BILLED_IN:       "FROM $id TO $addr1 WHERE $addr1 != \"\""
+    columns:
+      - {name: id, type: STRING, loads: "Transaction.PRIMARY_ID (3514030)"}
+      - {name: card_id, type: STRING}
+      - {name: customer_id, type: STRING}
+      - {name: ts, type: DATETIME}
+      - {name: ts_str, type: STRING}
+      - {name: amt, type: FLOAT, fmt: "%.2f"}
+      - {name: product_cd, type: STRING}
+      - {name: channel, type: STRING, note: "in_person|online"}
+      - {name: addr1, type: STRING, note: "raw text or ''"}
+      - {name: addr2, type: STRING}
+      - {name: dist1, type: FLOAT, fmt: "%.2f", note: "-1 when missing"}
+      - {name: dist2, type: FLOAT, fmt: "%.2f", note: "-1 when missing"}
+      - {name: p_email, type: STRING}
+      - {name: r_email, type: STRING}
+      - {name: risk_score, type: FLOAT, fmt: "%.4f"}
+      - {name: has_identity, type: BOOL}
+      - {name: device_new, type: STRING, note: "New|Found|Unknown|''"}
+      - {name: proxy, type: STRING, note: "id_23 or ''"}
+      - {name: device_type, type: STRING}
+      - {name: device_id, type: STRING, note: "DeviceProfile id or '' (no identity row, or all four fields NULL)"}
+      - {name: c_counts, type: STRING, note: "JSON {C1..C14: number|null}"}
+      - {name: d_deltas, type: STRING, note: "JSON {D1..D15: number|null}"}
+      - {name: m_flags, type: STRING, note: "JSON {M1..M9: string|null}"}
+      - {name: cms_p, type: FLOAT, fmt: "%.6f", note: "raw scorer probability (Jul-Oct: month-wise OOF; Nov-Dec: final model)"}
+      - {name: card_seq, type: INT}
+      - {name: prior_in_region, type: INT}
+      - {name: prior_on_dev, type: INT}
+      - {name: prior_pem, type: INT}
+      - {name: prior_pcd, type: INT}
+      - {name: prior_med_amt, type: FLOAT, fmt: "%.2f", note: "-1 at card_seq 1"}
+      - {name: prior_max_amt, type: FLOAT, fmt: "%.2f", note: "-1 at card_seq 1"}
+      - {name: ring_hit, type: BOOL}
+      - {name: burst_id, type: STRING, note: "card_id#firstTransactionID or ''"}
+
+  data/out/owns.csv:
+    loads: [OWNS]
+    columns:
+      - {name: customer_id, type: STRING, loads: "FROM Customer"}
+      - {name: card_id, type: STRING, loads: "TO Card"}
+
+  data/out/next.csv:
+    loads: [NEXT]
+    columns:
+      - {name: from_id, type: STRING, loads: "FROM Transaction (previous on the card by ts, TransactionID)"}
+      - {name: to_id, type: STRING, loads: "TO Transaction"}
+      - {name: gap_seconds, type: INT}
+
+  data/out/involves.csv:
+    loads: [INVOLVES]
+    columns:
+      - {name: case_id, type: STRING, loads: "FROM ClosedCase"}
+      - {name: txn_id, type: STRING, loads: "TO Transaction"}
+
+  data/out/on_card.csv:
+    loads: [ON_CARD]
+    columns:
+      - {name: case_id, type: STRING, loads: "FROM ClosedCase"}
+      - {name: card_id, type: STRING, loads: "TO Card"}
+
+  data/out/connected_to.csv:
+    loads: [CONNECTED_TO]
+    columns:
+      - {name: case_id, type: STRING, loads: "FROM ClosedCase"}
+      - {name: card_id, type: STRING, loads: "TO Card"}
+
+  data/out/matches.csv:
+    loads: [MATCHES]
+    columns:
+      - {name: case_id, type: STRING, loads: "FROM ClosedCase"}
+      - {name: pattern_id, type: STRING, loads: "TO FraudPattern ('none' for cleared cases)"}
+
+# Not produced here: data/out/vec_ClosedCase.psv, data/out/vec_PolicyChunk.psv (GraphRAG module; `id|f1,f2,...`),
+# AgentCase / CaseEvent / Approval / Document / PolicyChunk vertices (written at run time / by the GraphRAG module),
+# SHARES_DEVICE (projected inside the graph by graph/algos/project_shares_device.gsql).

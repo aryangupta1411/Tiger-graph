@@ -1,0 +1,145 @@
+// graph/schema.gsql — FraudGraph DDL (contracts/schema.md is authoritative for every name).
+//
+// Apply once on day 2 (graph/load_all.py --schema, or graph/rebuild.py --from schema):
+//     uv run python graph/load_all.py --schema
+// Rules baked in here:
+//   * Global vertex/edge types (created at USE GLOBAL scope) + CREATE GRAPH FraudGraph(*): the vector
+//     attributes are added afterwards by a GLOBAL schema-change job (graph/schema_change_vectors.gsql),
+//     because a local job "cannot alter global vertex types" (gsql-ref 4.2, Modifying a graph schema).
+//   * Every PRIMARY_ID is STRING with primary_id_as_attribute="true" (queries read v.id).
+//   * Attribute ORDER == the column order of the chunk files in contracts/csv_columns.yaml, so every
+//     loading job is VALUES($0, $1, ..., $N) with no reordering (graph/check_contracts.py asserts this).
+//   * No reserved words (gsql-ref 4.2 appendix "Keywords and reserved words"): `Case` -> AgentCase, and
+//     the contract's `proxy` attribute is stored as `proxy_type` because PROXY is a DDL reserved word.
+//     Queries print it under the contract key "proxy" (see 20-graph.md, Contract deviations).
+//   * Reverse edges on every directed edge: REV_<NAME>. SHARES_DEVICE is undirected (projected on day 4).
+//   * Missing strings load as "", missing numbers as -1 (ETL contract); wcc_id/device_degree/fraud_ppr
+//     are -1/0/0 until graph/run_algos.py writes them.
+
+USE GLOBAL
+
+// ---------------------------------------------------------------- vertices -----------------------------
+CREATE VERTEX Customer (
+  PRIMARY_ID id STRING,
+  n_cards INT, n_txns INT, n_closed_cases INT
+) WITH primary_id_as_attribute="true"
+
+CREATE VERTEX Card (
+  PRIMARY_ID id STRING,
+  customer_id STRING, card_type STRING, card_network STRING, n_txns INT,
+  first_ts DATETIME, last_ts DATETIME,
+  median_amt FLOAT, p90_amt FLOAT, max_amt FLOAT, max_in_person_amt FLOAT,
+  n_online INT, n_in_person INT, modal_region STRING, n_regions INT,
+  home_regions STRING, usual_products STRING, usual_p_email STRING,
+  n_devices_seen INT, known_device_ids STRING, recurring_amounts STRING,
+  n_prior_fraud_cases INT, n_prior_cleared_cases INT,
+  ring_id STRING, burst_lookalike_ids STRING, region_cluster_30d STRING,
+  wcc_id INT, device_degree INT, fraud_ppr FLOAT
+) WITH primary_id_as_attribute="true"
+
+CREATE VERTEX Transaction (
+  PRIMARY_ID id STRING,
+  card_id STRING, customer_id STRING, ts DATETIME, ts_str STRING, amt FLOAT,
+  product_cd STRING, channel STRING, addr1 STRING, addr2 STRING, dist1 FLOAT, dist2 FLOAT,
+  p_email STRING, r_email STRING, risk_score FLOAT, has_identity BOOL,
+  device_new STRING, proxy_type STRING, device_type STRING, device_id STRING,
+  c_counts STRING, d_deltas STRING, m_flags STRING,
+  cms_p FLOAT, card_seq INT, prior_in_region INT, prior_on_dev INT, prior_pem INT, prior_pcd INT,
+  prior_med_amt FLOAT, prior_max_amt FLOAT, ring_hit BOOL, burst_id STRING
+) WITH primary_id_as_attribute="true"
+
+CREATE VERTEX DeviceProfile (
+  PRIMARY_ID id STRING,
+  device_info STRING, os STRING, browser STRING, screen STRING,
+  n_txns INT, n_cards_alltime INT, n_cards_30d INT, n_proxy INT,
+  first_seen DATETIME, last_seen DATETIME, n_fraud_cases INT, is_strong BOOL
+) WITH primary_id_as_attribute="true"
+
+CREATE VERTEX EmailDomain (
+  PRIMARY_ID id STRING,
+  n_txns INT, n_cards INT
+) WITH primary_id_as_attribute="true"
+
+CREATE VERTEX BillingRegion (
+  PRIMARY_ID id STRING,
+  country STRING, n_txns INT, n_cards INT
+) WITH primary_id_as_attribute="true"
+
+CREATE VERTEX ClosedCase (
+  PRIMARY_ID id STRING,
+  customer_id STRING, card_id STRING, opened_at DATETIME, closed_at DATETIME,
+  outcome STRING, pattern STRING, first_fraud_txn_id STRING, n_txns INT, exposure_usd FLOAT,
+  actions_taken STRING, report_filed BOOL, analyst_notes STRING,
+  template_id STRING, note_region STRING, note_device STRING, note_evidence_type STRING, embed_text STRING
+) WITH primary_id_as_attribute="true"
+// + VECTOR note_emb(DIMENSION=1024, METRIC="COSINE")  -> graph/schema_change_vectors.gsql
+
+CREATE VERTEX AgentCase (
+  PRIMARY_ID id STRING,
+  source_case_id STRING, customer_id STRING, card_id STRING, trigger_type STRING,
+  opened_at DATETIME, updated_at DATETIME, status STRING, verdict STRING, fraud_probability FLOAT,
+  pattern STRING, pattern_description STRING, exposure_usd FLOAT, summary STRING,
+  sar_filed BOOL, sar_narrative STRING, initial_actions STRING, final_actions STRING,
+  what_changed STRING, stop_reason STRING, run_id STRING
+) WITH primary_id_as_attribute="true"
+// + VECTOR note_emb(DIMENSION=1024, METRIC="COSINE")  -> graph/schema_change_vectors.gsql
+
+CREATE VERTEX CaseEvent (
+  PRIMARY_ID id STRING,
+  case_id STRING, seq INT, at DATETIME, kind STRING, payload STRING
+) WITH primary_id_as_attribute="true"
+
+CREATE VERTEX Approval (
+  PRIMARY_ID id STRING,
+  case_id STRING, action STRING, route STRING, status STRING,
+  decided_by STRING, decided_at DATETIME, reason STRING
+) WITH primary_id_as_attribute="true"
+
+CREATE VERTEX Document (
+  PRIMARY_ID id STRING,
+  title STRING, url STRING, sha256 STRING, kind STRING
+) WITH primary_id_as_attribute="true"
+
+CREATE VERTEX PolicyChunk (
+  PRIMARY_ID id STRING,
+  doc_id STRING, section STRING, page INT, kind STRING, text STRING
+) WITH primary_id_as_attribute="true"
+// + VECTOR emb(DIMENSION=1024, METRIC="COSINE")  -> graph/schema_change_vectors.gsql
+
+CREATE VERTEX FraudPattern (
+  PRIMARY_ID id STRING,
+  description STRING, rule_refs STRING
+) WITH primary_id_as_attribute="true"
+
+// ---------------------------------------------------------------- edges --------------------------------
+CREATE DIRECTED EDGE OWNS (FROM Customer, TO Card) WITH REVERSE_EDGE="REV_OWNS"
+CREATE DIRECTED EDGE MADE (FROM Card, TO Transaction) WITH REVERSE_EDGE="REV_MADE"
+CREATE DIRECTED EDGE NEXT (FROM Transaction, TO Transaction, gap_seconds INT) WITH REVERSE_EDGE="REV_NEXT"
+CREATE DIRECTED EDGE FROM_DEVICE (FROM Transaction, TO DeviceProfile, device_new STRING, proxy_type STRING) WITH REVERSE_EDGE="REV_FROM_DEVICE"
+CREATE DIRECTED EDGE PURCHASER_EMAIL (FROM Transaction, TO EmailDomain) WITH REVERSE_EDGE="REV_PURCHASER_EMAIL"
+CREATE DIRECTED EDGE RECIPIENT_EMAIL (FROM Transaction, TO EmailDomain) WITH REVERSE_EDGE="REV_RECIPIENT_EMAIL"
+CREATE DIRECTED EDGE BILLED_IN (FROM Transaction, TO BillingRegion) WITH REVERSE_EDGE="REV_BILLED_IN"
+
+CREATE DIRECTED EDGE INVOLVES (FROM ClosedCase, TO Transaction) WITH REVERSE_EDGE="REV_INVOLVES"
+CREATE DIRECTED EDGE ON_CARD (FROM ClosedCase, TO Card) WITH REVERSE_EDGE="REV_ON_CARD"
+CREATE DIRECTED EDGE CONNECTED_TO (FROM ClosedCase, TO Card) WITH REVERSE_EDGE="REV_CONNECTED_TO"
+CREATE DIRECTED EDGE MATCHES (FROM ClosedCase, TO FraudPattern) WITH REVERSE_EDGE="REV_MATCHES"
+
+CREATE DIRECTED EDGE CASE_INVOLVES (FROM AgentCase, TO Transaction) WITH REVERSE_EDGE="REV_CASE_INVOLVES"
+CREATE DIRECTED EDGE CASE_ON_CARD (FROM AgentCase, TO Card) WITH REVERSE_EDGE="REV_CASE_ON_CARD"
+CREATE DIRECTED EDGE CASE_CONNECTED_TO (FROM AgentCase, TO Card) WITH REVERSE_EDGE="REV_CASE_CONNECTED_TO"
+CREATE DIRECTED EDGE CASE_DEVICE (FROM AgentCase, TO DeviceProfile) WITH REVERSE_EDGE="REV_CASE_DEVICE"
+CREATE DIRECTED EDGE CASE_SIMILAR_TO (FROM AgentCase, TO ClosedCase, score FLOAT) WITH REVERSE_EDGE="REV_CASE_SIMILAR_TO"
+CREATE DIRECTED EDGE CASE_SIMILAR_TO_AGENT (FROM AgentCase, TO AgentCase, score FLOAT) WITH REVERSE_EDGE="REV_CASE_SIMILAR_TO_AGENT"
+CREATE DIRECTED EDGE CASE_CITES (FROM AgentCase, TO PolicyChunk) WITH REVERSE_EDGE="REV_CASE_CITES"
+CREATE DIRECTED EDGE CASE_MATCHES (FROM AgentCase, TO FraudPattern) WITH REVERSE_EDGE="REV_CASE_MATCHES"
+CREATE DIRECTED EDGE HAS_EVENT (FROM AgentCase, TO CaseEvent) WITH REVERSE_EDGE="REV_HAS_EVENT"
+CREATE DIRECTED EDGE HAS_APPROVAL (FROM AgentCase, TO Approval) WITH REVERSE_EDGE="REV_HAS_APPROVAL"
+
+CREATE DIRECTED EDGE ABOUT (FROM PolicyChunk, TO FraudPattern) WITH REVERSE_EDGE="REV_ABOUT"
+CREATE DIRECTED EDGE CHUNK_OF (FROM PolicyChunk, TO Document) WITH REVERSE_EDGE="REV_CHUNK_OF"
+
+CREATE UNDIRECTED EDGE SHARES_DEVICE (FROM Card, TO Card, n_shared INT, weight FLOAT, via STRING)
+
+// ---------------------------------------------------------------- graph --------------------------------
+CREATE GRAPH FraudGraph (*)

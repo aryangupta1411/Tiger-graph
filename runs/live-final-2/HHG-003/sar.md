@@ -1,0 +1,1 @@
+No SAR. R2 / 3a not met: the customer denied the transaction, but exposure $165.93 <= $1,000; no device profile shared with other cards' fraud; no other card's fraud connected; documented pattern; no report

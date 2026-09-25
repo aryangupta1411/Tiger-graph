@@ -1,0 +1,36 @@
+{
+ "query": "card_window",
+ "case": "HHG-002",
+ "params": {
+  "c": "C11891-K1",
+  "from_ts": "2016-11-19 23:27:07",
+  "to_ts": "2016-11-22 23:27:07",
+  "max_rows": 60
+ },
+ "expected": {
+  "txns": [
+   {
+    "id": "3478782",
+    "ts": "2016-11-22 17:27:07",
+    "amt": 292.36,
+    "product_cd": "C",
+    "channel": "online",
+    "addr1": "",
+    "p_email": "hotmail.com",
+    "r_email": "hotmail.com",
+    "risk_score": 0.79,
+    "cms_p": 0.659545,
+    "device_id": "",
+    "device_new": "",
+    "proxy": "",
+    "gap_seconds": 1446851
+   }
+  ],
+  "summary": {
+   "n": 1,
+   "sum_amt": 292.36,
+   "n_online": 1,
+   "n_in_person": 0
+  }
+ }
+}

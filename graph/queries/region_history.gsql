@@ -1,0 +1,58 @@
+// region_history — how familiar billing region addr1 is for the card as of as_of.
+// Counts every transaction (any channel) with that addr1 up to as_of; modal_region is the precomputed
+// in-person modal region (Card.modal_region, the pattern convention's "home"). share = prior_n / all prior
+// transactions with a non-empty addr1. home_activity_48h counts the last 48 h before as_of: n_home in the
+// modal region, n_other elsewhere. hint: home (addr1 == modal), known (>= 3 distinct days or >= 5 txns),
+// rare (seen 1..4 times), new (never seen).
+USE GRAPH FraudGraph
+CREATE OR REPLACE QUERY region_history(VERTEX<Card> c, STRING addr1, DATETIME as_of) FOR GRAPH FraudGraph SYNTAX v3 {
+  TYPEDEF TUPLE<STRING addr1, INT prior_n, INT prior_days, STRING first_ts, STRING last_ts, FLOAT share> RegionRow;
+  TYPEDEF TUPLE<INT n_home, INT n_other> Home48;
+  MaxAccum<RegionRow> @@region;
+  MaxAccum<Home48> @@home_activity_48h;
+  MaxAccum<STRING> @@modal;
+  SumAccum<INT> @@prior_n, @@total_n, @@n_home, @@n_other;
+  SetAccum<STRING> @@days, @@all_regions;
+  MinAccum<INT> @@first_e = 9999999999;
+  MaxAccum<INT> @@last_e = 0;
+  DATETIME from48 = epoch_to_datetime(datetime_to_epoch(as_of) - 48 * 3600);
+
+  S = {c};
+  S = SELECT s FROM (s:S) POST-ACCUM @@modal += s.modal_region;
+
+  T = SELECT t FROM (s:S)-[:MADE]->(t:Transaction)
+      WHERE t.ts <= as_of AND t.addr1 != ""
+      ACCUM @@total_n += 1, @@all_regions += t.addr1,
+            IF t.addr1 == addr1 THEN
+              @@prior_n += 1, @@days += datetime_format(t.ts, "%Y-%m-%d"),
+              @@first_e += datetime_to_epoch(t.ts), @@last_e += datetime_to_epoch(t.ts)
+            END,
+            IF t.ts >= from48 THEN
+              IF t.addr1 == @@modal THEN @@n_home += 1 ELSE @@n_other += 1 END
+            END;
+
+  STRING first_s = "";
+  STRING last_s = "";
+  FLOAT share = 0.0;
+  IF @@prior_n > 0 THEN
+    first_s = datetime_format(epoch_to_datetime(@@first_e));
+    last_s = datetime_format(epoch_to_datetime(@@last_e));
+  END;
+  IF @@total_n > 0 THEN
+    share = @@prior_n * 1.0 / @@total_n;
+  END;
+  @@region += RegionRow(addr1, @@prior_n, @@days.size(), first_s, last_s, share);
+  @@home_activity_48h += Home48(@@n_home, @@n_other);
+
+  STRING hint = "new";
+  IF addr1 == @@modal AND @@modal != "" THEN
+    hint = "home";
+  ELSE IF @@days.size() >= 3 OR @@prior_n >= 5 THEN
+    hint = "known";
+  ELSE IF @@prior_n >= 1 THEN
+    hint = "rare";
+  END;
+
+  PRINT @@region AS region, @@modal AS modal_region, @@all_regions.size() AS n_regions,
+        @@home_activity_48h AS home_activity_48h, hint;
+}

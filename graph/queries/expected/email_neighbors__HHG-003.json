@@ -1,0 +1,500 @@
+{
+ "query": "email_neighbors",
+ "case": "HHG-003",
+ "params": {
+  "e": "me.com",
+  "c": "C08623-K2",
+  "from_ts": "2016-11-10 15:01:21",
+  "to_ts": "2016-12-10 15:01:21"
+ },
+ "expected": {
+  "cards": [
+   {
+    "card_id": "C09026-K1",
+    "n_txns": 7
+   },
+   {
+    "card_id": "C00750-K2",
+    "n_txns": 5
+   },
+   {
+    "card_id": "C09165-K2",
+    "n_txns": 3
+   },
+   {
+    "card_id": "C01109-K2",
+    "n_txns": 2
+   },
+   {
+    "card_id": "C02530-K1",
+    "n_txns": 2
+   },
+   {
+    "card_id": "C06026-K2",
+    "n_txns": 2
+   },
+   {
+    "card_id": "C11413-K1",
+    "n_txns": 2
+   },
+   {
+    "card_id": "C12897-K1",
+    "n_txns": 2
+   },
+   {
+    "card_id": "C00805-K1",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C01033-K1",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C01104-K2",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C01138-K2",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C01155-K2",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C02147-K2",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C02716-K2",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C02830-K1",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C02954-K1",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C04108-K2",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C04300-K1",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C04306-K1",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C04571-K2",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C04848-K1",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C05031-K2",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C05704-K2",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C06224-K2",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C06867-K1",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C07196-K2",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C07212-K2",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C07518-K2",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C07562-K2",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C07724-K1",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C07867-K2",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C08989-K2",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C09066-K1",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C09241-K2",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C09806-K1",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C09827-K2",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C10224-K1",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C11000-K2",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C11168-K1",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C11309-K1",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C11709-K2",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C11853-K1",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C11923-K2",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C12151-K1",
+    "n_txns": 1
+   },
+   {
+    "card_id": "C12211-K2",
+    "n_txns": 1
+   }
+  ],
+  "closed_cases": [
+   {
+    "id": "CC-0023",
+    "card_id": "C11309-K1",
+    "pattern": "none"
+   },
+   {
+    "id": "CC-0031",
+    "card_id": "C11923-K2",
+    "pattern": "card_not_present_new_device"
+   },
+   {
+    "id": "CC-0033",
+    "card_id": "C05704-K2",
+    "pattern": "account_takeover"
+   },
+   {
+    "id": "CC-0045",
+    "card_id": "C07212-K2",
+    "pattern": "out_of_region_use"
+   },
+   {
+    "id": "CC-0048",
+    "card_id": "C11309-K1",
+    "pattern": "card_not_present_fraud"
+   },
+   {
+    "id": "CC-0059",
+    "card_id": "C09165-K2",
+    "pattern": "card_not_present_new_device"
+   },
+   {
+    "id": "CC-0062",
+    "card_id": "C07867-K2",
+    "pattern": "out_of_region_use"
+   },
+   {
+    "id": "CC-0063",
+    "card_id": "C11000-K2",
+    "pattern": "account_takeover"
+   },
+   {
+    "id": "CC-0118",
+    "card_id": "C04108-K2",
+    "pattern": "account_takeover"
+   },
+   {
+    "id": "CC-0121",
+    "card_id": "C00750-K2",
+    "pattern": "account_takeover"
+   },
+   {
+    "id": "CC-0123",
+    "card_id": "C07196-K2",
+    "pattern": "card_not_present_new_device"
+   },
+   {
+    "id": "CC-0145",
+    "card_id": "C06224-K2",
+    "pattern": "account_takeover"
+   },
+   {
+    "id": "CC-0167",
+    "card_id": "C12897-K1",
+    "pattern": "card_not_present_new_device"
+   },
+   {
+    "id": "CC-0168",
+    "card_id": "C01138-K2",
+    "pattern": "account_takeover"
+   },
+   {
+    "id": "CC-0177",
+    "card_id": "C01155-K2",
+    "pattern": "account_takeover"
+   },
+   {
+    "id": "CC-0184",
+    "card_id": "C02716-K2",
+    "pattern": "out_of_region_use"
+   },
+   {
+    "id": "CC-0203",
+    "card_id": "C11709-K2",
+    "pattern": "out_of_region_use"
+   },
+   {
+    "id": "CC-0209",
+    "card_id": "C05704-K2",
+    "pattern": "out_of_region_use"
+   },
+   {
+    "id": "CC-0254",
+    "card_id": "C09241-K2",
+    "pattern": "account_takeover"
+   },
+   {
+    "id": "CC-0273",
+    "card_id": "C09165-K2",
+    "pattern": "card_not_present_new_device"
+   },
+   {
+    "id": "CC-0289",
+    "card_id": "C05704-K2",
+    "pattern": "card_not_present_fraud"
+   },
+   {
+    "id": "CC-0290",
+    "card_id": "C11923-K2",
+    "pattern": "card_testing"
+   },
+   {
+    "id": "CC-0291",
+    "card_id": "C06224-K2",
+    "pattern": "account_takeover"
+   },
+   {
+    "id": "CC-0310",
+    "card_id": "C04571-K2",
+    "pattern": "out_of_region_use"
+   },
+   {
+    "id": "CC-0328",
+    "card_id": "C02147-K2",
+    "pattern": "card_not_present_fraud"
+   },
+   {
+    "id": "CC-0340",
+    "card_id": "C07212-K2",
+    "pattern": "card_not_present_fraud"
+   },
+   {
+    "id": "CC-0344",
+    "card_id": "C08989-K2",
+    "pattern": "none"
+   },
+   {
+    "id": "CC-0358",
+    "card_id": "C01104-K2",
+    "pattern": "out_of_region_use"
+   },
+   {
+    "id": "CC-0363",
+    "card_id": "C09806-K1",
+    "pattern": "account_takeover"
+   },
+   {
+    "id": "CC-0364",
+    "card_id": "C01155-K2",
+    "pattern": "account_takeover"
+   },
+   {
+    "id": "CC-0383",
+    "card_id": "C05704-K2",
+    "pattern": "none"
+   },
+   {
+    "id": "CC-0399",
+    "card_id": "C05031-K2",
+    "pattern": "none"
+   },
+   {
+    "id": "CC-0423",
+    "card_id": "C05704-K2",
+    "pattern": "card_not_present_fraud"
+   },
+   {
+    "id": "CC-0452",
+    "card_id": "C11000-K2",
+    "pattern": "account_takeover"
+   },
+   {
+    "id": "CC-0455",
+    "card_id": "C11709-K2",
+    "pattern": "account_takeover"
+   },
+   {
+    "id": "CC-0458",
+    "card_id": "C04571-K2",
+    "pattern": "out_of_region_use"
+   },
+   {
+    "id": "CC-0462",
+    "card_id": "C04108-K2",
+    "pattern": "card_not_present_fraud"
+   },
+   {
+    "id": "CC-0475",
+    "card_id": "C06224-K2",
+    "pattern": "card_not_present_new_device"
+   },
+   {
+    "id": "CC-0480",
+    "card_id": "C00750-K2",
+    "pattern": "account_takeover"
+   },
+   {
+    "id": "CC-0496",
+    "card_id": "C07562-K2",
+    "pattern": "card_not_present_new_device"
+   },
+   {
+    "id": "CC-0498",
+    "card_id": "C11309-K1",
+    "pattern": "account_takeover"
+   },
+   {
+    "id": "CC-0499",
+    "card_id": "C06026-K2",
+    "pattern": "card_not_present_fraud"
+   },
+   {
+    "id": "CC-0510",
+    "card_id": "C05704-K2",
+    "pattern": "card_not_present_new_device"
+   },
+   {
+    "id": "CC-0512",
+    "card_id": "C07867-K2",
+    "pattern": "card_not_present_new_device"
+   },
+   {
+    "id": "CC-0548",
+    "card_id": "C09241-K2",
+    "pattern": "account_takeover"
+   },
+   {
+    "id": "CC-0557",
+    "card_id": "C11000-K2",
+    "pattern": "out_of_region_use"
+   },
+   {
+    "id": "CC-0578",
+    "card_id": "C02716-K2",
+    "pattern": "account_takeover"
+   },
+   {
+    "id": "CC-0591",
+    "card_id": "C00750-K2",
+    "pattern": "none"
+   },
+   {
+    "id": "CC-0593",
+    "card_id": "C11709-K2",
+    "pattern": "none"
+   },
+   {
+    "id": "CC-0604",
+    "card_id": "C12897-K1",
+    "pattern": "card_not_present_new_device"
+   },
+   {
+    "id": "CC-0639",
+    "card_id": "C01104-K2",
+    "pattern": "account_takeover"
+   },
+   {
+    "id": "CC-0653",
+    "card_id": "C01109-K2",
+    "pattern": "account_takeover"
+   },
+   {
+    "id": "CC-0662",
+    "card_id": "C01138-K2",
+    "pattern": "account_takeover"
+   },
+   {
+    "id": "CC-0691",
+    "card_id": "C00750-K2",
+    "pattern": "account_takeover"
+   },
+   {
+    "id": "CC-0695",
+    "card_id": "C11000-K2",
+    "pattern": "account_takeover"
+   },
+   {
+    "id": "CC-0705",
+    "card_id": "C07212-K2",
+    "pattern": "card_not_present_new_device"
+   },
+   {
+    "id": "CC-0707",
+    "card_id": "C11413-K1",
+    "pattern": "card_not_present_new_device"
+   },
+   {
+    "id": "CC-0711",
+    "card_id": "C11309-K1",
+    "pattern": "out_of_region_use"
+   },
+   {
+    "id": "CC-0732",
+    "card_id": "C05704-K2",
+    "pattern": "card_not_present_fraud"
+   },
+   {
+    "id": "CC-0762",
+    "card_id": "C07867-K2",
+    "pattern": "account_takeover"
+   }
+  ]
+ }
+}

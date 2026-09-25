@@ -1,0 +1,170 @@
+// graph/loading_jobs.gsql — one CREATE LOADING JOB per chunk file in contracts/csv_columns.yaml.
+//
+// File format (contracts/csv_columns.yaml `format:`): TAB-separated, headerless, NO QUOTE clause, EOL "\n",
+// BOOL as true|false, DATETIME as 'YYYY-MM-DD HH:MM:SS' (accepted natively by the loader: gsql-ref 4.2
+// "Creating a loading job" lists %Y-%m-%d %H:%M:%S), missing numbers -1, missing strings "".
+// The loader has no escape character, so quoted CSV cannot carry `"` inside JSON attributes — hence TAB.
+// The four GraphRAG files (document / policy_chunk / chunk_of / about) and fraud_pattern.csv are written
+// by rag/chunk.py as `,`-separated `"`-quoted CSV; graph/load_all.py re-encodes them losslessly to TAB
+// under data/out/_tsv/ before upload, so every job below uses the SAME USING clause.
+// Column numbers ($N) are the 0-based positions in csv_columns.yaml; graph/check_contracts.py asserts
+// that every job references exactly the yaml's column count and that VALUES order == schema.gsql order.
+// Each job has ONE file variable `f`; graph/load_all.py uploads each chunk with
+//   conn.runLoadingJobWithFile(path, "f", <job>, sep="\t", eol="\n", timeout=600000, sizeLimit=128000000)
+// The whole transaction load (8 chunks) is ONE job, load_txn, run once per chunk.
+// Edge loads auto-create missing endpoint vertices (VERTEX_MUST_EXIST default "false"); load_all.py loads
+// vertices first so the count assertions are exact anyway.
+
+USE GRAPH FraudGraph
+
+// -------------------------------------------------------------------- vertices ----------------------
+CREATE LOADING JOB load_customer FOR GRAPH FraudGraph {
+  DEFINE FILENAME f;
+  // id, n_cards, n_txns, n_closed_cases
+  LOAD f TO VERTEX Customer VALUES ($0, $1, $2, $3)
+       USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}
+
+CREATE LOADING JOB load_card FOR GRAPH FraudGraph {
+  DEFINE FILENAME f;
+  // 0 id, 1 customer_id, 2 card_type, 3 card_network, 4 n_txns, 5 first_ts, 6 last_ts, 7 median_amt,
+  // 8 p90_amt, 9 max_amt, 10 max_in_person_amt, 11 n_online, 12 n_in_person, 13 modal_region, 14 n_regions,
+  // 15 home_regions, 16 usual_products, 17 usual_p_email, 18 n_devices_seen, 19 known_device_ids,
+  // 20 recurring_amounts, 21 n_prior_fraud_cases, 22 n_prior_cleared_cases, 23 ring_id,
+  // 24 burst_lookalike_ids, 25 region_cluster_30d, 26 wcc_id, 27 device_degree, 28 fraud_ppr
+  LOAD f TO VERTEX Card VALUES ($0, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14,
+                               $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28)
+       USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}
+
+CREATE LOADING JOB load_device_profile FOR GRAPH FraudGraph {
+  DEFINE FILENAME f;
+  // 0 id, 1 device_info, 2 os, 3 browser, 4 screen, 5 n_txns, 6 n_cards_alltime, 7 n_cards_30d,
+  // 8 n_proxy, 9 first_seen, 10 last_seen, 11 n_fraud_cases, 12 is_strong
+  LOAD f TO VERTEX DeviceProfile VALUES ($0, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+       USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}
+
+CREATE LOADING JOB load_email_domain FOR GRAPH FraudGraph {
+  DEFINE FILENAME f;
+  // id, n_txns, n_cards
+  LOAD f TO VERTEX EmailDomain VALUES ($0, $1, $2)
+       USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}
+
+CREATE LOADING JOB load_billing_region FOR GRAPH FraudGraph {
+  DEFINE FILENAME f;
+  // id, country, n_txns, n_cards
+  LOAD f TO VERTEX BillingRegion VALUES ($0, $1, $2, $3)
+       USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}
+
+CREATE LOADING JOB load_fraud_pattern FOR GRAPH FraudGraph {
+  DEFINE FILENAME f;
+  // id, description, rule_refs
+  LOAD f TO VERTEX FraudPattern VALUES ($0, $1, $2)
+       USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}
+
+CREATE LOADING JOB load_closed_case FOR GRAPH FraudGraph {
+  DEFINE FILENAME f;
+  // 0 id, 1 customer_id, 2 card_id, 3 opened_at, 4 closed_at, 5 outcome, 6 pattern, 7 first_fraud_txn_id,
+  // 8 n_txns, 9 exposure_usd, 10 actions_taken, 11 report_filed, 12 analyst_notes, 13 template_id,
+  // 14 note_region, 15 note_device, 16 note_evidence_type, 17 embed_text   (note_emb: rag.load_vectors)
+  LOAD f TO VERTEX ClosedCase VALUES ($0, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+       USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}
+
+CREATE LOADING JOB load_document FOR GRAPH FraudGraph {
+  DEFINE FILENAME f;
+  // id, title, url, sha256, kind        (data/out/_tsv/document.csv, re-encoded from rag/chunk.py output)
+  LOAD f TO VERTEX Document VALUES ($0, $1, $2, $3, $4)
+       USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}
+
+CREATE LOADING JOB load_policy_chunk FOR GRAPH FraudGraph {
+  DEFINE FILENAME f;
+  // id, doc_id, section, page, kind, text   (emb: rag.load_vectors)
+  LOAD f TO VERTEX PolicyChunk VALUES ($0, $1, $2, $3, $4, $5)
+       USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}
+
+// -------------------------------------------------------------------- transactions ------------------
+// One pass per chunk creates the Transaction vertex and its five outgoing edges. Empty foreign keys are
+// guarded with gsql_is_not_empty_string() (documented WHERE token function), so in-person rows create no
+// FROM_DEVICE / PURCHASER_EMAIL edge and rows without addr1 create no BILLED_IN edge.
+CREATE LOADING JOB load_txn FOR GRAPH FraudGraph {
+  DEFINE FILENAME f;
+  // 0 id, 1 card_id, 2 customer_id, 3 ts, 4 ts_str, 5 amt, 6 product_cd, 7 channel, 8 addr1, 9 addr2,
+  // 10 dist1, 11 dist2, 12 p_email, 13 r_email, 14 risk_score, 15 has_identity, 16 device_new,
+  // 17 proxy (-> proxy_type), 18 device_type, 19 device_id, 20 c_counts, 21 d_deltas, 22 m_flags,
+  // 23 cms_p, 24 card_seq, 25 prior_in_region, 26 prior_on_dev, 27 prior_pem, 28 prior_pcd,
+  // 29 prior_med_amt, 30 prior_max_amt, 31 ring_hit, 32 burst_id
+  LOAD f
+    TO VERTEX Transaction VALUES ($0, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15,
+                                  $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29,
+                                  $30, $31, $32),
+    TO EDGE MADE            VALUES ($1, $0),
+    TO EDGE FROM_DEVICE     VALUES ($0, $19, $16, $17) WHERE gsql_is_not_empty_string($19),
+    TO EDGE PURCHASER_EMAIL VALUES ($0, $12)           WHERE gsql_is_not_empty_string($12),
+    TO EDGE RECIPIENT_EMAIL VALUES ($0, $13)           WHERE gsql_is_not_empty_string($13),
+    TO EDGE BILLED_IN       VALUES ($0, $8)            WHERE gsql_is_not_empty_string($8)
+    USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}
+
+// -------------------------------------------------------------------- edges -------------------------
+CREATE LOADING JOB load_owns FOR GRAPH FraudGraph {
+  DEFINE FILENAME f;
+  // customer_id, card_id
+  LOAD f TO EDGE OWNS VALUES ($0, $1)
+       USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}
+
+CREATE LOADING JOB load_next FOR GRAPH FraudGraph {
+  DEFINE FILENAME f;
+  // from_id, to_id, gap_seconds
+  LOAD f TO EDGE NEXT VALUES ($0, $1, $2)
+       USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}
+
+CREATE LOADING JOB load_involves FOR GRAPH FraudGraph {
+  DEFINE FILENAME f;
+  // case_id, txn_id
+  LOAD f TO EDGE INVOLVES VALUES ($0, $1)
+       USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}
+
+CREATE LOADING JOB load_on_card FOR GRAPH FraudGraph {
+  DEFINE FILENAME f;
+  // case_id, card_id
+  LOAD f TO EDGE ON_CARD VALUES ($0, $1)
+       USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}
+
+CREATE LOADING JOB load_connected_to FOR GRAPH FraudGraph {
+  DEFINE FILENAME f;
+  // case_id, card_id
+  LOAD f TO EDGE CONNECTED_TO VALUES ($0, $1)
+       USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}
+
+CREATE LOADING JOB load_matches FOR GRAPH FraudGraph {
+  DEFINE FILENAME f;
+  // case_id, pattern_id
+  LOAD f TO EDGE MATCHES VALUES ($0, $1)
+       USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}
+
+CREATE LOADING JOB load_chunk_of FOR GRAPH FraudGraph {
+  DEFINE FILENAME f;
+  // chunk_id, doc_id
+  LOAD f TO EDGE CHUNK_OF VALUES ($0, $1)
+       USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}
+
+CREATE LOADING JOB load_about FOR GRAPH FraudGraph {
+  DEFINE FILENAME f;
+  // chunk_id, pattern_id
+  LOAD f TO EDGE ABOUT VALUES ($0, $1)
+       USING SEPARATOR="\t", HEADER="false", EOL="\n";
+}

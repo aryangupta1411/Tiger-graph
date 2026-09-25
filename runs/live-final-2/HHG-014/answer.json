@@ -1,0 +1,246 @@
+{
+  "case_id": "HHG-014",
+  "case": {
+    "status": "escalated",
+    "verdict": "fraud",
+    "fraud_probability": 0.9,
+    "pattern": "undocumented",
+    "pattern_description": "Anonymous-proxy device ring: 28 cards in the current wave (19 of them active before this case opened) share one exact device profile `SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080` routed through IP_PROXY:ANONYMOUS, each making small online purchases marked New for the account. The same profile drove 4 closed cases in August-September that analysts confirmed as undocumented fraud. Found by following FROM_DEVICE from the flagged transaction to the profile and back out to every other card on it.",
+    "affected_txn_ids": [
+      "3460634",
+      "3478561"
+    ],
+    "first_suspicious_txn_id": "3460634",
+    "connected_card_ids": [
+      "C06031-K2",
+      "C06650-K2",
+      "C10326-K1",
+      "C04274-K1",
+      "C10193-K2",
+      "C11670-K2",
+      "C09049-K1",
+      "C11702-K1",
+      "C01289-K1",
+      "C05448-K2",
+      "C12796-K1",
+      "C09906-K1",
+      "C07472-K1",
+      "C01996-K2",
+      "C11082-K1",
+      "C08168-K1",
+      "C06710-K1",
+      "C13291-K1",
+      "C02975-K1",
+      "C02910-K1",
+      "C08972-K2",
+      "C04108-K2",
+      "C12645-K1",
+      "C09195-K1",
+      "C09975-K1",
+      "C10020-K1",
+      "C03676-K2"
+    ],
+    "connected_device_profiles": [
+      "SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080"
+    ],
+    "exposure_usd": 187.33,
+    "evidence": [
+      {
+        "claim": "An analyst requested review because several cards this month show purchases from the same unusual device profile, naming transaction 3478561 on card C13487-K1.",
+        "source": "external",
+        "ref": "trigger",
+        "entity_ids": [
+          "3478561",
+          "C13487-K1"
+        ]
+      },
+      {
+        "claim": "The flagged transaction's device profile `SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080` is a strong profile (is_strong=true) shared by 52 cards all-time and 28 cards in the 30 days before opening, with 114 transactions routed through IP_PROXY:ANONYMOUS and 4 prior confirmed-fraud closed cases on this exact profile.",
+        "source": "graph",
+        "ref": "query:ring_profile(c=C13487-K1, as_of=2016-11-22 20:11:00)",
+        "entity_ids": [
+          "SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080",
+          "C13487-K1"
+        ]
+      },
+      {
+        "claim": "19 other cards (C10193-K2, C09975-K1, C11670-K2, C02910-K1, C03676-K2, C06710-K1, C08168-K1, C04274-K1, C01996-K2, C01289-K1, C09906-K1, C12796-K1, C09049-K1, C04108-K2, C05448-K2, C02975-K1, C13291-K1, C10326-K1, C11082-K1) were already active on this same device profile before this case opened, and 27 cards make up the current wave sharing it.",
+        "source": "graph",
+        "ref": "query:device_neighbors(d=SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080, from_ts=2016-11-01 00:00:00, to_ts=2016-11-22 20:11:00, max_cards=60)",
+        "entity_ids": [
+          "C10193-K2",
+          "C09975-K1",
+          "C11670-K2",
+          "C02910-K1",
+          "C03676-K2",
+          "C06710-K1",
+          "C08168-K1",
+          "C04274-K1",
+          "C01996-K2",
+          "C01289-K1",
+          "C09906-K1",
+          "C12796-K1",
+          "C09049-K1",
+          "C04108-K2",
+          "C05448-K2",
+          "C02975-K1",
+          "C13291-K1",
+          "C10326-K1",
+          "C11082-K1"
+        ]
+      },
+      {
+        "claim": "Four closed cases already confirmed the same device profile as undocumented fraud between August and September 2016: CC-2649, CC-2971, CC-2985 and CC-3035, all with a report filed.",
+        "source": "graph",
+        "ref": "query:ring_profile(c=C13487-K1, as_of=2016-11-22 20:11:00)",
+        "entity_ids": [
+          "CC-2649",
+          "CC-2971",
+          "CC-2985",
+          "CC-3035"
+        ]
+      },
+      {
+        "claim": "Card C13487-K1's own activity on this ring profile before opening consists of two online, product-code-C purchases: 3460634 ($112.37, 2016-11-15 20:30) and the flagged 3478561 ($74.96, 2016-11-22 16:11), both marked device_new=New and routed through IP_PROXY:ANONYMOUS.",
+        "source": "graph",
+        "ref": "query:ring_profile(c=C13487-K1, as_of=2016-11-22 20:11:00)",
+        "entity_ids": [
+          "3460634",
+          "3478561",
+          "C13487-K1"
+        ]
+      },
+      {
+        "claim": "The flagged amount of $74.96 sits inside the card's baseline of 71 prior transactions (prior median $55.92, prior maximum $225.94), and the case-memory calibration (cms_p 0.071, real-time risk_score 0.05) is low on its own, but this reading is outweighed by the two independent ring/memory evidence families above.",
+        "source": "graph",
+        "ref": "query:case_context(t=3478561, as_of=2016-11-22 20:11:00)",
+        "entity_ids": [
+          "3478561",
+          "C13487-K1"
+        ]
+      },
+      {
+        "claim": "The online billing region 191.0 is one of only two regions the card uses (36 prior purchases there over 34 distinct days, hint=known), so the region itself is not a novelty signal for this card.",
+        "source": "graph",
+        "ref": "query:region_history(c=C13487-K1, addr1=191.0, as_of=2016-11-22 16:10:59)",
+        "entity_ids": [
+          "C13487-K1"
+        ]
+      },
+      {
+        "claim": "The customer has a single card on file (n_cards=1) and no prior closed or agent cases, so this device-ring exposure is the first and only fraud signal on the account.",
+        "source": "graph",
+        "ref": "query:prior_cases_for_customer(cu=C13487, as_of=2016-11-22 20:11:00)",
+        "entity_ids": [
+          "C13487"
+        ]
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-2649",
+      "CC-2971",
+      "CC-2985",
+      "CC-3035"
+    ],
+    "summary": "Verdict fraud at p=0.90: an anonymous-proxy device ring where one strong profile spans 28 cards, 19 already active before this case opened, tying card C13487-K1 to four prior confirmed-fraud closed cases (CC-2649, CC-2971, CC-2985, CC-3035) on the same profile. Episode is the card's two transactions on that profile, $112.37 (2016-11-15) and $74.96 (2016-11-22), exposure $187.33 by the chain rule even though the amounts look ordinary against the card's own baseline. No evidence request was needed. Recommend BLOCK_CARD (L1) and FILE_REPORT (L2), with connected cards already under monitoring and the ring escalated to an analyst.",
+    "written_to_graph": true,
+    "graph_case_id": "AC-HHG-014"
+  },
+  "evidence_requests": [],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: verdict fraud with probability 0.90 and the pattern is undocumented (anonymous-proxy device ring), so a case is opened to record the evidence."
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: the shared device profile SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080 behind IP_PROXY:ANONYMOUS connects this card to 27 other cards in the current wave, so every sharing card is recommended for monitoring."
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "§3b: fraud verdict on a shared anonymous-proxy device ring with exposure $187.33 ≤ $2,500, so blocking this card is recommended to L1 rather than executed automatically."
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "3a/R6: exposure is under $1,000 but the case connects to a shared device profile and to another card's confirmed fraud (CC-2649, CC-2971, CC-2985, CC-3035 on the same profile), so a report is recommended to L2."
+      },
+      {
+        "action": "ESCALATE_TO_ANALYST",
+        "route": "auto",
+        "reason": "R9: the ring shows coordinated, repeated abuse across many customers' cards on one device profile, an undocumented pattern that the analyst should review further."
+      }
+    ],
+    "final": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: verdict fraud with probability 0.90 and the pattern is undocumented (anonymous-proxy device ring), so a case is opened to record the evidence."
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: the shared device profile SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080 behind IP_PROXY:ANONYMOUS connects this card to 27 other cards in the current wave, so every sharing card is recommended for monitoring."
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "§3b: fraud verdict on a shared anonymous-proxy device ring with exposure $187.33 ≤ $2,500, so blocking this card is recommended to L1 rather than executed automatically."
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "3a/R6: exposure is under $1,000 but the case connects to a shared device profile and to another card's confirmed fraud (CC-2649, CC-2971, CC-2985, CC-3035 on the same profile), so a report is recommended to L2."
+      },
+      {
+        "action": "ESCALATE_TO_ANALYST",
+        "route": "auto",
+        "reason": "R9: the ring shows coordinated, repeated abuse across many customers' cards on one device profile, an undocumented pattern that the analyst should review further."
+      }
+    ],
+    "what_changed": "nothing"
+  },
+  "sar": {
+    "file": true,
+    "reason": "3a / R6 / R9: coordinated undocumented pattern — anonymous-proxy device ring `SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080` spanning 27 other cards",
+    "narrative": "This report documents an undocumented coordinated fraud pattern identified in internal case AC-HHG-014. The subject is customer C13487, whose debit card C13487-K1 shows two online transactions on a device profile, `SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080`, that is shared with 27 other connected cards in the same wave, including cards C06031-K2, C10326-K1, C04274-K1, C10193-K2, C11670-K2, C09049-K1, C01289-K1, C05448-K2, C12796-K1, C09906-K1, C01996-K2, C11082-K1, C08168-K1, C06710-K1, C13291-K1, C02975-K1, C02910-K1, C04108-K2, C09975-K1 and C03676-K2, among others. On 2016-11-15 at 20:30, card C13487-K1 made a $112.37 online purchase on this device profile, marked as a new device for the account. On 2016-11-22 at 16:11, the same card made a second online purchase of $74.96 (product code C, billing region 191.0) on the identical device profile, again flagged as a new device; this second transaction is what triggered the analyst's request for review after several cards that month were observed using the same unusual device profile. The device profile is routed through an anonymous proxy address and, as of the case opening, was associated with 28 cards active in the current wave, 19 of which had already transacted on the profile before this case was opened, indicating coordinated, non-organic use across many customer accounts rather than a single cardholder's device history. This pattern is unusual against the cardholder's own baseline as of opening: across 71 prior transactions dating back to 2016-07-04, the card's median amount was $55.92 and maximum was $225.94, with regular activity split between billing regions 191.0 and 272.0 and only one other device on file (a Windows/edge profile first seen 2016-10-02); the shared, proxy-routed device profile had no prior history on this card before 2016-11-15. No prior suspicious activity report has been filed on this card; the same device profile or connected cards were the subject of four closed cases, CC-2649, CC-3035, CC-2971 and CC-2985, all confirmed fraud with reports filed between August and September 2016. OFAC screening of the customer and card identifiers against the SDN list returned no match. In response to this activity, the agent opened case AC-HHG-014 and placed the connected cards sharing this device profile under monitoring; a block of card C13487-K1 is recommended and awaits team-lead approval, this filing is recommended and awaits fraud-manager approval, and the matter has been escalated to an analyst for further review of the coordinated pattern; total suspicious activity on this card identified to date is $187.33.",
+    "subjects": [
+      "C13487",
+      "C13487-K1",
+      "C06031-K2",
+      "C10326-K1",
+      "C04274-K1",
+      "C10193-K2",
+      "C11670-K2",
+      "C09049-K1",
+      "C01289-K1",
+      "C05448-K2",
+      "C12796-K1",
+      "C09906-K1",
+      "C01996-K2",
+      "C11082-K1",
+      "C08168-K1",
+      "C06710-K1",
+      "C13291-K1",
+      "C02975-K1",
+      "C02910-K1",
+      "C04108-K2",
+      "C09975-K1",
+      "C03676-K2",
+      "SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080"
+    ],
+    "total_amount_usd": 187.33,
+    "activity_dates": [
+      "2016-11-15",
+      "2016-11-22"
+    ]
+  },
+  "stop_reason": "Policy §6 test 3 fired: with the device-ring evidence and four confirmed prior cases on the same profile already decisive, no admissible evidence request (customer validation, step-up, or analyst info) could change the recommended action set, so investigation stopped at this defensible fraud decision.",
+  "tool_calls": 22,
+  "tokens": 284222,
+  "latency_s": 128.0
+}

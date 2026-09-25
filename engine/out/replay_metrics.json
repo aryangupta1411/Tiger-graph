@@ -1,0 +1,173 @@
+{
+ "n": 310,
+ "n_failed": 0,
+ "seconds": 16.2,
+ "pattern_accuracy_fraud_all": 0.8778,
+ "pattern_accuracy_fraud_verdict_fraud": 0.9239,
+ "pattern_confusion": {
+  "account_takeover": {
+   "account_takeover": 50,
+   "card_not_present_fraud": 2,
+   "card_not_present_new_device": 1,
+   "out_of_region_use": 3
+  },
+  "card_not_present_fraud": {
+   "account_takeover": 1,
+   "card_not_present_fraud": 45,
+   "card_not_present_new_device": 3,
+   "out_of_region_use": 0
+  },
+  "card_not_present_new_device": {
+   "account_takeover": 2,
+   "card_not_present_fraud": 3,
+   "card_not_present_new_device": 39,
+   "out_of_region_use": 0
+  },
+  "card_testing": {
+   "account_takeover": 0,
+   "card_not_present_fraud": 0,
+   "card_not_present_new_device": 1,
+   "out_of_region_use": 0
+  },
+  "none": {
+   "account_takeover": 3,
+   "card_not_present_fraud": 0,
+   "card_not_present_new_device": 1,
+   "out_of_region_use": 1
+  },
+  "out_of_region_use": {
+   "account_takeover": 1,
+   "card_not_present_fraud": 0,
+   "card_not_present_new_device": 0,
+   "out_of_region_use": 24
+  }
+ },
+ "sar_accuracy_fraud_all": 0.9389,
+ "sar_accuracy_fraud_verdict_fraud": 0.9457,
+ "sar_confusion": {
+  "false": {
+   "false": 164,
+   "true": 7
+  },
+  "true": {
+   "false": 4,
+   "true": 5
+  }
+ },
+ "episode_jaccard_fraud_all": 0.7917,
+ "episode_jaccard_fraud_verdict_fraud": 0.8552,
+ "cleared_false_episodes": 74,
+ "brier_final": 0.1214,
+ "ece_final": 0.1091,
+ "brier_pre": 0.1175,
+ "ece_pre": 0.1283,
+ "per_group": {
+  "cleared_as_risk_score": {
+   "n": 100,
+   "verdict_counts": {
+    "legitimate": 56,
+    "uncertain": 41,
+    "fraud": 3
+   },
+   "verdict_accuracy": 0.56,
+   "uncertain_share": 0.41,
+   "action_f1_final_mean": 0.224,
+   "action_f1_initial_union_final_mean": 0.4944,
+   "blocked_initial": 1,
+   "blocked_final": 3,
+   "requests": {
+    "customer_validation/confirm": 56,
+    "customer_validation/no_reply": 38,
+    "step_up_auth/inconclusive": 3,
+    "customer_validation/deny": 2,
+    "step_up_auth/fail": 1
+   },
+   "r7_fires": 0,
+   "ring_hits": 0,
+   "burst_hits": 0,
+   "mean_p": 0.1394,
+   "validator_errors": 0,
+   "policy_violations": 0
+  },
+  "cleared_as_synthetic_dispute": {
+   "n": 30,
+   "verdict_counts": {
+    "uncertain": 28,
+    "fraud": 2
+   },
+   "verdict_accuracy": 0.0,
+   "uncertain_share": 0.9333,
+   "action_f1_final_mean": 0.0,
+   "action_f1_initial_union_final_mean": 0.0,
+   "blocked_initial": 30,
+   "blocked_final": 30,
+   "requests": {
+    "step_up_auth/inconclusive": 27,
+    "": 3
+   },
+   "r7_fires": 0,
+   "ring_hits": 0,
+   "burst_hits": 0,
+   "mean_p": 0.5673,
+   "validator_errors": 0,
+   "policy_violations": 0
+  },
+  "fraud_as_dispute": {
+   "n": 150,
+   "verdict_counts": {
+    "uncertain": 74,
+    "fraud": 74,
+    "legitimate": 2
+   },
+   "verdict_accuracy": 0.4933,
+   "uncertain_share": 0.4933,
+   "action_f1_final_mean": 0.8383,
+   "action_f1_initial_union_final_mean": 0.8063,
+   "blocked_initial": 148,
+   "blocked_final": 148,
+   "requests": {
+    "": 99,
+    "step_up_auth/inconclusive": 39,
+    "step_up_auth/fail": 10,
+    "customer_validation/confirm": 2
+   },
+   "r7_fires": 2,
+   "ring_hits": 0,
+   "burst_hits": 0,
+   "mean_p": 0.7119,
+   "validator_errors": 0,
+   "policy_violations": 0
+  },
+  "fraud_as_risk_score": {
+   "n": 30,
+   "verdict_counts": {
+    "fraud": 18,
+    "uncertain": 9,
+    "legitimate": 3
+   },
+   "verdict_accuracy": 0.6,
+   "uncertain_share": 0.3,
+   "action_f1_final_mean": 0.56,
+   "action_f1_initial_union_final_mean": 0.4852,
+   "blocked_initial": 19,
+   "blocked_final": 18,
+   "requests": {
+    "customer_validation/no_reply": 22,
+    "customer_validation/deny": 2,
+    "": 2,
+    "customer_validation/confirm": 2,
+    "step_up_auth/pass": 1,
+    "step_up_auth/inconclusive": 1
+   },
+   "r7_fires": 0,
+   "ring_hits": 0,
+   "burst_hits": 0,
+   "mean_p": 0.6537,
+   "validator_errors": 0,
+   "policy_violations": 0
+  }
+ },
+ "synthetic_disputes_blocked_initial": 30,
+ "synthetic_disputes_blocked_final": 30,
+ "r7_disputes_blocked_initial": 0
+}

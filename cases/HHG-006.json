@@ -1,0 +1,186 @@
+{
+  "case_id": "HHG-006",
+  "case": {
+    "status": "escalated",
+    "verdict": "fraud",
+    "fraud_probability": 0.9,
+    "pattern": "undocumented",
+    "pattern_description": "Under-threshold burst: 4 online purchases each between $450 and $499.99 ($1,906.07 in total) inside 30 minutes on a card with almost no online history, split across 2 New device profiles and 2 purchaser email domains. Amounts sit just under a $500 authorisation threshold. 12 other cards show the identical shape within 30 days (C00466-K1, C01890-K1, C02265-K1, C03633-K1, C05423-K1, C05766-K1, C05851-K1, C06208-K1, C06881-K1, C10751-K1, C10990-K1, C12641-K2); five closed cases with this shape were confirmed as undocumented fraud and reported.",
+    "affected_txn_ids": [
+      "3476602",
+      "3476633",
+      "3476665",
+      "3476682"
+    ],
+    "first_suspicious_txn_id": "3476602",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 1906.07,
+    "evidence": [
+      {
+        "claim": "Customer C07297 states they never made the $482.12 purchase 3476682; in this bank's closed-case history 0 of the customer-reported denials were ultimately cleared, so the denial alone floors the case above the verify-first threshold.",
+        "source": "customer",
+        "ref": "trigger",
+        "entity_ids": [
+          "3476682",
+          "C07297"
+        ]
+      },
+      {
+        "claim": "under_threshold_burst found the flagged transaction inside a 4-member online burst on card C07297-K1 (3476602 $478.95, 3476633 $456.96, 3476665 $488.04, 3476682 $482.12), all between 20:00 and 20:30 on 2016-11-21, all product code C, using two New device profiles (Trident/IE11/Windows7 and iOS Safari) and two purchaser email domains (gmail.com, yahoo.com); this matches the just-under-$500 undocumented burst shape.",
+        "source": "graph",
+        "ref": "query:under_threshold_burst(c=C07297-K1, as_of=2016-11-22 02:30:00)",
+        "entity_ids": [
+          "3476602",
+          "3476633",
+          "3476665",
+          "3476682",
+          "C07297-K1",
+          "Trident/7.0 | Windows 7 | ie 11.0 for desktop | 1920x1080",
+          "iOS Device | iOS 11.2.1 | mobile safari 11.0 | 2208x1242"
+        ]
+      },
+      {
+        "claim": "As of opening the card had 199 prior transactions (card_seq 200 minus 1) with a prior median amount of $62.93 and a prior maximum of $1,104, and only 6 online transactions in its whole history, so the $1,906.07 online burst is a sharp break from the card's baseline.",
+        "source": "graph",
+        "ref": "query:case_context(t=3476682, as_of=2016-11-22 02:30:00)",
+        "entity_ids": [
+          "3476682",
+          "C07297-K1"
+        ]
+      },
+      {
+        "claim": "under_threshold_burst also lists 12 other cards (C00466-K1, C01890-K1, C02265-K1, C03633-K1, C05423-K1, C05766-K1, C05851-K1, C06208-K1, C06881-K1, C10751-K1, C10990-K1, C12641-K2) showing the same just-under-$500 shape within 30 days, indicating coordinated repeated abuse rather than a one-off.",
+        "source": "graph",
+        "ref": "query:under_threshold_burst(c=C07297-K1, as_of=2016-11-22 02:30:00)",
+        "entity_ids": [
+          "C00466-K1",
+          "C01890-K1",
+          "C02265-K1",
+          "C03633-K1",
+          "C05423-K1",
+          "C05766-K1",
+          "C05851-K1",
+          "C06208-K1",
+          "C06881-K1",
+          "C10751-K1",
+          "C10990-K1",
+          "C12641-K2"
+        ]
+      },
+      {
+        "claim": "find_similar_cases returned four closed cases confirmed as fraud on the same generic device profiles (CC-3368, CC-5111, CC-3624, CC-1476), three labeled card_not_present_new_device and one card_not_present_fraud, reinforcing that New-device online bursts of this size on this card population have previously been confirmed fraudulent.",
+        "source": "graph",
+        "ref": "query:find_similar_cases(card_id=C07297-K1, device_id=Trident/7.0 | Windows 7 | ie 11.0 for desktop | 1920x1080, as_of=2016-11-22 02:30:00)",
+        "entity_ids": [
+          "CC-3368",
+          "CC-5111",
+          "CC-3624",
+          "CC-1476"
+        ]
+      },
+      {
+        "claim": "The calibrated case-memory score (cms_p) on the flagged transaction is 0.0126 and the real-time risk_score is 0.25, both low, so the model component alone leans legitimate and conflicts with the denial and burst signals.",
+        "source": "graph",
+        "ref": "query:case_context(t=3476682, as_of=2016-11-22 02:30:00)",
+        "entity_ids": [
+          "3476682"
+        ]
+      },
+      {
+        "claim": "recurring_charge_check found only 1 matching prior instance for this amount/place (gmail.com), far short of the 5 needed for the R7 recurring-charge exception, so the disputed charge does not match an established recurring pattern and R7 does not apply.",
+        "source": "graph",
+        "ref": "query:recurring_charge_check(t=3476682, tol=0.01, as_of=2016-11-22 02:30:00)",
+        "entity_ids": [
+          "3476682"
+        ]
+      },
+      {
+        "claim": "shared_origin_scan shows both burst device profiles are generic rather than exclusive: the Trident/IE11 profile appears on 359 cards and the iOS Safari profile on 354 cards in the 30 days before opening, so neither qualifies as a strong shared-origin (R6) device and no connected cards/profiles are named.",
+        "source": "graph",
+        "ref": "query:shared_origin_scan(c=C07297-K1, as_of=2016-11-22 02:30:00, days=30)",
+        "entity_ids": [
+          "Trident/7.0 | Windows 7 | ie 11.0 for desktop | 1920x1080",
+          "iOS Device | iOS 11.2.1 | mobile safari 11.0 | 2208x1242"
+        ]
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-3368",
+      "CC-5111",
+      "CC-3624",
+      "CC-1476"
+    ],
+    "summary": "Verdict fraud at probability 0.90. Four online purchases of $478.95, $456.96, $488.04 and $482.12 between 20:00 and 20:30 on 2016-11-21 (3476602, 3476633, 3476665, 3476682; exposure $1,906.07) form an under-threshold burst priced just under $500 across two New device profiles, matching 12 lookalike cards and four prior confirmed-fraud cases on the same profiles. The customer's denial of 3476682 and this coordinated shape are decisive, though the low calibrated score alone would read legitimate. No further evidence request changes the outcome; recommended actions are a card block (L1) and report filing (L2), with case creation and analyst escalation already taken (auto).",
+    "written_to_graph": true,
+    "graph_case_id": "AC-HHG-006"
+  },
+  "evidence_requests": [],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: exposure $1,906.07 > $1,000 and the pattern is undocumented (just-under-$500 burst), and R2: the customer denied transaction 3476682, so a case is opened to hold the episode."
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: customer denied transaction 3476682 and exposure $1,906.07 ≤ $2,500, so blocking this card is recommended pending team-lead approval."
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "3a/R9: exposure $1,906.07 > $1,000 and the undocumented just-under-$500 burst shape recurs on 12 other cards in the same 30-day window, so a report is recommended pending fraud-manager approval."
+      },
+      {
+        "action": "ESCALATE_TO_ANALYST",
+        "route": "auto",
+        "reason": "R9: the episode fits no documented pattern but shows coordinated, repeated abuse across customers (the just-under-$500 burst shared by 12 lookalike cards), so an analyst should review the wider wave."
+      }
+    ],
+    "final": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: exposure $1,906.07 > $1,000 and the pattern is undocumented (just-under-$500 burst), and R2: the customer denied transaction 3476682, so a case is opened to hold the episode."
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: customer denied transaction 3476682 and exposure $1,906.07 ≤ $2,500, so blocking this card is recommended pending team-lead approval."
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "3a/R9: exposure $1,906.07 > $1,000 and the undocumented just-under-$500 burst shape recurs on 12 other cards in the same 30-day window, so a report is recommended pending fraud-manager approval."
+      },
+      {
+        "action": "ESCALATE_TO_ANALYST",
+        "route": "auto",
+        "reason": "R9: the episode fits no documented pattern but shows coordinated, repeated abuse across customers (the just-under-$500 burst shared by 12 lookalike cards), so an analyst should review the wider wave."
+      }
+    ],
+    "what_changed": "nothing"
+  },
+  "sar": {
+    "file": true,
+    "reason": "3a / R9: undocumented coordinated pattern (Under-threshold burst)",
+    "narrative": "This report concerns internal case AC-HHG-006, filed for an undocumented coordinated fraud pattern identified as an under-threshold burst. The subject is customer C07297, cardholder of debit card C07297-K1 (mastercard network), whose card was used through two device profiles: \"Trident/7.0 | Windows 7 | ie 11.0 for desktop | 1920x1080\" and \"iOS Device | iOS 11.2.1 | mobile safari 11.0 | 2208x1242\"; no other cards were found connected to these device profiles at the time of review. On 2016-11-21 at 20:00 an online purchase of $478.95 (transaction 3476602, product code C, billing region 264.0) was made on the Trident/IE device profile, newly seen on the account. At 20:10 an online purchase of $456.96 (transaction 3476633, billing region 476.0) followed on the iOS device profile, also newly seen, and at 20:24 a further online purchase of $488.04 (transaction 3476665, billing region 476.0) occurred on the same iOS device profile. At 20:30 the flagged transaction, an online purchase of $482.12 (transaction 3476682, billing region 264.0) on the Trident/IE device profile, completed the sequence; the customer stated they never made this $482.12 purchase. All four transactions were placed within 30 minutes, all online, all under product code C, and all priced between $450 and $499.99, just under a likely $500 authorization threshold; the graph shows the identical amount-and-timing shape on 12 other cards within the same 30-day window and on five closed cases previously confirmed as fraud of this type. This activity is inconsistent with the cardholder's baseline as of the case opening: in the 199 prior transactions on this card, the median amount was $62.93 and the maximum was $1,104.00, the card had recorded only 4 online transactions in the preceding 30 days, and neither device profile had more than 3 prior uses on the card, with first use of the Trident/IE profile on 2016-07-12 and the iOS profile on 2016-07-26. No prior suspicious activity report has been filed on this card, and no prior report exists for the two device profiles or any connected cards; OFAC screening of the customer and card identifiers against the SDN list returned no match. A case (AC-HHG-006) has been opened and the matter escalated to an analyst for review of the wider coordinated pattern; a block of card C07297-K1 is recommended and awaits team-lead approval, and the filing of this report is recommended and awaits fraud-manager approval, covering total suspicious activity of $1,906.07 across the four transactions described.",
+    "subjects": [
+      "C07297",
+      "C07297-K1",
+      "Trident/7.0 | Windows 7 | ie 11.0 for desktop | 1920x1080",
+      "iOS Device | iOS 11.2.1 | mobile safari 11.0 | 2208x1242"
+    ],
+    "total_amount_usd": 1906.07,
+    "activity_dates": [
+      "2016-11-21",
+      "2016-11-21"
+    ]
+  },
+  "stop_reason": "Policy §6 test 1 fired: fraud probability 0.90 is at or above 0.85 with two independent evidence families (customer denial, burst/device history), and no further evidence request could change the required actions, so the initial recommendation stands as final.",
+  "tool_calls": 24,
+  "tokens": 294362,
+  "latency_s": 182.8
+}

@@ -1,0 +1,23 @@
+# Build context for the Dockerfile (the Streamlit UI image). Allowlist: start from nothing, then let
+# in only what the Dockerfile copies. Everything else stays out, including .env, .git, .venv, .claude,
+# data/ (raw CSVs and every *.duckdb; the UI opens none of them), graph/, docs/ and every run other
+# than the canonical one.
+*
+
+!requirements-ui.txt
+!.streamlit/config.toml
+!ops/
+!rag/
+!cases/
+!runs/live-final-2/
+!ui/
+
+# Never, even inside the paths let in above.
+**/.env
+**/.env.*
+**/*.sqlite
+**/*.sqlite-journal
+**/*.duckdb
+**/__pycache__
+**/*.pyc
+**/.DS_Store

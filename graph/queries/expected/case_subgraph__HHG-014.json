@@ -1,0 +1,13 @@
+{
+ "query": "case_subgraph",
+ "case": "HHG-014",
+ "params": {
+  "c": "C13487-K1",
+  "as_of": "2016-11-22 20:11:00",
+  "hours": 72
+ },
+ "expected": {
+  "n_nodes": 10,
+  "n_edges": 10
+ }
+}

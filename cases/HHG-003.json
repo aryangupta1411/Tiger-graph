@@ -1,0 +1,152 @@
+{
+  "case_id": "HHG-003",
+  "case": {
+    "status": "open",
+    "verdict": "uncertain",
+    "fraud_probability": 0.6,
+    "pattern": "out_of_region_use",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3530056",
+      "3530164"
+    ],
+    "first_suspicious_txn_id": "3530056",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 165.93,
+    "evidence": [
+      {
+        "claim": "Customer C08623 denies making the $49.00 purchase 3530164, which is the case trigger; in the bank's history 0 of 4,665 customer-reported denials were later cleared.",
+        "source": "customer",
+        "ref": "trigger",
+        "entity_ids": [
+          "3530164",
+          "C08623"
+        ]
+      },
+      {
+        "claim": "Card C08623-K2 has 5 prior confirmed_fraud closed cases (CC-4957, CC-3682, CC-3327, CC-2935, CC-2817), most recently opened 2016-10-18, spanning out_of_region_use and account_takeover patterns.",
+        "source": "graph",
+        "ref": "query:prior_cases_for_customer(cu=C08623, as_of=2016-12-10 15:01:21)",
+        "entity_ids": [
+          "CC-4957",
+          "CC-3682",
+          "CC-3327",
+          "CC-2935",
+          "CC-2817",
+          "C08623-K2"
+        ]
+      },
+      {
+        "claim": "Transaction 3530056 ($116.93, in_person, region 330.0, ts 2016-12-10 12:12:41) sits 49 minutes before the flagged transaction 3530164 and scores 0.844 on the case-memory calibration, far above every other transaction in the 48h chain.",
+        "source": "graph",
+        "ref": "query:episode_candidates(t=3530164, as_of=2016-12-10 15:01:21, gap_h=48)",
+        "entity_ids": [
+          "3530056",
+          "3530164"
+        ]
+      },
+      {
+        "claim": "recurring_charge_check on region 330.0 finds only 3 prior same-region product-W charges with median gap 0.001 days and gap CV 1.00, failing R7's 5-35 day/CV<=0.6 cadence test, so the R7 recurring-pattern exception to R2 does not apply.",
+        "source": "graph",
+        "ref": "query:recurring_charge_check(t=3530164, tol=0.01, as_of=2016-12-10 15:01:21)",
+        "entity_ids": [
+          "3530164"
+        ]
+      },
+      {
+        "claim": "The flagged $49.00 amount sits inside the card's baseline as of opening: 980 prior transactions, prior median $67.91, prior maximum $2,680.95.",
+        "source": "graph",
+        "ref": "query:case_context(t=3530164, as_of=2016-12-10 15:01:21)",
+        "entity_ids": [
+          "3530164",
+          "C08623-K2"
+        ]
+      },
+      {
+        "claim": "Region 330.0 is known to the card (42 prior purchases over 33 distinct days before this transaction) but is not the modal region (299.0); the bank's convention still labels card-present fraud away from the modal region as out_of_region_use even in a region used repeatedly (581 of 955 confirmed out_of_region_use closed cases were in regions the card had used 5+ times before).",
+        "source": "graph",
+        "ref": "query:region_history(c=C08623-K2, addr1=330.0, as_of=2016-12-10 15:01:21)",
+        "entity_ids": [
+          "3530164",
+          "C08623-K2"
+        ]
+      },
+      {
+        "claim": "One prior case on this card, CC-1589 (opened 2016-08-03), closed with outcome cleared under the cleared_travel template, showing this card's roaming activity has previously been confirmed as legitimate travel rather than fraud.",
+        "source": "graph",
+        "ref": "query:prior_cases_for_customer(cu=C08623, as_of=2016-12-10 15:01:21)",
+        "entity_ids": [
+          "CC-1589",
+          "C08623-K2"
+        ]
+      },
+      {
+        "claim": "find_similar_cases returns 8 closed cases with same_region overlap to this card, all confirmed_fraud under pattern out_of_region_use (CC-3154, CC-4744, CC-4909, CC-4847, CC-4005, CC-4213, CC-3499, CC-3121), reinforcing that the bank's out_of_region_use label applies broadly to region-based card-present fraud on this profile.",
+        "source": "graph",
+        "ref": "query:similar_prior_cases(q=[1024 items], k=8, card_id=C08623-K2, customer_id=C08623, device_id=, addr1=330.0, pattern_sig=, as_of=2016-12-10 15:01:21)",
+        "entity_ids": [
+          "CC-3154",
+          "CC-4744",
+          "CC-4909",
+          "CC-4847",
+          "CC-4005",
+          "CC-4213",
+          "CC-3499",
+          "CC-3121"
+        ]
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-3154",
+      "CC-4744",
+      "CC-4909",
+      "CC-4847",
+      "CC-4005",
+      "CC-4213"
+    ],
+    "summary": "Verdict uncertain at p=0.60: customer denies transaction 3530164 ($49.00, region 330.0); episode 3530056+3530164, exposure $165.93. Decisive facts: the region-330.0 recurrence fails R7's cadence test (gap CV 1.00), and this card already carries 5 confirmed_fraud closed cases plus a neighboring transaction scoring 0.844. Alternative reading: the amount and region fit the card's established spending pattern, arguing for routine use. Recommended: CREATE_CASE (auto) and BLOCK_CARD (L1, exposure ≤ $2,500), pending approval.",
+    "written_to_graph": true,
+    "graph_case_id": "AC-HHG-003"
+  },
+  "evidence_requests": [],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a/R2: the customer disputed transaction 3530164, and R2 requires a case be opened on a denial not explained by R7 (recurring_charge_check on region 330.0 shows median gap 0.001 days, CV 1.00, failing the 5-35 day cadence test)."
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: customer denied transaction 3530164 and no R7 exception applies; exposure $165.93 (transactions 3530056, 3530164) is ≤ $2,500, so the recommended block routes to L1 for approval."
+      }
+    ],
+    "final": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a/R2: the customer disputed transaction 3530164, and R2 requires a case be opened on a denial not explained by R7 (recurring_charge_check on region 330.0 shows median gap 0.001 days, CV 1.00, failing the 5-35 day cadence test)."
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: customer denied transaction 3530164 and no R7 exception applies; exposure $165.93 (transactions 3530056, 3530164) is ≤ $2,500, so the recommended block routes to L1 for approval."
+      }
+    ],
+    "what_changed": "nothing"
+  },
+  "sar": {
+    "file": false,
+    "reason": "R2 / 3a not met: the customer denied the transaction, but exposure $165.93 <= $1,000; no device profile shared with other cards' fraud; no other card's fraud connected; documented pattern; no report",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "Policy §6 test 2 fired: the customer's own denial in the trigger is the verification response, and R2 fixes the action set (BLOCK_CARD, CREATE_CASE) as in the README §3b example; re-asking the customer would repeat the answered question and step-up authentication does not apply to this card-present purchase, so no evidence request was made.",
+  "tool_calls": 17,
+  "tokens": 308253,
+  "latency_s": 184.0
+}

@@ -1,0 +1,185 @@
+{
+  "case_id": "HHG-007",
+  "case": {
+    "status": "open",
+    "verdict": "fraud",
+    "fraud_probability": 0.77,
+    "pattern": "account_takeover",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3508487",
+      "3514573",
+      "3514948"
+    ],
+    "first_suspicious_txn_id": "3508487",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 265.85,
+    "evidence": [
+      {
+        "claim": "case_context shows the flagged transaction 3514948 ($111.92, in_person, product W, billing region 264.0, 2016-12-05 00:46:14) scored cms_p 0.8491 (calibrated 0.7674) against a real-time risk_score of 0.87.",
+        "source": "graph",
+        "ref": "query:case_context(t=3514948, as_of=2016-12-05 03:46:14)",
+        "entity_ids": [
+          "3514948"
+        ]
+      },
+      {
+        "claim": "episode_candidates over the 48h window before opening shows a second in-person transaction in the same region, 3514573 ($36.97, 2016-12-04 22:40:36, about 2.1 hours before the flagged transaction), scoring cms_p 0.72 - both are anomalous against the rest of the 7-day chain, which mostly scores well under cms_p 0.05.",
+        "source": "graph",
+        "ref": "query:episode_candidates(t=3514948, as_of=2016-12-05 03:46:14, gap_h=48)",
+        "entity_ids": [
+          "3514573",
+          "3514948"
+        ]
+      },
+      {
+        "claim": "prior_cases_for_customer lists 18 prior confirmed_fraud closed cases on card C09933-K2 (account_takeover and out_of_region_use patterns, most recent CC-5521 opened 2016-10-31), making this a card with a repeat-fraud history rather than a clean baseline.",
+        "source": "graph",
+        "ref": "query:prior_cases_for_customer(cu=C09933, as_of=2016-12-05 03:46:14)",
+        "entity_ids": [
+          "CC-5521",
+          "CC-5092",
+          "CC-4787",
+          "CC-4597",
+          "CC-4455",
+          "CC-4277",
+          "CC-4196",
+          "CC-3821",
+          "CC-3439",
+          "CC-3136",
+          "CC-2986",
+          "CC-2834",
+          "CC-2565",
+          "CC-1682",
+          "CC-1524",
+          "CC-1228",
+          "CC-0765",
+          "CC-0104",
+          "C09933-K2"
+        ]
+      },
+      {
+        "claim": "8 of those prior confirmed cases (CC-5521, CC-4787, CC-4597, CC-4455, CC-3136, CC-2834) carry pattern account_takeover and were confirmed as all-in-person fraud inside this same modal region (264.0), which by the labeling convention is this card's established fraud shape, so an in-region in-person purchase here is not automatically ordinary use.",
+        "source": "graph",
+        "ref": "query:prior_cases_for_customer(cu=C09933, as_of=2016-12-05 03:46:14)",
+        "entity_ids": [
+          "CC-5521",
+          "CC-4787",
+          "CC-4597",
+          "CC-4455",
+          "CC-3136",
+          "CC-2834",
+          "C09933-K2"
+        ]
+      },
+      {
+        "claim": "region_history confirms 264.0 is the card's modal in-person region (2,224 prior purchases over 156 days, share 0.92) with continuous home activity in the surrounding 48h window (24 home vs 2 other transactions), and case_context's card_seq places the flagged transaction's amount ($111.92) between the card's prior median ($77.04) and prior maximum ($2,529.78) over 2,431 prior transactions - read together, these are the legitimacy-side facts the memory-based score has to be weighed against.",
+        "source": "graph",
+        "ref": "query:region_history(c=C09933-K2, addr1=264.0, as_of=2016-12-05 03:46:14)",
+        "entity_ids": [
+          "3514948",
+          "C09933-K2"
+        ]
+      },
+      {
+        "claim": "recurring_charge_check finds 5 prior purchases within 1% of $111.92, same product code W, same billing region 264.0, median gap 16.0 days but gap CV 0.60, which narrowly fails the R7 monthly-cadence exemption test (CV must be <=0.6), so this recurrence does not clear the transaction as the customer's own settled pattern.",
+        "source": "graph",
+        "ref": "query:recurring_charge_check(t=3514948, tol=0.01, as_of=2016-12-05 03:46:14)",
+        "entity_ids": [
+          "3514948",
+          "C09933-K2"
+        ]
+      },
+      {
+        "claim": "ring_profile and shared_origin_scan show the flagged transaction carries no device record (channel in_person, device_known false) and the card's own strong device profile (LG-K450 Build/MXB48T | Android 6.0.1 | chrome 63.0 for android | 1280x720) has n_fraud_cases 0, so no shared-origin or shared-device evidence ties to this episode.",
+        "source": "graph",
+        "ref": "query:ring_profile(c=C09933-K2, as_of=2016-12-05 03:46:14)",
+        "entity_ids": [
+          "LG-K450 Build/MXB48T | Android 6.0.1 | chrome 63.0 for android | 1280x720",
+          "C09933-K2"
+        ]
+      },
+      {
+        "claim": "Assumed reply: no reply from the customer within 24 hours",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": [
+          "3514948"
+        ]
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-4591",
+      "CC-5008",
+      "CC-3761",
+      "CC-5401",
+      "CC-4349",
+      "CC-3366"
+    ],
+    "summary": "Verdict: fraud, probability 0.77. Pattern: account_takeover — three in-person purchases in the card's own modal region (3508487, 3514573, 3514948; exposure $265.85) form the chain-scoped episode, decisive on the case-memory score (cms_p 0.85, matching the 0.87 real-time alert) plus 8 prior confirmed account_takeover cases already cleared in this same region. A customer-validation request was sent and is assumed unanswered within 24 hours, so the recommendation is MONITOR_CARD, DECLINE_TRANSACTION and BLOCK_CARD (L1, pending approval); a reply confirming the charges could still have closed this as ordinary use of a card that overwhelmingly transacts in this one region.",
+    "written_to_graph": true,
+    "graph_case_id": "AC-HHG-007"
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 16,
+      "assumed_response": "ASSUMED (simulated): no reply from the customer within 24 hours"
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: fraud probability 0.77 ≥ 0.30 on a risk-score alert (cms_p 0.85, calibrated 0.77) opens a case to hold the evidence for card C09933-K2."
+      },
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "§3b: probability 0.77 sits in the 0.70–0.85 band with a single strong fraud family (case-memory score plus 18 prior confirmed-fraud cases on this card) set against home-region, baseline-amount history, so verify with the customer before recommending a block."
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "§3b: recommended now pending the verification reply, with exposure $265.85 ≤ $2,500 keeping this at L1; the card's 8 prior account_takeover cases confirmed inside this same modal region support holding the card if the customer does not confirm the charge."
+      }
+    ],
+    "final": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a/§3b: the case opened at probability 0.77 ≥ 0.30 on this risk-score alert stays open now that the customer-validation request drew no reply."
+      },
+      {
+        "action": "MONITOR_CARD",
+        "route": "auto",
+        "reason": "R4: no reply within 24 h to the customer-validation request on card C09933-K2, so monitor the card for further activity."
+      },
+      {
+        "action": "DECLINE_TRANSACTION",
+        "route": "L1",
+        "reason": "R4: no reply within 24 h; decline any pending authorization on this card (exposure $265.85, below the $500 escalation threshold)."
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "§3b: recommended now that verification went unanswered, with exposure $265.85 ≤ $2,500 keeping this at L1; the card's 8 prior account_takeover cases confirmed inside this same modal region (264.0) support holding the card absent a customer reply."
+      }
+    ],
+    "what_changed": "The assumed customer validation reply (no_reply) left the probability at 0.77 and kept the verdict fraud, adding MONITOR_CARD, DECLINE_TRANSACTION, removing VERIFY_WITH_CUSTOMER. Counterfactual: a confirmation would have closed the alert (R3); a denial would have led to BLOCK_CARD and CREATE_CASE (R2)."
+  },
+  "sar": {
+    "file": false,
+    "reason": "3a not met: exposure $265.85 <= $1,000; no device profile shared with other cards' fraud; no shared region cluster; no other customer's fraud connected; documented pattern",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "Policy §6 test 3: the customer-validation request went unanswered within the 24-hour window and the probability held at 0.77, so R4's no-reply actions (monitor, decline pending authorizations) apply on top of the existing fraud-band block recommendation, and no further automated step would change that outcome.",
+  "tool_calls": 16,
+  "tokens": 483760,
+  "latency_s": 228.5
+}

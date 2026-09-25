@@ -1,0 +1,28 @@
+// under_threshold_burst — reads the precomputed Transaction.burst_id (>= 4 online purchases of $450–499.99
+// inside 40 minutes, computed offline by the ETL) on the card's transactions <= as_of and groups the members
+// per burst. lookalike_cards comes from Card.burst_lookalike_ids (other cards with a burst within ±30 days).
+// bursts is a GroupByAccum keyed by burst_id, which prints as [{burst_id, ids[], amts[], start_ts, end_ts,
+// device_ids[], emails[], regions[]}] — exactly the contract. Empty strings may appear in device_ids/emails/
+// regions for members without a device / email / region; the engine drops "".
+// UNVERIFIED: printing a JSONARRAY built by parse_json_array(). Fallback if the compiler rejects it:
+//   PRINT @@bursts AS bursts, @@look AS lookalike_cards;   (a JSON string; mcp/normalize.py json-decodes it)
+USE GRAPH FraudGraph
+CREATE OR REPLACE QUERY under_threshold_burst(VERTEX<Card> c, DATETIME as_of) FOR GRAPH FraudGraph SYNTAX v3 {
+  GroupByAccum<STRING burst_id, ListAccum<STRING> ids, ListAccum<FLOAT> amts, MinAccum<STRING> start_ts,
+               MaxAccum<STRING> end_ts, SetAccum<STRING> device_ids, SetAccum<STRING> emails,
+               SetAccum<STRING> regions> @@bursts;
+  MaxAccum<STRING> @@look;
+
+  S = {c};
+  S = SELECT s FROM (s:S) POST-ACCUM @@look += s.burst_lookalike_ids;
+
+  T = SELECT t FROM (s:S)-[:MADE]->(t:Transaction)
+      WHERE t.ts <= as_of AND t.burst_id != ""
+      ACCUM @@bursts += (t.burst_id -> t.id, t.amt, t.ts_str, t.ts_str, t.device_id, t.p_email, t.addr1);
+
+  STRING look_json = @@look;
+  IF look_json == "" THEN look_json = "[]"; END;
+  JSONARRAY lookalike_cards = parse_json_array(look_json);
+
+  PRINT @@bursts AS bursts, lookalike_cards;
+}

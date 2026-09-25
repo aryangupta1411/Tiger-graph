@@ -1,0 +1,46 @@
+// shared_origin_scan — the shared-origin candidates on the card's online transactions in the last `days` days
+// before as_of: device profiles (with precomputed strength / 30-day fan-out / fraud-case counts) and recipient
+// email domains (fan-out and fraud-case counts computed live). No region branch: a BillingRegion reverses
+// 100k+ BILLED_IN edges, so R6's region clause is served by the precomputed Card.region_cluster_30d.
+// Email n_cards_30d = distinct OTHER cards using the recipient domain in (as_of-30d, as_of]; n_fraud_cases =
+// distinct confirmed-fraud ClosedCases on OTHER cards whose INVOLVES transaction used the domain in (as_of-30d, as_of]
+// -- the same window as engine/facts_duckdb.py (the engine of record) and the R6 evidence text ("...within 30 days").
+// Emails are kept up to 50 (a card's 30-day recipient domains are few): R6 looks for RARE domains (<= 40 cards), so a
+// top-10-by-fan-out heap silently dropped exactly the rows the rule needs.
+USE GRAPH FraudGraph
+CREATE OR REPLACE QUERY shared_origin_scan(VERTEX<Card> c, DATETIME as_of, INT days) FOR GRAPH FraudGraph SYNTAX v3 {
+  TYPEDEF TUPLE<STRING device_id, BOOL is_strong, INT n_cards_30d, INT n_fraud_cases, INT n_txns_on_card> DevRow;
+  TYPEDEF TUPLE<STRING domain, INT n_cards_30d, INT n_fraud_cases> EmailRow;
+  HeapAccum<DevRow>(20, n_txns_on_card DESC, device_id ASC) @@devices;
+  HeapAccum<EmailRow>(50, n_cards_30d DESC, domain ASC) @@recipient_emails;
+  MaxAccum<STRING> @@region_cluster_30d, @@cid;
+  SumAccum<INT> @n_on_card;
+  SetAccum<STRING> @cards30, @fraud_cases;
+  DATETIME from_ts = epoch_to_datetime(datetime_to_epoch(as_of) - days * 86400);
+  DATETIME from30 = epoch_to_datetime(datetime_to_epoch(as_of) - 30 * 86400);
+
+  S = {c};
+  S = SELECT s FROM (s:S) POST-ACCUM @@region_cluster_30d += s.region_cluster_30d, @@cid += s.id;
+
+  T = SELECT t FROM (s:S)-[:MADE]->(t:Transaction)
+      WHERE t.ts > from_ts AND t.ts <= as_of AND t.channel == "online";
+
+  D = SELECT d FROM (t:T)-[:FROM_DEVICE]->(d:DeviceProfile)
+      ACCUM d.@n_on_card += 1
+      POST-ACCUM @@devices += DevRow(d.id, d.is_strong, d.n_cards_30d, d.n_fraud_cases, d.@n_on_card);
+
+  E = SELECT e FROM (t:T)-[:RECIPIENT_EMAIL]->(e:EmailDomain);
+
+  E2 = SELECT e FROM (e:E)-[:REV_RECIPIENT_EMAIL]->(u:Transaction)
+       WHERE u.ts > from30 AND u.ts <= as_of AND u.card_id != @@cid
+       ACCUM e.@cards30 += u.card_id;
+
+  E3 = SELECT e FROM (e:E)-[:REV_RECIPIENT_EMAIL]->(u:Transaction)-[:REV_INVOLVES]->(p:ClosedCase)
+       WHERE p.outcome == "confirmed_fraud" AND u.ts > from30 AND u.ts <= as_of AND u.card_id != @@cid
+       ACCUM e.@fraud_cases += p.id;
+
+  E4 = SELECT e FROM (e:E)
+       POST-ACCUM @@recipient_emails += EmailRow(e.id, e.@cards30.size(), e.@fraud_cases.size());
+
+  PRINT @@devices AS devices, @@recipient_emails AS recipient_emails, @@region_cluster_30d AS region_cluster_30d;
+}

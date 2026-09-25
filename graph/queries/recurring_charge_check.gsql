@@ -1,0 +1,79 @@
+// recurring_charge_check — R7 evidence for a disputed charge: prior transactions on the same card with the
+// same ProductCD and an amount within tol (fraction) of the flagged amount, grouped by PLACE = addr1 for
+// in-person / purchaser email domain for online (there is no merchant field in the data). Per group:
+// n, median gap in days between consecutive matches, gap coefficient of variation, first/last timestamps.
+// Implementation: one heap sorted by (place, ts) is popped in the query body; gaps per place go into a
+// second heap so the median is exact. Capacity 3000 matches (HHG-018 has 143; HHG-011's card is the worst).
+// R7's gate in the engine: n >= 5 AND 5 <= median_gap_days <= 35 AND gap_cv <= 0.6 (PLAN §4.3 C).
+USE GRAPH FraudGraph
+CREATE OR REPLACE QUERY recurring_charge_check(VERTEX<Transaction> t, FLOAT tol, DATETIME as_of) FOR GRAPH FraudGraph SYNTAX v3 {
+  TYPEDEF TUPLE<STRING place, INT ts_e, STRING ts> Ev;
+  TYPEDEF TUPLE<FLOAT gap> Gap;
+  TYPEDEF TUPLE<STRING place, INT n, FLOAT median_gap_days, FLOAT gap_cv, STRING first_ts, STRING last_ts> GroupRow;
+  MaxAccum<FLOAT> @@famt;
+  MaxAccum<STRING> @@fpcd, @@fid;
+  HeapAccum<Ev>(3000, place ASC, ts_e ASC, ts ASC) @@evs;
+  ListAccum<Ev> @@ecur;
+  HeapAccum<Gap>(3000, gap ASC) @@gaps;
+  ListAccum<GroupRow> @@groups;
+  SumAccum<INT> @@total_n;
+
+  S = {t};
+  S = SELECT s FROM (s:S) POST-ACCUM @@famt += s.amt, @@fpcd += s.product_cd, @@fid += s.id;
+
+  X = SELECT x FROM (s:S)-[:REV_MADE]->(c:Card)-[:MADE]->(x:Transaction)
+      WHERE x.ts <= as_of AND x.id != @@fid AND x.product_cd == @@fpcd AND abs(x.amt - @@famt) <= tol * @@famt
+      ACCUM IF x.channel == "in_person" THEN @@evs += Ev(x.addr1, datetime_to_epoch(x.ts), x.ts_str)
+            ELSE @@evs += Ev(x.p_email, datetime_to_epoch(x.ts), x.ts_str) END;
+
+  STRING cur = "";
+  INT n = 0;
+  INT prev_e = 0;
+  FLOAT sum_g = 0.0;
+  FLOAT sumsq = 0.0;
+  STRING first_s = "";
+  STRING last_s = "";
+  WHILE @@evs.size() > 0 DO
+    @@ecur.clear();
+    @@ecur += @@evs.pop();
+    IF n == 0 THEN
+      cur = @@ecur.get(0).place;
+      first_s = @@ecur.get(0).ts;
+    ELSE
+      FLOAT g = (@@ecur.get(0).ts_e - prev_e) / 86400.0;
+      sum_g = sum_g + g;
+      sumsq = sumsq + g * g;
+      @@gaps += Gap(g);
+    END;
+    n = n + 1;
+    prev_e = @@ecur.get(0).ts_e;
+    last_s = @@ecur.get(0).ts;
+    // finalize the group when the next element belongs to another place (or the heap is exhausted)
+    IF @@evs.size() == 0 OR @@evs.top().place != cur THEN
+      FLOAT med = 0.0;
+      FLOAT cv = 0.0;
+      INT ng = n - 1;
+      IF ng > 0 THEN
+        INT skip = floor((ng - 1) / 2.0);
+        IF skip > 0 THEN
+          FOREACH q IN RANGE[1, skip] DO
+            @@gaps.pop();
+          END;
+        END;
+        med = @@gaps.top().gap;
+        FLOAT mean_g = sum_g / ng;
+        FLOAT var_g = sumsq / ng - mean_g * mean_g;
+        IF var_g < 0 THEN var_g = 0.0; END;
+        IF mean_g > 0 THEN cv = sqrt(var_g) / mean_g; END;
+      END;
+      @@groups += GroupRow(cur, n, med, cv, first_s, last_s);
+      @@total_n += n;
+      @@gaps.clear();
+      n = 0;
+      sum_g = 0.0;
+      sumsq = 0.0;
+    END;
+  END;
+
+  PRINT @@groups AS groups, @@total_n AS total_n;
+}

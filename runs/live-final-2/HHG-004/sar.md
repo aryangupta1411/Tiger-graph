@@ -1,0 +1,1 @@
+No SAR. R2 / 3a not met: the customer denied the transaction, but exposure $128.33 <= $1,000; the New profile `NULL | NULL | firefox 47.0 | NULL` is a common, non-distinctive profile (not a strong device profile), so it is not a shared-origin signal; no other card's fraud connected; documented pattern; no report

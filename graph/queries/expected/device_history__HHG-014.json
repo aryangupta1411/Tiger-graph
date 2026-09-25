@@ -1,0 +1,16 @@
+{
+ "query": "device_history",
+ "case": "HHG-014",
+ "params": {
+  "c": "C13487-K1",
+  "d": "SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080",
+  "as_of": "2016-11-22 20:11:00"
+ },
+ "expected": {
+  "prior_n": 2,
+  "first_ts": "2016-11-15 20:30:00",
+  "device_new_values": [
+   "New"
+  ]
+ }
+}

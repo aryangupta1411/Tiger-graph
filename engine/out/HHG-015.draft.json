@@ -1,0 +1,178 @@
+{
+  "case_id": "HHG-015",
+  "case": {
+    "status": "escalated",
+    "verdict": "uncertain",
+    "fraud_probability": 0.3,
+    "pattern": "account_takeover",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3462385",
+      "3462387",
+      "3462404",
+      "3464869"
+    ],
+    "first_suspicious_txn_id": "3462385",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 2140.94,
+    "evidence": [
+      {
+        "claim": "Amount $599.94 exceeds the card's prior maximum ($550.03); prior median $99.96",
+        "source": "graph",
+        "ref": "query:case_context(txn=3464869)",
+        "entity_ids": [
+          "3464869",
+          "C03042-K1"
+        ]
+      },
+      {
+        "claim": "Purchaser email domain anonymous.com used 17 times before on this card",
+        "source": "graph",
+        "ref": "query:case_context(txn=3464869)",
+        "entity_ids": [
+          "3464869"
+        ]
+      },
+      {
+        "claim": "Mixed-channel chain of 4 transactions worth $2,140.94 inside 48 h: in-person purchases up to $550.03 against a card median of $99.96, then online activity",
+        "source": "graph",
+        "ref": "query:episode_candidates(txn=3464869)",
+        "entity_ids": [
+          "3462385",
+          "3462387",
+          "3462404",
+          "3464869"
+        ]
+      },
+      {
+        "claim": "Online purchase of $599.94 from a device marked New for this account in billing region 327.0 the card has never used",
+        "source": "graph",
+        "ref": "query:case_context(txn=3464869)",
+        "entity_ids": [
+          "3464869",
+          "C03042-K1"
+        ]
+      },
+      {
+        "claim": "Case-memory scorer (LightGBM over the bank's 5,565 closed cases; October holdout AUC 0.956) puts the flagged transaction at 0.01 (calibrated 0.00); the real-time risk score was 0.77",
+        "source": "graph",
+        "ref": "query:case_context(txn=3464869)",
+        "entity_ids": [
+          "3464869"
+        ]
+      },
+      {
+        "claim": "2 prior confirmed-fraud case(s) on this card (card_not_present_new_device), most recent 2016-09-24; 1 within 120 days on the same channel",
+        "source": "graph",
+        "ref": "query:prior_cases_for_customer(customer=C03042)",
+        "entity_ids": [
+          "CC-0615",
+          "CC-3886",
+          "C03042-K1"
+        ]
+      },
+      {
+        "claim": "1 prior risk-score alert(s) on this card were cleared after the customer confirmed the activity (CC-1313); the cleared alert had the same shape as this one",
+        "source": "graph",
+        "ref": "query:prior_cases_for_customer(customer=C03042)",
+        "entity_ids": [
+          "CC-1313",
+          "C03042-K1"
+        ]
+      },
+      {
+        "claim": "Device profile `Trident/7.0 | Windows 8.1 | ie 11.0 for desktop | 1680x1050` is marked New for this account; a New device is not by itself a fraud signal in this history (cleared 'new phone' alerts are New-device ones)",
+        "source": "graph",
+        "ref": "query:case_context(txn=3464869)",
+        "entity_ids": [
+          "Trident/7.0 | Windows 8.1 | ie 11.0 for desktop | 1680x1050",
+          "3464869"
+        ]
+      },
+      {
+        "claim": "No reply within 24 hours / verification not completed (assumed); probability unchanged",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": []
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-3886",
+      "CC-1313",
+      "CC-0615",
+      "CC-1015",
+      "CC-1370",
+      "CC-1841"
+    ],
+    "summary": "Risk-score alert (0.77) on transaction 3464869 ($599.94, online) for card C03042-K1. Mixed-channel chain of 4 transactions worth $2,140.94 inside 48 h: in-person purchases up to $550.03 against a card median of $99.96, then online activity. Verdict uncertain at probability 0.30, pattern account_takeover, 4 affected transaction(s) worth $2,140.94. Final actions: CREATE_CASE, MONITOR_CARD, DECLINE_TRANSACTION, ESCALATE_TO_ANALYST after the assumed step_up_auth reply; status escalated.",
+    "written_to_graph": false,
+    "graph_case_id": "AC-HHG-015"
+  },
+  "evidence_requests": [
+    {
+      "type": "step_up_auth",
+      "asked_after_step": 15,
+      "assumed_response": "ASSUMED (simulated): step-up authentication was not completed within the window"
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: probability 0.30 reaches 0.30; case opened and written to the graph"
+      },
+      {
+        "action": "STEP_UP_AUTH",
+        "route": "auto",
+        "reason": "R1: probability 0.30 rests on a single evidence family (history); one-time passcode / app confirmation as a possession check before further activity before any block"
+      },
+      {
+        "action": "MONITOR_CARD",
+        "route": "auto",
+        "reason": "\u00a73b / \u00a75: verdict uncertain; raise monitoring for 72 h while the verification is pending"
+      },
+      {
+        "action": "ESCALATE_TO_ANALYST",
+        "route": "auto",
+        "reason": "R8: verdict uncertain and exposure $2,140.94 exceeds $500"
+      }
+    ],
+    "final": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: probability 0.30 reaches 0.30; case opened and written to the graph"
+      },
+      {
+        "action": "MONITOR_CARD",
+        "route": "auto",
+        "reason": "R4: no reply within 24 h; raise monitoring sensitivity for 72 h"
+      },
+      {
+        "action": "DECLINE_TRANSACTION",
+        "route": "L1",
+        "reason": "R4: no reply within 24 h; decline pending / further authorisations on this card (card stays active)"
+      },
+      {
+        "action": "ESCALATE_TO_ANALYST",
+        "route": "auto",
+        "reason": "R8: verdict uncertain and exposure $2,140.94 exceeds $500"
+      }
+    ],
+    "what_changed": "The assumed reply (step_up_auth: step-up authentication was not completed within the window) left the probability at 0.30 and the verdict became uncertain. Added DECLINE_TRANSACTION. Dropped STEP_UP_AUTH. Counterfactual: a passed step-up would have closed the alert (R3); a failed one would have led to BLOCK_CARD (R2)."
+  },
+  "sar": {
+    "file": false,
+    "reason": "3a not met: verdict uncertain (fraud not confirmed or strongly suspected), exposure $2,140.94; no report",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0.0,
+    "activity_dates": []
+  },
+  "stop_reason": "Policy \u00a76 test 3: the verification was not answered within the window; R4 applies (monitor + decline pending authorisations) and the case is escalated to an analyst (R8), so no further automated step would change the recommendation until a reply arrives.",
+  "tool_calls": 15,
+  "tokens": 0,
+  "latency_s": 0.06
+}

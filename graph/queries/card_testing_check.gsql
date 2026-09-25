@@ -1,0 +1,119 @@
+// card_testing_check — R5 detector on one card up to as_of.
+//   run{}: the best run of >= min_n online authorisations with amt <= small inside window_min minutes
+//          (best = most members; ties -> latest). Printed as a one-element GroupByAccum list keyed by the
+//          run's first TransactionID: run: [{start_id, ids[], amts[], start_ts, end_ts}] — [] when no run.
+//   larger_purchase{}: the LARGEST online purchase with amt > small in the lookahead_h hours after the run
+//          (ts <= as_of); id == "" when none.  cleared_over_big = larger_purchase.amt > big.
+//   chain{}: the <= 48 h-gap chain (all channels) containing the run's last transaction — or, without a run,
+//          the card's last transaction <= as_of — n_members and how many are online with amt <= small
+//          (the label rule in PLAN §4.4 needs >= 5 members and >= 1 sub-$5 member). The chain is scanned over
+//          a 45-day window ending at the anchor (heap capacity 8000 transactions).
+// Two-pointer scan over the sorted small-authorisation list is O(n); everything is bounded by the card.
+USE GRAPH FraudGraph
+CREATE OR REPLACE QUERY card_testing_check(VERTEX<Card> c, DATETIME as_of, FLOAT small, INT window_min, INT min_n,
+                                           FLOAT big, INT lookahead_h) FOR GRAPH FraudGraph SYNTAX v3 {
+  TYPEDEF TUPLE<INT ts_e, STRING id, FLOAT amt, STRING ts> Small;
+  TYPEDEF TUPLE<FLOAT amt, STRING id, STRING ts> Larger;
+  TYPEDEF TUPLE<INT ts_e, STRING id, STRING channel, FLOAT amt> Ev;
+  TYPEDEF TUPLE<INT n_members, INT n_small> Chain;
+  HeapAccum<Small>(3000, ts_e ASC, id ASC) @@small_heap;
+  ListAccum<Small> @@smalls;
+  GroupByAccum<STRING start_id, ListAccum<STRING> ids, ListAccum<FLOAT> amts, MinAccum<STRING> start_ts,
+               MaxAccum<STRING> end_ts> @@run;
+  MaxAccum<Larger> @@larger_purchase;
+  OrAccum @@cleared_over_big;
+  HeapAccum<Ev>(8000, ts_e ASC, id ASC) @@ev_heap;
+  ListAccum<Ev> @@evs;
+  MaxAccum<Chain> @@chain;
+  MaxAccum<INT> @@last_e;
+  MaxAccum<STRING> @@last_id;
+
+  S = {c};
+  T = SELECT t FROM (s:S)-[:MADE]->(t:Transaction)
+      WHERE t.ts <= as_of AND t.channel == "online" AND t.amt <= small
+      ACCUM @@small_heap += Small(datetime_to_epoch(t.ts), t.id, t.amt, t.ts_str);
+  WHILE @@small_heap.size() > 0 DO
+    @@smalls += @@small_heap.pop();
+  END;
+
+  // best run (two pointers over the chronological list)
+  INT n = @@smalls.size();
+  INT best_n = 0;
+  INT best_i = -1;
+  INT best_j = -1;
+  INT j = 0;
+  INT win = window_min * 60;
+  IF n > 0 THEN
+    FOREACH i IN RANGE[0, n - 1] DO
+      IF j < i THEN j = i; END;
+      WHILE j + 1 < n AND @@smalls.get(j + 1).ts_e - @@smalls.get(i).ts_e <= win DO
+        j = j + 1;
+      END;
+      IF j - i + 1 >= best_n THEN
+        best_n = j - i + 1;
+        best_i = i;
+        best_j = j;
+      END;
+    END;
+  END;
+
+  INT anchor_e = 0;
+  STRING anchor_id = "";
+  IF best_n >= min_n THEN
+    STRING start_id = @@smalls.get(best_i).id;
+    FOREACH k IN RANGE[best_i, best_j] DO
+      @@run += (start_id -> @@smalls.get(k).id, @@smalls.get(k).amt, @@smalls.get(k).ts, @@smalls.get(k).ts);
+    END;
+    anchor_e = @@smalls.get(best_j).ts_e;
+    anchor_id = @@smalls.get(best_j).id;
+    DATETIME run_end = epoch_to_datetime(anchor_e);
+    DATETIME look_to = epoch_to_datetime(anchor_e + lookahead_h * 3600);
+    L = SELECT t FROM (s:S)-[:MADE]->(t:Transaction)
+        WHERE t.ts > run_end AND t.ts <= look_to AND t.ts <= as_of AND t.channel == "online" AND t.amt > small
+        ACCUM @@larger_purchase += Larger(t.amt, t.id, t.ts_str),
+              IF t.amt > big THEN @@cleared_over_big += true END;
+  ELSE
+    // no run: anchor the chain on the card's last transaction <= as_of
+    Z = SELECT t FROM (s:S)-[:MADE]->(t:Transaction)
+        WHERE t.ts <= as_of
+        ACCUM @@last_e += datetime_to_epoch(t.ts);
+    Z2 = SELECT t FROM (s:S)-[:MADE]->(t:Transaction)
+         WHERE t.ts <= as_of AND datetime_to_epoch(t.ts) == @@last_e
+         ACCUM @@last_id += t.id;
+    anchor_e = @@last_e;
+    anchor_id = @@last_id;
+  END;
+
+  // chain containing the anchor: <= 48 h gaps, scanned over the 45 days ending at the anchor
+  INT n_members = 0;
+  INT n_small = 0;
+  IF anchor_id != "" THEN
+    DATETIME chain_from = epoch_to_datetime(anchor_e - 45 * 86400);
+    H = SELECT t FROM (s:S)-[:MADE]->(t:Transaction)
+        WHERE t.ts <= as_of AND t.ts >= chain_from
+        ACCUM @@ev_heap += Ev(datetime_to_epoch(t.ts), t.id, t.channel, t.amt);
+    WHILE @@ev_heap.size() > 0 DO
+      @@evs += @@ev_heap.pop();
+    END;
+    INT m = @@evs.size();
+    INT ai = -1;
+    FOREACH k IN RANGE[0, m - 1] DO
+      IF @@evs.get(k).id == anchor_id THEN ai = k; END;
+    END;
+    IF ai >= 0 THEN
+      INT lo = ai;
+      INT hi = ai;
+      WHILE lo > 0 AND @@evs.get(lo).ts_e - @@evs.get(lo - 1).ts_e <= 48 * 3600 DO lo = lo - 1; END;
+      WHILE hi + 1 < m AND @@evs.get(hi + 1).ts_e - @@evs.get(hi).ts_e <= 48 * 3600 DO hi = hi + 1; END;
+      FOREACH k IN RANGE[lo, hi] DO
+        n_members = n_members + 1;
+        IF @@evs.get(k).channel == "online" AND @@evs.get(k).amt <= small THEN n_small = n_small + 1; END;
+      END;
+    END;
+  END;
+  @@chain += Chain(n_members, n_small);
+
+  // `run` is a GSQL reserved word and cannot be used as a PRINT alias; printed as `best_run` and renamed
+  // back to the contract key `run` by the harness (agent/mcp_client.py _RENAME_KEYS).
+  PRINT @@run AS best_run, @@larger_purchase AS larger_purchase, @@cleared_over_big AS cleared_over_big, @@chain AS chain;
+}

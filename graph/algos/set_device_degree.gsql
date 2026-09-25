@@ -1,0 +1,21 @@
+USE GRAPH FraudGraph
+/*
+ graph/algos/set_device_degree.gsql — writes Card.device_degree = number of SHARES_DEVICE neighbours.
+ Fallback for tg_degree_cent(result_attribute="device_degree"): the library query stores a DOUBLE score via
+ setAttr(); if the server rejects DOUBLE -> INT at runtime (unverified until day 4), run_algos.py runs this
+ instead, which is exact and unnormalised. Also resets wcc_id to -1 for cards with no SHARES_DEVICE edge so
+ "isolated" is distinguishable from "component id 0".
+*/
+CREATE OR REPLACE QUERY set_device_degree(BOOL reset_isolated_wcc = TRUE) SYNTAX v3 {
+  SumAccum<INT> @@n_cards, @@n_with_edges;
+  MaxAccum<INT> @@max_degree;
+  cards = SELECT c FROM (c:Card)
+          POST-ACCUM
+            INT deg = c.outdegree("SHARES_DEVICE"),
+            c.device_degree = deg,
+            @@n_cards += 1,
+            @@max_degree += deg,
+            IF deg > 0 THEN @@n_with_edges += 1 END,
+            IF reset_isolated_wcc AND deg == 0 THEN c.wcc_id = -1 END;
+  PRINT @@n_cards AS n_cards, @@n_with_edges AS n_with_edges, @@max_degree AS max_degree;
+}

@@ -1,0 +1,79 @@
+USE GRAPH FraudGraph
+/*
+ similar_cases_structural - pure-graph fallback for similar_prior_cases (no vector index needed).
+ Used by rag.retrieval when /restpp/vector/status reports Rebuild_processing (freshly written AgentCase)
+ or when vectorSearch is unavailable. Same printed shape as similar_prior_cases; `@distance` is derived
+ from the overlap score so callers can sort uniformly (distance = 1 / (1 + score)).
+
+ Weights (research/gap4 recommendation): same_device 3.0, same_card 2.5, same_customer 2.0,
+ same_pattern 1.5, same_region 1.0, plus a recency bonus of up to 0.5 inside the 120-day window.
+*/
+// AgentCase rows use STRICT opened_at < as_of: the case under investigation (written at intake with opened_at =
+// as_of) and any later case are never returned as its own precedent.
+CREATE OR REPLACE QUERY similar_cases_structural(INT k, STRING card_id, STRING customer_id, STRING device_id,
+                                                 STRING addr1, STRING pattern_sig, DATETIME as_of)
+    FOR GRAPH FraudGraph SYNTAX v3 {
+  SumAccum<FLOAT> @score;
+  SetAccum<STRING> @overlap_reasons;
+  MaxAccum<STRING> @kind;
+  MaxAccum<STRING> @outcome_or_verdict;
+  MaxAccum<STRING> @pattern;
+  MaxAccum<FLOAT> @exposure_usd;
+  MaxAccum<STRING> @opened_at;   // datetime_format() string: contract wants YYYY-MM-DD HH:MM:SS
+  MinAccum<FLOAT> @distance;
+  INT window_s = 120 * 86400;
+
+  cc = SELECT c FROM (c:ClosedCase)
+       WHERE c.opened_at <= as_of AND datetime_diff(as_of, c.opened_at) <= window_s
+         AND ((card_id != "" AND c.card_id == card_id)
+           OR (customer_id != "" AND c.customer_id == customer_id)
+           OR (addr1 != "" AND c.note_region == addr1)
+           OR (pattern_sig != "" AND c.pattern == pattern_sig))
+       ACCUM
+         c.@kind += "closed", c.@outcome_or_verdict += c.outcome, c.@pattern += c.pattern,
+         c.@exposure_usd += c.exposure_usd, c.@opened_at += datetime_format(c.opened_at, "%Y-%m-%d %H:%M:%S"),
+         c.@score += 0.5 * (1.0 - datetime_diff(as_of, c.opened_at) * 1.0 / window_s),
+         IF card_id != "" AND c.card_id == card_id THEN c.@score += 2.5, c.@overlap_reasons += "same_card" END,
+         IF customer_id != "" AND c.customer_id == customer_id THEN c.@score += 2.0, c.@overlap_reasons += "same_customer" END,
+         IF addr1 != "" AND c.note_region == addr1 THEN c.@score += 1.0, c.@overlap_reasons += "same_region" END,
+         IF pattern_sig != "" AND c.pattern == pattern_sig THEN c.@score += 1.5, c.@overlap_reasons += "same_pattern" END;
+
+  ac = SELECT a FROM (a:AgentCase)
+       WHERE a.opened_at < as_of AND datetime_diff(as_of, a.opened_at) <= window_s
+         AND ((card_id != "" AND a.card_id == card_id)
+           OR (customer_id != "" AND a.customer_id == customer_id)
+           OR (pattern_sig != "" AND a.pattern == pattern_sig))
+       ACCUM
+         a.@kind += "agent", a.@outcome_or_verdict += a.verdict, a.@pattern += a.pattern,
+         a.@exposure_usd += a.exposure_usd, a.@opened_at += datetime_format(a.opened_at, "%Y-%m-%d %H:%M:%S"),
+         a.@score += 0.5 * (1.0 - datetime_diff(as_of, a.opened_at) * 1.0 / window_s),
+         IF card_id != "" AND a.card_id == card_id THEN a.@score += 2.5, a.@overlap_reasons += "same_card" END,
+         IF customer_id != "" AND a.customer_id == customer_id THEN a.@score += 2.0, a.@overlap_reasons += "same_customer" END,
+         IF pattern_sig != "" AND a.pattern == pattern_sig THEN a.@score += 1.5, a.@overlap_reasons += "same_pattern" END;
+
+  all_c = cc UNION ac;
+  IF device_id != "" THEN
+    // datetime_format() of the pattern's own anchor attribute (c.opened_at / a.opened_at) can't share an
+    // ACCUM clause with other statements on this multi-hop pattern (the compiler mis-scopes alias `d`), so
+    // it runs as a second, single-hop pass over the vertex set the first SELECT already produced.
+    cd = SELECT c FROM (d:DeviceProfile WHERE d.id == device_id)<-[:FROM_DEVICE]-(t:Transaction)<-[:INVOLVES]-(c:ClosedCase)
+         WHERE c.opened_at <= as_of AND datetime_diff(as_of, c.opened_at) <= window_s
+         ACCUM c.@score += 3.0, c.@overlap_reasons += "same_device", c.@kind += "closed",
+               c.@outcome_or_verdict += c.outcome, c.@pattern += c.pattern, c.@exposure_usd += c.exposure_usd;
+    cd = SELECT c FROM (c:cd)
+         POST-ACCUM c.@opened_at += datetime_format(c.opened_at, "%Y-%m-%d %H:%M:%S");
+    ad = SELECT a FROM (d:DeviceProfile WHERE d.id == device_id)<-[:CASE_DEVICE]-(a:AgentCase)
+         WHERE a.opened_at < as_of AND datetime_diff(as_of, a.opened_at) <= window_s
+         ACCUM a.@score += 3.0, a.@overlap_reasons += "same_device", a.@kind += "agent",
+               a.@outcome_or_verdict += a.verdict, a.@pattern += a.pattern, a.@exposure_usd += a.exposure_usd;
+    ad = SELECT a FROM (a:ad)
+         POST-ACCUM a.@opened_at += datetime_format(a.opened_at, "%Y-%m-%d %H:%M:%S");
+    all_c = all_c UNION cd UNION ad;
+  END;
+
+  res = SELECT x FROM (x:all_c) ACCUM x.@distance += 1.0 / (1.0 + x.@score)
+        ORDER BY x.@score DESC LIMIT k;
+  PRINT res[res.@kind, res.@outcome_or_verdict, res.@pattern, res.@exposure_usd, res.@opened_at,
+            res.@distance, res.@overlap_reasons, res.@score] AS cases;
+}
+INSTALL QUERY similar_cases_structural

@@ -1,0 +1,16 @@
+{
+  "sdn.csv": {
+    "url": "https://www.treasury.gov/ofac/downloads/sdn.csv",
+    "ok": true,
+    "sha256": "2739bd07a7401aa19930b959e3665772b900924fd54a0d63fd41d20d459f9dce",
+    "bytes": 5695725,
+    "fetched_at": "2026-09-23T13:45:40Z"
+  },
+  "alt.csv": {
+    "url": "https://www.treasury.gov/ofac/downloads/alt.csv",
+    "ok": true,
+    "sha256": "c19a3cdcab83dec2c637103ed24c7bff84340c180b90a9eda3cbee8fa1b279c2",
+    "bytes": 1064228,
+    "fetched_at": "2026-09-23T13:45:44Z"
+  }
+}

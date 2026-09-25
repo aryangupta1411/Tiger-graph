@@ -1,0 +1,5 @@
+// install_all.gsql — run once after every CREATE OR REPLACE batch (graph/install_all.py concatenates the
+// query files, sends them through pyTigerGraph conn.gsql() and then sends this file). One compile for the
+// whole library (1–3 min on TG-00) instead of one per query.
+USE GRAPH FraudGraph
+INSTALL QUERY ALL

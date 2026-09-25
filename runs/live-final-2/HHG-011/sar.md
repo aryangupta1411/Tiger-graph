@@ -1,0 +1,1 @@
+No SAR. R2 / 3a not met: the customer denied the transaction, but exposure $131.30 <= $1,000; the New profile `SM-G610F Build/NRD90M | NULL | chrome 66.0 for android | NULL` is a common, non-distinctive profile (not a strong device profile), so it is not a shared-origin signal; no other card's fraud connected; documented pattern; no report

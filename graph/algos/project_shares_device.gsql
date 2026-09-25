@@ -1,0 +1,59 @@
+USE GRAPH FraudGraph
+/*
+ graph/algos/project_shares_device.gsql — projects the undirected Card–Card edge SHARES_DEVICE
+ (contracts/schema.md: n_shared INT, weight FLOAT, via STRING) over STRONG device profiles only.
+
+ Rule (PLAN §3.4): two cards share a device when they both made an ONLINE transaction from the same
+ DeviceProfile with is_strong == true (device_info present, >= 3 of 4 fields, n_cards_alltime <= 60,
+ 2 <= n_cards_30d <= 40). Generic profiles ("Windows | Windows 10 | chrome 63.0 | 1920x1080", 842 cards)
+ never project an edge, so the projection is 109,507 edges over 3,703 cards (DuckDB, 20-graph.md
+ Verification §3), not a 14k-card hairball. WCC over it still yields one 3,687-card component: hub
+ profiles (<= 60 cards each) bridge everything — reported honestly, the ring rule stays profile-centric.
+
+   n_shared = number of strong profiles the pair shares
+   weight   = sum over shared profiles of 1 / max(n_cards_alltime - 1, 1)   (inverse fan-out)
+   via      = the shared profile with the most confirmed-fraud closed cases (ties: lexically largest id)
+
+ Both orientations (a,b) and (b,a) are accumulated and inserted; the edge is UNDIRECTED so the second
+ INSERT is an idempotent upsert of the same edge with identical attributes. Re-running the query is safe
+ after graph/algos/clear_shares_device.gsql (run_algos.py does that first).
+ Runs offline through pyTigerGraph runInstalledQuery(..., timeout=600000) — never through the MCP.
+*/
+CREATE OR REPLACE QUERY project_shares_device(INT max_cards_per_profile = 60, BOOL do_insert = TRUE) SYNTAX v3 {
+  TYPEDEF TUPLE<VERTEX<Card> a, VERTEX<Card> b> CardPair;
+  SetAccum<VERTEX<Card>> @cards;
+  MapAccum<CardPair, SumAccum<INT>>   @@n_shared;
+  MapAccum<CardPair, SumAccum<FLOAT>> @@weight;
+  MapAccum<CardPair, MaxAccum<STRING>> @@via_key;   // "<1000+n_fraud_cases>|<profile id>" so MAX = most fraud
+  SumAccum<INT> @@n_profiles_used, @@n_pairs, @@n_inserted;
+
+  // strong profile -> its online transactions -> the cards that made them
+  profiles = SELECT d
+             FROM (d:DeviceProfile)-[:REV_FROM_DEVICE]->(t:Transaction)-[:REV_MADE]->(c:Card)
+             WHERE d.is_strong == TRUE AND t.channel == "online"
+             ACCUM d.@cards += c
+             POST-ACCUM
+               IF d.@cards.size() >= 2 AND d.@cards.size() <= max_cards_per_profile THEN
+                 @@n_profiles_used += 1,
+                 FOREACH a IN d.@cards DO
+                   FOREACH b IN d.@cards DO
+                     IF a != b THEN
+                       @@n_shared += (CardPair(a, b) -> 1),
+                       @@weight   += (CardPair(a, b) -> 1.0 / (d.n_cards_alltime - 1)),   // n_cards_alltime >= @cards.size() >= 2
+                       @@via_key  += (CardPair(a, b) -> to_string(1000 + d.n_fraud_cases) + "|" + d.id)
+                     END
+                   END
+                 END
+               END;
+
+  @@n_pairs = @@n_shared.size();
+  IF do_insert THEN
+    FOREACH (p, n) IN @@n_shared DO
+      INSERT INTO SHARES_DEVICE (FROM, TO, n_shared, weight, via)
+        VALUES (p.a, p.b, n, @@weight.get(p), substr(@@via_key.get(p), 5, 4096));
+      @@n_inserted += 1;
+    END;
+  END;
+
+  PRINT @@n_profiles_used AS n_profiles_used, @@n_pairs AS n_ordered_pairs, @@n_inserted AS n_inserts;
+}

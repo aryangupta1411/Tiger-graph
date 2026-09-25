@@ -1,0 +1,176 @@
+{
+  "case_id": "HHG-016",
+  "case": {
+    "status": "open",
+    "verdict": "fraud",
+    "fraud_probability": 0.77,
+    "pattern": "card_not_present_new_device",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3534820"
+    ],
+    "first_suspicious_txn_id": "3534820",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 59.67,
+    "evidence": [
+      {
+        "claim": "Customer C09988 denies making the $59.67 purchase 3534820, stating 'I never made this $59.67 purchase.'",
+        "source": "customer",
+        "ref": "trigger",
+        "entity_ids": [
+          "3534820",
+          "C09988"
+        ]
+      },
+      {
+        "claim": "The case-memory scorer rates transaction 3534820 at cms_p=0.4463 (calibrated to cal_p=0.5259 by the denial floor), versus a real-time risk_score of 0.37, on card C09988-K1's 49th transaction (48 prior transactions).",
+        "source": "graph",
+        "ref": "query:case_context(t=3534820, as_of=2016-12-12 01:39:08)",
+        "entity_ids": [
+          "3534820",
+          "C09988-K1"
+        ]
+      },
+      {
+        "claim": "recurring_charge_check on transaction 3534820 (tolerance 1%, as of opening) returned 0 matching groups out of 0 candidates, so the R7 recurring-pattern exception to blocking does not apply.",
+        "source": "graph",
+        "ref": "query:recurring_charge_check(t=3534820, tol=0.01, as_of=2016-12-12 01:39:08)",
+        "entity_ids": [
+          "3534820"
+        ]
+      },
+      {
+        "claim": "find_similar_cases returned 8 closed cases (CC-3491, CC-5057, CC-2694, CC-2898, CC-2540, CC-3580, CC-2675, CC-2732), all overlapping on the same device profile and all resolved as confirmed_fraud with pattern card_not_present_new_device.",
+        "source": "graph",
+        "ref": "query:find_similar_cases(card_id=C09988-K1, device_id=Windows | NULL | edge 16.0 | NULL, as_of=2016-12-12 01:39:08)",
+        "entity_ids": [
+          "CC-3491",
+          "CC-5057",
+          "CC-2694",
+          "CC-2898",
+          "CC-2540",
+          "CC-3580",
+          "CC-2675",
+          "CC-2732"
+        ]
+      },
+      {
+        "claim": "device_history shows the device profile Windows | NULL | edge 16.0 | NULL has prior_n=1 use on card C09988-K1 with first_ts equal to the flagged transaction's own timestamp (2016-12-11 22:39:08), i.e. it is the first-ever use of this profile on this card, flagged device_new=New.",
+        "source": "graph",
+        "ref": "query:device_history(c=C09988-K1, d=Windows | NULL | edge 16.0 | NULL, as_of=2016-12-12 01:39:08)",
+        "entity_ids": [
+          "C09988-K1",
+          "Windows | NULL | edge 16.0 | NULL",
+          "3534820"
+        ]
+      },
+      {
+        "claim": "card_testing_check found only 1 chain member with 0 small (<$5) authorizations and under_threshold_burst found 0 bursts on card C09988-K1, ruling out both the card-testing and just-under-$500 burst shapes.",
+        "source": "graph",
+        "ref": "query:card_testing_check(c=C09988-K1, as_of=2016-12-12 01:39:08); query:under_threshold_burst(c=C09988-K1, as_of=2016-12-12 01:39:08)",
+        "entity_ids": [
+          "C09988-K1"
+        ]
+      },
+      {
+        "claim": "The flagged amount of $59.67 falls inside the card's own baseline as of opening: prior median $37.75 and prior maximum $94.70 across 48 prior transactions, so amount alone is not the anomaly here.",
+        "source": "graph",
+        "ref": "query:case_context(t=3534820, as_of=2016-12-12 01:39:08)",
+        "entity_ids": [
+          "3534820",
+          "C09988-K1"
+        ]
+      },
+      {
+        "claim": "card_window (72h pre-open) shows the card was dormant for roughly 21 days before the flagged transaction, with no other online or in-person activity in that window.",
+        "source": "graph",
+        "ref": "query:card_window(c=C09988-K1, from_ts=2016-12-08 22:39:08, to_ts=2016-12-12 01:39:08)",
+        "entity_ids": [
+          "3534820",
+          "C09988-K1"
+        ]
+      },
+      {
+        "claim": "Assumed reply: step-up authentication was not completed within the window",
+        "source": "external",
+        "ref": "evidence_request:1",
+        "entity_ids": [
+          "3534820"
+        ]
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-3491",
+      "CC-5057",
+      "CC-2694",
+      "CC-2898",
+      "CC-2540",
+      "CC-3580"
+    ],
+    "summary": "Verdict: fraud, probability 0.77. Card C09988-K1's customer denies the sole $59.67 online transaction 3534820 (card_not_present_new_device, new device profile); episode exposure is $59.67. Decisive evidence: the denial plus 6+ closed cases on the same device profile all confirmed as this pattern, with no R7 recurring match to excuse it. An assumed inconclusive step-up reply leaves probability unchanged, so MONITOR_CARD and DECLINE_TRANSACTION (auto/L1) apply now, with BLOCK_CARD recommended for L1 approval.",
+    "written_to_graph": true,
+    "graph_case_id": "AC-HHG-016"
+  },
+  "evidence_requests": [
+    {
+      "type": "step_up_auth",
+      "asked_after_step": 21,
+      "assumed_response": "ASSUMED (simulated): step-up authentication was not completed within the window"
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a/R2: the customer's dispute of the $59.67 charge opens a case, and the denial on card C09988-K1 with no R7 recurring-pattern match invokes R2."
+      },
+      {
+        "action": "STEP_UP_AUTH",
+        "route": "auto",
+        "reason": "§3b: probability 0.77 sits in the 0.70–0.85 band, so a step-up authentication request is recommended per §5 to confirm whether any further activity belongs to the episode before the block is executed."
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2/§3b: the customer denied transaction 3534820 on card C09988-K1 and exposure of $59.67 is ≤ $2,500, so BLOCK_CARD is recommended for team-lead approval."
+      }
+    ],
+    "final": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a/R2: the customer's denial of the $59.67 charge on card C09988-K1, with no R7 recurring-pattern match, opens a case."
+      },
+      {
+        "action": "MONITOR_CARD",
+        "route": "auto",
+        "reason": "R4: the step-up authentication request came back inconclusive within the reply window, so the card is placed under monitoring pending resolution."
+      },
+      {
+        "action": "DECLINE_TRANSACTION",
+        "route": "L1",
+        "reason": "R4: no conclusive reply to the step-up request, so declining any pending authorization on card C09988-K1 is recommended for approval."
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2/§3b: the customer denied transaction 3534820 and exposure of $59.67 is ≤ $2,500, so BLOCK_CARD is recommended for team-lead approval."
+      }
+    ],
+    "what_changed": "The assumed step up auth reply (inconclusive) left the probability at 0.77 and kept the verdict fraud, adding MONITOR_CARD, DECLINE_TRANSACTION, removing STEP_UP_AUTH. Counterfactual: a passed step-up would have closed the alert (R3); a failed one would have led to BLOCK_CARD (R2)."
+  },
+  "sar": {
+    "file": false,
+    "reason": "3a not met: exposure $59.67 <= $1,000; the New profile `Windows | NULL | edge 16.0 | NULL` is a common, non-distinctive profile (not a strong device profile), so it is not a shared-origin signal; no shared region cluster; no other customer's fraud connected; documented pattern",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "Policy §6 test 3 fired: the step-up verification was not completed within the window and the probability stayed at 0.77, so no further automated evidence step would change the fraud-band recommendation already in force.",
+  "tool_calls": 21,
+  "tokens": 264901,
+  "latency_s": 148.1
+}

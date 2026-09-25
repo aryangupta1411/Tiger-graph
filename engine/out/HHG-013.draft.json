@@ -1,0 +1,139 @@
+{
+  "case_id": "HHG-013",
+  "case": {
+    "status": "closed_legitimate",
+    "verdict": "legitimate",
+    "fraud_probability": 0.09,
+    "pattern": "none",
+    "pattern_description": "",
+    "affected_txn_ids": [],
+    "first_suspicious_txn_id": "",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 0.0,
+    "evidence": [
+      {
+        "claim": "Amount $35.66 sits inside the card's baseline (prior median $59.08, prior maximum $3,891.01 over 1431 transactions)",
+        "source": "graph",
+        "ref": "query:case_context(txn=3526826)",
+        "entity_ids": [
+          "3526826",
+          "C07671-K2"
+        ]
+      },
+      {
+        "claim": "Purchaser email domain gmail.com used 674 times before on this card",
+        "source": "graph",
+        "ref": "query:case_context(txn=3526826)",
+        "entity_ids": [
+          "3526826"
+        ]
+      },
+      {
+        "claim": "Case-memory scorer (LightGBM over the bank's 5,565 closed cases; October holdout AUC 0.956) puts the flagged transaction at 0.04 (calibrated 0.06); the real-time risk score was 0.76",
+        "source": "graph",
+        "ref": "query:case_context(txn=3526826)",
+        "entity_ids": [
+          "3526826"
+        ]
+      },
+      {
+        "claim": "3 prior confirmed-fraud case(s) on this card (account_takeover, card_not_present_new_device), most recent 2016-10-03; 1 within 120 days on the same channel",
+        "source": "graph",
+        "ref": "query:prior_cases_for_customer(customer=C07671)",
+        "entity_ids": [
+          "CC-1475",
+          "CC-3216",
+          "CC-4294",
+          "C07671-K2"
+        ]
+      },
+      {
+        "claim": "1 prior risk-score alert(s) on this card were cleared after the customer confirmed the activity (CC-3761); that alert was a different shape (amount), so it is a weak precedent",
+        "source": "graph",
+        "ref": "query:prior_cases_for_customer(customer=C07671)",
+        "entity_ids": [
+          "CC-3761",
+          "C07671-K2"
+        ]
+      },
+      {
+        "claim": "Customer confirmed the activity when asked (assumed reply)",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": []
+      },
+      {
+        "claim": "Device profile `Windows | NULL | chrome 66.0 | NULL` is marked New for this account; the profile is generic (266 cards use it) and is not a shared-origin signal; a New device is not by itself a fraud signal in this history (cleared 'new phone' alerts are New-device ones)",
+        "source": "graph",
+        "ref": "query:case_context(txn=3526826)",
+        "entity_ids": [
+          "Windows | NULL | chrome 66.0 | NULL",
+          "3526826"
+        ]
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-4294",
+      "CC-3761",
+      "CC-3216",
+      "CC-1475",
+      "CC-3211",
+      "CC-3384"
+    ],
+    "summary": "Risk-score alert (0.76) on transaction 3526826 ($35.66, online) for card C07671-K2. Customer confirmed the activity when asked (assumed reply). Verdict legitimate at probability 0.09. Final actions: CREATE_CASE, ALLOW_TRANSACTION, CLOSE_NO_FRAUD after the assumed customer_validation reply; status closed_legitimate.",
+    "written_to_graph": false,
+    "graph_case_id": "AC-HHG-013"
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 15,
+      "assumed_response": "ASSUMED (simulated): customer confirmed the purchase from a new phone/device and recognises the $35.66 charge"
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: evidence requested; case opened and written to the graph"
+      },
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1: probability 0.09 rests on a single evidence family (history); ask the cardholder which of the transactions were theirs before any block"
+      }
+    ],
+    "final": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: evidence requested; case opened and written to the graph"
+      },
+      {
+        "action": "ALLOW_TRANSACTION",
+        "route": "auto",
+        "reason": "R3: alert cleared; let the flagged transaction stand"
+      },
+      {
+        "action": "CLOSE_NO_FRAUD",
+        "route": "auto",
+        "reason": "R3: customer confirmed the activity; the confirmation is noted in the case"
+      }
+    ],
+    "what_changed": "The assumed reply (customer_validation: customer confirmed the purchase from a new phone/device and recognises the $35.66 charge) left the probability at 0.09 and the verdict became legitimate. Added ALLOW_TRANSACTION, CLOSE_NO_FRAUD. Dropped VERIFY_WITH_CUSTOMER. Counterfactual: had the customer denied the purchase, R2 would have applied: BLOCK_CARD (L1) and CREATE_CASE."
+  },
+  "sar": {
+    "file": false,
+    "reason": "3a not met: verdict legitimate (fraud not confirmed or strongly suspected), exposure $0.00; no report",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0.0,
+    "activity_dates": []
+  },
+  "stop_reason": "Policy \u00a76 test 2: the assumed customer confirmation settled the question. Probability 0.09 with 2 families also meets \u00a76 test 1.",
+  "tool_calls": 15,
+  "tokens": 0,
+  "latency_s": 0.06
+}

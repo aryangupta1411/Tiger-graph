@@ -1,0 +1,151 @@
+{
+  "case_id": "HHG-019",
+  "case": {
+    "status": "open",
+    "verdict": "fraud",
+    "fraud_probability": 0.77,
+    "pattern": "card_not_present_new_device",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3503878"
+    ],
+    "first_suspicious_txn_id": "3503878",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 99.92,
+    "evidence": [
+      {
+        "claim": "Amount $99.92 sits inside the card's baseline (prior median $116.92, prior maximum $1,586.94 over 219 transactions)",
+        "source": "graph",
+        "ref": "query:case_context(txn=3503878)",
+        "entity_ids": [
+          "3503878",
+          "C07987-K2"
+        ]
+      },
+      {
+        "claim": "Purchaser email domain verizon.net used 3 times before on this card",
+        "source": "graph",
+        "ref": "query:case_context(txn=3503878)",
+        "entity_ids": [
+          "3503878"
+        ]
+      },
+      {
+        "claim": "Case-memory scorer (LightGBM over the bank's 5,565 closed cases; October holdout AUC 0.956) puts the flagged transaction at 0.85 (calibrated 0.77); the real-time risk score was 0.90",
+        "source": "graph",
+        "ref": "query:case_context(txn=3503878)",
+        "entity_ids": [
+          "3503878"
+        ]
+      },
+      {
+        "claim": "3 prior confirmed-fraud case(s) on this card (card_not_present_fraud, out_of_region_use), most recent 2016-10-19; 1 within 120 days on the same channel",
+        "source": "graph",
+        "ref": "query:prior_cases_for_customer(customer=C07987)",
+        "entity_ids": [
+          "CC-2011",
+          "CC-2860",
+          "CC-5026",
+          "C07987-K2"
+        ]
+      },
+      {
+        "claim": "1 prior risk-score alert(s) on this card were cleared after the customer confirmed the activity (CC-2087); the cleared alert had the same shape as this one",
+        "source": "graph",
+        "ref": "query:prior_cases_for_customer(customer=C07987)",
+        "entity_ids": [
+          "CC-2087",
+          "C07987-K2"
+        ]
+      },
+      {
+        "claim": "Device profile `Windows | other | chrome 61.0 | 1280x720` is marked New for this account; a New device is not by itself a fraud signal in this history (cleared 'new phone' alerts are New-device ones)",
+        "source": "graph",
+        "ref": "query:case_context(txn=3503878)",
+        "entity_ids": [
+          "Windows | other | chrome 61.0 | 1280x720",
+          "3503878"
+        ]
+      },
+      {
+        "claim": "No reply within 24 hours / verification not completed (assumed); probability unchanged",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": []
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-5026",
+      "CC-2860",
+      "CC-2087",
+      "CC-2011",
+      "CC-0066",
+      "CC-2616"
+    ],
+    "summary": "Risk-score alert (0.90) on transaction 3503878 ($99.92, online) for card C07987-K2. Case-memory scorer (LightGBM over the bank's 5,565 closed cases; October holdout AUC 0.956) puts the flagged transaction at 0.85 (calibrated 0.77); the real-time risk score was 0.90. Verdict fraud at probability 0.77, pattern card_not_present_new_device, 1 affected transaction(s) worth $99.92. Final actions: CREATE_CASE, MONITOR_CARD, DECLINE_TRANSACTION, BLOCK_CARD after the assumed step_up_auth reply; status open.",
+    "written_to_graph": false,
+    "graph_case_id": "AC-HHG-019"
+  },
+  "evidence_requests": [
+    {
+      "type": "step_up_auth",
+      "asked_after_step": 15,
+      "assumed_response": "ASSUMED (simulated): step-up authentication was not completed within the window"
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: probability 0.77 reaches 0.30; case opened and written to the graph"
+      },
+      {
+        "action": "STEP_UP_AUTH",
+        "route": "auto",
+        "reason": "\u00a73b / \u00a75: probability 0.77 is below the \u00a76 stop threshold of 0.85; one-time passcode / app confirmation as a possession check before further activity"
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "\u00a73b: fraud verdict at probability 0.77 with 1 independent evidence family (memory), so R1 does not apply (probability at or above 0.70); exposure $99.92 routes L1"
+      }
+    ],
+    "final": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: probability 0.77 reaches 0.30; case opened and written to the graph"
+      },
+      {
+        "action": "MONITOR_CARD",
+        "route": "auto",
+        "reason": "R4: no reply within 24 h; raise monitoring sensitivity for 72 h"
+      },
+      {
+        "action": "DECLINE_TRANSACTION",
+        "route": "L1",
+        "reason": "R4: no reply within 24 h; decline pending / further authorisations on this card (card stays active)"
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "\u00a73b: fraud verdict at probability 0.77 with 1 independent evidence family (memory), so R1 does not apply (probability at or above 0.70); exposure $99.92 routes L1"
+      }
+    ],
+    "what_changed": "The assumed reply (step_up_auth: step-up authentication was not completed within the window) left the probability at 0.77 and the verdict became fraud. Added MONITOR_CARD, DECLINE_TRANSACTION. Dropped STEP_UP_AUTH. Counterfactual: a passed step-up would have closed the alert (R3); a failed one would have led to BLOCK_CARD (R2)."
+  },
+  "sar": {
+    "file": false,
+    "reason": "3a not met: exposure $99.92 <= $1,000; the New profile `Windows | other | chrome 61.0 | 1280x720` is used by 3 cards (this one included) in the 30 days before the case opened, with no fraud linkage strong enough to be a shared-origin signal; no shared region cluster; no other customer's fraud connected; documented pattern",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0.0,
+    "activity_dates": []
+  },
+  "stop_reason": "Policy \u00a76 test 3: the verification was not completed within the window and the probability stayed at 0.77; the fraud-band actions (block pending approval) already apply, so no further automated step would change the recommendation.",
+  "tool_calls": 15,
+  "tokens": 0,
+  "latency_s": 0.06
+}

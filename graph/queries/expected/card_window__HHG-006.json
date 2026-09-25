@@ -1,0 +1,132 @@
+{
+ "query": "card_window",
+ "case": "HHG-006",
+ "params": {
+  "c": "C07297-K1",
+  "from_ts": "2016-11-20 02:30:00",
+  "to_ts": "2016-11-22 02:30:00",
+  "max_rows": 60
+ },
+ "expected": {
+  "txns": [
+   {
+    "id": "3473012",
+    "ts": "2016-11-20 14:22:12",
+    "amt": 262.04,
+    "product_cd": "W",
+    "channel": "in_person",
+    "addr1": "191.0",
+    "p_email": "anonymous.com",
+    "r_email": "",
+    "risk_score": 0.13,
+    "cms_p": 0.001641,
+    "device_id": "",
+    "device_new": "",
+    "proxy": "",
+    "gap_seconds": 130734
+   },
+   {
+    "id": "3474057",
+    "ts": "2016-11-20 20:26:28",
+    "amt": 226.02,
+    "product_cd": "W",
+    "channel": "in_person",
+    "addr1": "264.0",
+    "p_email": "gmail.com",
+    "r_email": "",
+    "risk_score": 0.15,
+    "cms_p": 0.007823,
+    "device_id": "",
+    "device_new": "",
+    "proxy": "",
+    "gap_seconds": 21856
+   },
+   {
+    "id": "3476602",
+    "ts": "2016-11-21 20:00:00",
+    "amt": 478.95,
+    "product_cd": "C",
+    "channel": "online",
+    "addr1": "264.0",
+    "p_email": "gmail.com",
+    "r_email": "",
+    "risk_score": 0.26,
+    "cms_p": 0.012811,
+    "device_id": "Trident/7.0 | Windows 7 | ie 11.0 for desktop | 1920x1080",
+    "device_new": "New",
+    "proxy": "",
+    "gap_seconds": 84812
+   },
+   {
+    "id": "3476633",
+    "ts": "2016-11-21 20:10:00",
+    "amt": 456.96,
+    "product_cd": "C",
+    "channel": "online",
+    "addr1": "476.0",
+    "p_email": "yahoo.com",
+    "r_email": "yahoo.com",
+    "risk_score": 0.14,
+    "cms_p": 0.087679,
+    "device_id": "iOS Device | iOS 11.2.1 | mobile safari 11.0 | 2208x1242",
+    "device_new": "New",
+    "proxy": "IP_PROXY:TRANSPARENT",
+    "gap_seconds": 600
+   },
+   {
+    "id": "3476665",
+    "ts": "2016-11-21 20:24:00",
+    "amt": 488.04,
+    "product_cd": "C",
+    "channel": "online",
+    "addr1": "476.0",
+    "p_email": "yahoo.com",
+    "r_email": "yahoo.com",
+    "risk_score": 0.12,
+    "cms_p": 0.086402,
+    "device_id": "iOS Device | iOS 11.2.1 | mobile safari 11.0 | 2208x1242",
+    "device_new": "New",
+    "proxy": "IP_PROXY:TRANSPARENT",
+    "gap_seconds": 840
+   },
+   {
+    "id": "3476682",
+    "ts": "2016-11-21 20:30:00",
+    "amt": 482.12,
+    "product_cd": "C",
+    "channel": "online",
+    "addr1": "264.0",
+    "p_email": "gmail.com",
+    "r_email": "",
+    "risk_score": 0.25,
+    "cms_p": 0.012555,
+    "device_id": "Trident/7.0 | Windows 7 | ie 11.0 for desktop | 1920x1080",
+    "device_new": "New",
+    "proxy": "",
+    "gap_seconds": 360
+   },
+   {
+    "id": "3477578",
+    "ts": "2016-11-22 02:07:04",
+    "amt": 82.97,
+    "product_cd": "W",
+    "channel": "in_person",
+    "addr1": "315.0",
+    "p_email": "gmail.com",
+    "r_email": "",
+    "risk_score": 0.04,
+    "cms_p": 0.001288,
+    "device_id": "",
+    "device_new": "",
+    "proxy": "",
+    "gap_seconds": 20224
+   }
+  ],
+  "summary": {
+   "n": 7,
+   "sum_amt": 2477.1,
+   "n_online": 4,
+   "n_in_person": 3
+  }
+ }
+}

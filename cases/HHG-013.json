@@ -1,0 +1,146 @@
+{
+  "case_id": "HHG-013",
+  "case": {
+    "status": "closed_legitimate",
+    "verdict": "legitimate",
+    "fraud_probability": 0.09,
+    "pattern": "none",
+    "pattern_description": "",
+    "affected_txn_ids": [],
+    "first_suspicious_txn_id": "",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 0.0,
+    "evidence": [
+      {
+        "claim": "The flagged transaction ($35.66) falls below the card's prior median amount ($59.08) and far below its prior maximum ($3,891.01) over 1,431 prior transactions as of opening.",
+        "source": "graph",
+        "ref": "query:case_context(txn=3526826)",
+        "entity_ids": [
+          "3526826",
+          "C07671-K2"
+        ]
+      },
+      {
+        "claim": "The online device profile 'Windows | NULL | chrome 66.0 | NULL' is New on this card (device_history prior_n=1, first_ts=2016-12-09 02:39:29) but is a generic profile used by 266 cards all-time and in the last 30 days, so it is not shared-origin evidence.",
+        "source": "graph",
+        "ref": "query:device_history(c=C07671-K2, d=Windows | NULL | chrome 66.0 | NULL, as_of=2016-12-09 05:39:29)",
+        "entity_ids": [
+          "Windows | NULL | chrome 66.0 | NULL",
+          "C07671-K2"
+        ]
+      },
+      {
+        "claim": "Case-memory calibration scores the flagged transaction at cms_p=0.0448 (cal_p=0.0555, p_engine=0.0883), far below the real-time risk_score of 0.76, indicating the bank's closed-case history does not support this shape as fraud.",
+        "source": "graph",
+        "ref": "query:case_context(txn=3526826)",
+        "entity_ids": [
+          "3526826"
+        ]
+      },
+      {
+        "claim": "card_testing_check over the card's chain found no run of >=3 small (<$5) online authorizations before a larger purchase (chain n_small=0 of 438 members), ruling out the card_testing pattern.",
+        "source": "graph",
+        "ref": "query:card_testing_check(c=C07671-K2, as_of=2016-12-09 05:39:29, small=5, window_min=60, min_n=3, big=100, lookahead_h=48)",
+        "entity_ids": [
+          "C07671-K2"
+        ]
+      },
+      {
+        "claim": "under_threshold_burst found no cluster of $450-$499.99 online purchases on this card, ruling out the undocumented just-under-$500 burst shape.",
+        "source": "graph",
+        "ref": "query:under_threshold_burst(c=C07671-K2, as_of=2016-12-09 05:39:29)",
+        "entity_ids": [
+          "C07671-K2"
+        ]
+      },
+      {
+        "claim": "Three prior closed cases on this card were confirmed fraud (CC-1475 account_takeover $1,307.98, CC-3216 card_not_present_new_device $449.97, CC-4294 account_takeover $506.01), the most recent opened 2016-10-03, showing repeated compromise history on this account.",
+        "source": "graph",
+        "ref": "query:prior_cases_for_customer(customer=C07671, as_of=2016-12-09 05:39:29)",
+        "entity_ids": [
+          "CC-1475",
+          "CC-3216",
+          "CC-4294",
+          "C07671-K2"
+        ]
+      },
+      {
+        "claim": "One prior risk-score alert on this card, CC-3761 (opened 2016-09-21), was cleared with exposure $0 after confirmation, showing that not every high-risk-score alert on this card has been fraud.",
+        "source": "graph",
+        "ref": "query:prior_cases_for_customer(customer=C07671, as_of=2016-12-09 05:39:29)",
+        "entity_ids": [
+          "CC-3761",
+          "C07671-K2"
+        ]
+      },
+      {
+        "claim": "Assumed reply: customer confirmed the purchase from a new phone/device and recognises the $35.66 charge",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": [
+          "3526826"
+        ]
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-3761",
+      "CC-3216",
+      "CC-4294"
+    ],
+    "summary": "Verdict legitimate at probability 0.09: the $35.66 online purchase on a new but generic device (266 cards, no shared-origin signal) sat within the card's normal baseline, with case-memory calibration (cms_p 0.04) far below the triggering risk score of 0.76. No episode was formed and exposure is $0. A customer_validation request was sent given three prior confirmed-fraud cases on this card; the assumed reply confirmed the charge, so ALLOW_TRANSACTION and CLOSE_NO_FRAUD are recommended (auto), with CREATE_CASE kept on record; a denial would instead have triggered R2 (BLOCK_CARD/L1, CREATE_CASE).",
+    "written_to_graph": true,
+    "graph_case_id": "AC-HHG-013"
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 19,
+      "assumed_response": "ASSUMED (simulated): customer confirmed the purchase from a new phone/device and recognises the $35.66 charge"
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a/§6: a customer_validation evidence request is being made on this risk-score alert, so a case is opened even though the case-memory probability (0.0883) sits well below the fraud band."
+      },
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1/§6: single evidence family (the real-time risk score alone, cms_p=0.0448) and probability 0.0883 < 0.70, so the online purchase on the New-but-generic device profile is verified with the customer before any block is considered."
+      }
+    ],
+    "final": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: a customer_validation evidence request was made on this risk-score alert, so the case opened at intake stays recorded even though the transaction is now cleared."
+      },
+      {
+        "action": "ALLOW_TRANSACTION",
+        "route": "auto",
+        "reason": "R3: the customer confirmed making the $35.66 online purchase, so the transaction is recommended for allow."
+      },
+      {
+        "action": "CLOSE_NO_FRAUD",
+        "route": "auto",
+        "reason": "R3/§6: the customer's confirmation of the charge on the new device settles the alert, and with probability 0.0883 and no fraud-family evidence the case is recommended closed as no fraud."
+      }
+    ],
+    "what_changed": "The assumed customer validation reply (confirm) left the probability at 0.09 and kept the verdict legitimate, adding ALLOW_TRANSACTION, CLOSE_NO_FRAUD, removing VERIFY_WITH_CUSTOMER. Counterfactual: had the customer denied the purchase, R2 would have applied: BLOCK_CARD (L1) and CREATE_CASE."
+  },
+  "sar": {
+    "file": false,
+    "reason": "3a not met: verdict legitimate (fraud not confirmed or strongly suspected), exposure $0.00; no report",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "Policy §6 test 2 fired: the assumed customer confirmation settled the single weak signal. Test 1 was also independently met, since probability 0.09 with two evidence families (customer, history) already sits in the legitimate band.",
+  "tool_calls": 19,
+  "tokens": 359953,
+  "latency_s": 157.8
+}

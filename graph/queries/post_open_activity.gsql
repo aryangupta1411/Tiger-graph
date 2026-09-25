@@ -1,0 +1,22 @@
+// post_open_activity — what happened on the card AFTER the case opened: (opened_at, opened_at + days].
+// Never part of affected_txn_ids / exposure (PLAN §2.2 item 4); reported as a monitoring note.
+// txns are the first 100 chronologically; summary counts the whole window.
+USE GRAPH FraudGraph
+CREATE OR REPLACE QUERY post_open_activity(VERTEX<Card> c, DATETIME opened_at, INT days) FOR GRAPH FraudGraph SYNTAX v3 {
+  TYPEDEF TUPLE<STRING ts, STRING id, FLOAT amt, STRING channel, STRING addr1, STRING device_new, FLOAT cms_p> Row;
+  TYPEDEF TUPLE<INT n, FLOAT sum_amt> Summary;
+  HeapAccum<Row>(100, ts ASC, id ASC) @@txns;
+  MaxAccum<Summary> @@summary;
+  SumAccum<INT> @@n;
+  SumAccum<FLOAT> @@sum_amt;
+  DATETIME to_ts = epoch_to_datetime(datetime_to_epoch(opened_at) + days * 86400);
+
+  S = {c};
+  T = SELECT t FROM (s:S)-[:MADE]->(t:Transaction)
+      WHERE t.ts > opened_at AND t.ts <= to_ts
+      ACCUM @@n += 1, @@sum_amt += t.amt,
+            @@txns += Row(t.ts_str, t.id, t.amt, t.channel, t.addr1, t.device_new, t.cms_p);
+  @@summary += Summary(@@n, @@sum_amt);
+
+  PRINT @@txns AS txns, @@summary AS summary;
+}

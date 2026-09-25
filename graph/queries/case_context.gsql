@@ -1,0 +1,40 @@
+// case_context — first look at the flagged transaction: its attributes, card, customer, device profile.
+// Contract: interfaces.md §A. Output keys: txn{}, card{}, customer{}, device{} (device.id == "" when the
+// transaction has no FROM_DEVICE edge). Single objects are MaxAccum<TUPLE> so they print as JSON objects.
+// The flagged transaction is always <= opened_at, so it is returned regardless of as_of (the harness never asks
+// about a later transaction). card.n_txns counts the card's transactions with ts <= as_of (the loaded Card.n_txns is
+// all-time and includes activity after the case opened); the other card / device fields are the loaded profile.
+USE GRAPH FraudGraph
+CREATE OR REPLACE QUERY case_context(VERTEX<Transaction> t, DATETIME as_of) FOR GRAPH FraudGraph SYNTAX v3 {
+  TYPEDEF TUPLE<STRING id, STRING ts, FLOAT amt, STRING product_cd, STRING channel, STRING addr1, STRING addr2,
+                STRING p_email, STRING r_email, FLOAT risk_score, BOOL has_identity, STRING device_new, STRING proxy,
+                STRING device_type, STRING device_id, FLOAT cms_p, INT card_seq, INT prior_in_region, INT prior_on_dev,
+                INT prior_pem, INT prior_pcd, FLOAT prior_med_amt, FLOAT prior_max_amt, BOOL ring_hit, STRING burst_id> TxnRow;
+  TYPEDEF TUPLE<STRING id, STRING card_type, STRING card_network, STRING modal_region, INT n_txns, STRING ring_id> CardRow;
+  TYPEDEF TUPLE<STRING id, INT n_cards> CustRow;
+  TYPEDEF TUPLE<STRING id, BOOL is_strong, INT n_cards_alltime, INT n_cards_30d, INT n_proxy, INT n_fraud_cases> DevRow;
+  MaxAccum<TxnRow> @@txn;
+  MaxAccum<CardRow> @@card;
+  MaxAccum<CustRow> @@customer;
+  MaxAccum<DevRow> @@device;
+  SumAccum<INT> @@card_n;
+
+  S = {t};
+  S = SELECT s FROM (s:S)
+      POST-ACCUM @@txn += TxnRow(s.id, s.ts_str, s.amt, s.product_cd, s.channel, s.addr1, s.addr2,
+                                 s.p_email, s.r_email, s.risk_score, s.has_identity, s.device_new, s.proxy_type,
+                                 s.device_type, s.device_id, s.cms_p, s.card_seq, s.prior_in_region, s.prior_on_dev,
+                                 s.prior_pem, s.prior_pcd, s.prior_med_amt, s.prior_max_amt, s.ring_hit, s.burst_id);
+  C = SELECT c FROM (s:S)-[:REV_MADE]->(c:Card);
+  N = SELECT x FROM (c:C)-[:MADE]->(x:Transaction)
+      WHERE x.ts <= as_of
+      ACCUM @@card_n += 1;
+  C = SELECT c FROM (c:C)
+      POST-ACCUM @@card += CardRow(c.id, c.card_type, c.card_network, c.modal_region, @@card_n, c.ring_id);
+  U = SELECT u FROM (c:C)-[:REV_OWNS]->(u:Customer)
+      POST-ACCUM @@customer += CustRow(u.id, u.n_cards);
+  D = SELECT d FROM (s:S)-[:FROM_DEVICE]->(d:DeviceProfile)
+      POST-ACCUM @@device += DevRow(d.id, d.is_strong, d.n_cards_alltime, d.n_cards_30d, d.n_proxy, d.n_fraud_cases);
+
+  PRINT @@txn AS txn, @@card AS card, @@customer AS customer, @@device AS device;
+}

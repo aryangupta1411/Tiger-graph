@@ -1,0 +1,52 @@
+# tigergraph-mcp 1.0.3 tool selection for the HHGOA agent (PLAN §3.6).
+# Names only (with or without the tigergraph__ prefix). Never use the
+# `destructive` selector: it also removes run_installed_query.
+#
+# Sections are read by agent/mcp_client.py:
+#   [read]   tools served to the LLM-facing / UI sessions (open_session(read_only=True))
+#   [write]  additional tools served to the harness session (open_session(read_only=False));
+#            the LLM never receives these — it only sees typed wrappers over the
+#            installed read queries, never the raw run_installed_query tool.
+#   [blocked] always removed, on every session.
+
+[read]
+run_installed_query
+get_query_description
+get_query_metadata
+is_query_installed
+get_neighbors
+get_node
+get_nodes
+get_vertex_count
+get_edge_count
+get_vector_index_status
+list_vector_attributes
+discover_tools
+get_tool_info
+
+[write]
+add_node
+add_nodes
+add_edge
+add_edges
+
+[blocked]
+gsql
+run_query
+install_query
+drop_query
+drop_graph
+clear_graph_data
+delete_node
+delete_nodes
+delete_edge
+delete_edges
+update_schema
+drop_vector_attribute
+upsert_vectors
+load_vectors_from_csv
+load_vectors_from_json
+add_vector_attribute
+generate_gsql
+generate_cypher
+authenticate

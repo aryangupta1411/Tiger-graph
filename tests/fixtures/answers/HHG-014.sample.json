@@ -1,0 +1,198 @@
+{
+  "case_id": "HHG-014",
+  "case": {
+    "status": "escalated",
+    "verdict": "fraud",
+    "fraud_probability": 0.9,
+    "pattern": "undocumented",
+    "pattern_description": "An anonymous-proxy device ring: one Samsung SM-G935F / Android 7.0 / Chrome 62 / 1920x1080 profile behind IP_PROXY:ANONYMOUS makes small product-C online purchases across 28 cards in November-December 2016, each card marked New for the device. Found by walking FROM_DEVICE from the flagged transaction to the profile and back out to every other card on it (device_neighbors), then matching four August-September closed cases on the same profile.",
+    "affected_txn_ids": [
+      "3460634",
+      "3478561"
+    ],
+    "first_suspicious_txn_id": "3460634",
+    "connected_card_ids": [
+      "C10326-K1",
+      "C08168-K1",
+      "C01996-K2",
+      "C09975-K1",
+      "C02975-K1",
+      "C01289-K1",
+      "C04108-K2",
+      "C10193-K2",
+      "C11670-K2",
+      "C02910-K1",
+      "C12796-K1",
+      "C04274-K1",
+      "C09906-K1",
+      "C09049-K1",
+      "C13291-K1",
+      "C06710-K1",
+      "C11082-K1",
+      "C03676-K2",
+      "C05448-K2",
+      "C06031-K2",
+      "C09195-K1",
+      "C10020-K1",
+      "C12645-K1",
+      "C11702-K1",
+      "C08972-K2",
+      "C07472-K1",
+      "C06650-K2"
+    ],
+    "connected_device_profiles": [
+      "SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080"
+    ],
+    "exposure_usd": 187.33,
+    "evidence": [
+      {
+        "claim": "The flagged transaction 3478561 ($74.96, product C, online) and 3460634 ($112.37, Nov 15) are the card's only purchases from device profile SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080, both marked New for this card and both behind an anonymous proxy (id_23 = IP_PROXY:ANONYMOUS).",
+        "source": "graph",
+        "ref": "query:case_context(t=3478561, as_of=2016-11-22 20:11:00)",
+        "entity_ids": [
+          "3478561",
+          "3460634",
+          "C13487-K1",
+          "SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080"
+        ]
+      },
+      {
+        "claim": "Before the case opened, 19 other cards had used the same strong device profile in November (24 transactions, all product C, all New, all anonymous proxy); the full November-December wave is 27 other cards.",
+        "source": "graph",
+        "ref": "query:device_neighbors(d=SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080, from_ts=2016-11-01 00:00:00, to_ts=2016-11-22 20:11:00, max_cards=60)",
+        "entity_ids": [
+          "C10326-K1",
+          "C08168-K1",
+          "C01996-K2",
+          "C09975-K1",
+          "C02975-K1",
+          "C01289-K1",
+          "C04108-K2",
+          "C10193-K2",
+          "C11670-K2",
+          "C02910-K1",
+          "C12796-K1",
+          "C04274-K1",
+          "C09906-K1",
+          "C09049-K1",
+          "C13291-K1",
+          "C06710-K1",
+          "C11082-K1",
+          "C03676-K2",
+          "C05448-K2"
+        ]
+      },
+      {
+        "claim": "Four closed cases (August-September 2016) on the same device profile were confirmed as fraud with pattern undocumented and a report filed; each lists 23 connected cards of that earlier wave.",
+        "source": "graph",
+        "ref": "query:similar_prior_cases(device_id=SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080, k=8)",
+        "entity_ids": [
+          "CC-2649",
+          "CC-2971",
+          "CC-2985",
+          "CC-3035"
+        ]
+      },
+      {
+        "claim": "The card's own history is in-person purchases in regions 191.0 and 272.0 at $31-$171; it had never transacted online before the two ring purchases.",
+        "source": "graph",
+        "ref": "query:card_profile(c=C13487-K1, as_of=2016-11-22 20:11:00)",
+        "entity_ids": [
+          "C13487-K1"
+        ]
+      },
+      {
+        "claim": "Policy 3a: file a report when fraud is strongly suspected and the activity connects to a shared device profile or is undocumented (R9); R6 names the shared element and requires MONITOR_CONNECTED_CARDS for every sharing card.",
+        "source": "document",
+        "ref": "policy:3a; policy:R6; policy:R9",
+        "entity_ids": []
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-2649",
+      "CC-2971",
+      "CC-2985",
+      "CC-3035"
+    ],
+    "summary": "The analyst's suspicion is confirmed: both online purchases on C13487-K1 come from a Samsung SM-G935F / Android 7.0 / Chrome 62 profile behind an anonymous proxy that 27 other cards also used in November-December, 19 of them before this case opened, and that four August-September closed cases already marked as an undocumented fraud ring. The card's own history is in-person only. Verdict fraud at 0.90 on two independent families (device ring, prior undocumented cases); exposure $187.33 on this card. Block the card (L1), file a report (L2) under R6/R9/3a, monitor the 27 connected cards and escalate under R9; no customer verification is needed because the stop rule is met.",
+    "written_to_graph": true,
+    "graph_case_id": "AC-HHG-014"
+  },
+  "evidence_requests": [],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: probability 0.90 >= 0.30; case written to the graph as AC-HHG-014"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: 27 other cards share device profile SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080 behind an anonymous proxy"
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R6 shared origin confirmed on this card; exposure $187.33 <= $2,500 so L1. R1 not applicable: two independent evidence families at 0.90"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "3a and R9: undocumented coordinated pattern across 28 cards on a shared device profile; four prior undocumented cases on the same profile"
+      },
+      {
+        "action": "ESCALATE_TO_ANALYST",
+        "route": "auto",
+        "reason": "R9: undocumented pattern; analyst to review the 27 connected cards"
+      }
+    ],
+    "final": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: probability 0.90 >= 0.30; case written to the graph as AC-HHG-014"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: 27 other cards share device profile SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080 behind an anonymous proxy"
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R6 shared origin confirmed on this card; exposure $187.33 <= $2,500 so L1. R1 not applicable: two independent evidence families at 0.90"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "3a and R9: undocumented coordinated pattern across 28 cards on a shared device profile; four prior undocumented cases on the same profile"
+      },
+      {
+        "action": "ESCALATE_TO_ANALYST",
+        "route": "auto",
+        "reason": "R9: undocumented pattern; analyst to review the 27 connected cards"
+      }
+    ],
+    "what_changed": "nothing"
+  },
+  "sar": {
+    "file": true,
+    "reason": "3a and R9: fraud strongly suspected (0.90) and the activity connects to a shared device profile used across 28 cards in an undocumented coordinated pattern; R6 shared origin",
+    "narrative": "This report concerns internal case AC-HHG-014 (alert HHG-014). Between 2016-11-15 and 2016-11-22, card C13487-K1 held by customer C13487 was used for two online purchases of $112.37 (transaction 3460634, 2016-11-15) and $74.96 (transaction 3478561, 2016-11-22), both under product code C. Both purchases originated from a device profile recorded as SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080, marked as new for this account, connecting through an anonymous proxy. The cardholder's prior history consists exclusively of in-person purchases in billing regions 191.0 and 272.0 between $31 and $171, with no online activity before these two transactions. The same device profile was used by 27 other cards between 2016-11-01 and 2016-12-31, 19 of them before this case opened, in the same manner: small product-C online purchases, each marked new for the card, each behind an anonymous proxy. Four closed investigations from August and September 2016 (CC-2649, CC-2971, CC-2985, CC-3035) confirmed fraud on the same device profile and were reported at the time, each naming 23 connected cards of that earlier wave. The pattern of one anonymised device making first-time online purchases across dozens of unrelated cards is consistent with a coordinated card-not-present ring operating stolen card numbers through a shared proxy, which matches none of the bank's five documented patterns. No prior report exists on card C13487-K1 and the customer name screened clear against the OFAC SDN list. Total unauthorised amount on this card is $187.33; the card is recommended for block and reissue, the 27 connected cards are placed under monitoring, and the case is escalated to a fraud analyst.",
+    "subjects": [
+      "C13487",
+      "C13487-K1",
+      "SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080"
+    ],
+    "total_amount_usd": 187.33,
+    "activity_dates": [
+      "2016-11-15",
+      "2016-11-22"
+    ]
+  },
+  "stop_reason": "Policy 6 test 1: probability 0.90 >= 0.85 with two independent evidence families (shared device ring from device_neighbors; four prior undocumented closed cases on the same profile). A customer reply could not change the action set, so no evidence was requested.",
+  "tool_calls": 9,
+  "tokens": 21850,
+  "latency_s": 41.2
+}

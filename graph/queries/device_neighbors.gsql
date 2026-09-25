@@ -1,0 +1,50 @@
+// device_neighbors — every card that used device profile d in [from_ts, to_ts] (R6 shared-origin evidence).
+// If the profile is not strong (generic: NULL | NULL | chrome 66.0 | NULL and the like) only device{} is
+// returned and the lists are empty — generic profiles are never "shared device" evidence (PLAN §3.4).
+// cards are ranked by n_txns in the window (top max_cards). closed_cases = the closed cases whose INVOLVES
+// transactions used THIS profile (all-time memory, not time-boxed) -- the same set engine/facts_duckdb.py (the
+// engine of record) returns. Taking every case on those cards instead let a hub card's unrelated fraud history
+// read as "this device carries fraud" (HHG-019: 40 cases on a 5-card profile). agent_cases are the agent cases
+// on those cards opened STRICTLY before to_ts (the harness clamps to_ts to opened_at, so the calling case's own
+// AgentCase — written at intake with opened_at = the case's opened_at — and every later case are excluded).
+USE GRAPH FraudGraph
+CREATE OR REPLACE QUERY device_neighbors(VERTEX<DeviceProfile> d, DATETIME from_ts, DATETIME to_ts, INT max_cards) FOR GRAPH FraudGraph SYNTAX v3 {
+  TYPEDEF TUPLE<STRING id, BOOL is_strong, INT n_cards_alltime, INT n_cards_30d, INT n_proxy, INT n_fraud_cases> DevRow;
+  TYPEDEF TUPLE<STRING card_id, STRING customer_id, INT n_txns, FLOAT sum_amt, INT n_proxy, INT n_new,
+                STRING first_ts, STRING last_ts> CardRow;
+  TYPEDEF TUPLE<STRING id, STRING card_id, STRING pattern, STRING outcome, BOOL report_filed> ClosedRow;
+  TYPEDEF TUPLE<STRING id, STRING card_id, STRING verdict, STRING pattern> AgentRow;
+  MaxAccum<DevRow> @@device;
+  OrAccum @@strong;
+  HeapAccum<CardRow>(max_cards, n_txns DESC, card_id ASC) @@cards;
+  HeapAccum<ClosedRow>(60, id ASC) @@closed_cases;
+  HeapAccum<AgentRow>(30, id ASC) @@agent_cases;
+  SumAccum<INT> @n, @n_proxy, @n_new;
+  SumAccum<FLOAT> @sum_amt;
+  MinAccum<INT> @first_e = 9999999999;
+  MaxAccum<INT> @last_e = 0;
+
+  D = {d};
+  D = SELECT x FROM (x:D)
+      POST-ACCUM @@device += DevRow(x.id, x.is_strong, x.n_cards_alltime, x.n_cards_30d, x.n_proxy, x.n_fraud_cases),
+                 @@strong += x.is_strong;
+
+  IF @@strong THEN
+    C = SELECT k FROM (x:D)-[:REV_FROM_DEVICE]->(t:Transaction)-[:REV_MADE]->(k:Card)
+        WHERE t.ts >= from_ts AND t.ts <= to_ts
+        ACCUM k.@n += 1, k.@sum_amt += t.amt,
+              IF t.proxy_type != "" THEN k.@n_proxy += 1 END,
+              IF t.device_new == "New" THEN k.@n_new += 1 END,
+              k.@first_e += datetime_to_epoch(t.ts), k.@last_e += datetime_to_epoch(t.ts)
+        POST-ACCUM @@cards += CardRow(k.id, k.customer_id, k.@n, k.@sum_amt, k.@n_proxy, k.@n_new,
+                                      datetime_format(epoch_to_datetime(k.@first_e)),
+                                      datetime_format(epoch_to_datetime(k.@last_e)));
+    P = SELECT p FROM (x:D)-[:REV_FROM_DEVICE]->(t:Transaction)-[:REV_INVOLVES]->(p:ClosedCase)
+        POST-ACCUM @@closed_cases += ClosedRow(p.id, p.card_id, p.pattern, p.outcome, p.report_filed);
+    A = SELECT a FROM (k:C)-[:REV_CASE_ON_CARD]->(a:AgentCase)
+        WHERE a.opened_at < to_ts
+        POST-ACCUM @@agent_cases += AgentRow(a.id, a.card_id, a.verdict, a.pattern);
+  END;
+
+  PRINT @@device AS device, @@cards AS cards, @@closed_cases AS closed_cases, @@agent_cases AS agent_cases;
+}

@@ -1,0 +1,92 @@
+# CI: lint + unit tests + answer-file validation + one RUN_MODE=mock end-to-end case.
+# No secrets: nothing here talks to TigerGraph, Anthropic or Voyage.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      RUN_MODE: mock
+      VALIDATOR_DB: data/ids.duckdb
+      HHGOA_DB: data/hhgoa.duckdb            # absent in CI -> test_card_rule / test_features skip (M10)
+      ENGINE_DATA_DIR: data
+      ENGINE_FACTS_DB: data/hhgoa_engine.duckdb   # absent in CI -> test_engine skips; `make facts` builds it locally
+      RUNS_DIR: runs
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+
+      - name: Set up Python 3.12
+        run: uv python install 3.12
+
+      - name: Sync dependencies
+        run: uv sync --extra dev
+
+      - name: Lint (ruff)
+        run: uv run ruff check .
+
+      - name: Unit tests (data-backed tests skip without data/hhgoa.duckdb / the facts DB; run `make test-data` locally)
+        run: uv run pytest tests/unit -rs
+
+      - name: Validate answer files (cases/*.json) against README schema + dataset ids
+        # data/ids.duckdb is checked in (ops/export_id_tables.py, ~15 MB); skips cleanly before day 10.
+        run: |
+          if ls cases/HHG-*.json >/dev/null 2>&1; then
+            uv run python -m agent.validator --db "$VALIDATOR_DB" cases/HHG-*.json
+          else
+            echo "no cases/HHG-*.json yet — validator step skipped"
+          fi
+
+      - name: Mock end-to-end case (RUN_MODE=mock, HHG-014)
+        # agent/bench.py --mock (RUN_MODE=mock: FakeAnthropic + FakeSession, no keys) runs the engine + policy gate +
+        # answer_writer + validator on the recorded facts and writes runs/ci/HHG-014/answer.json (agent/bench.py flags).
+        # data/raw/ is gitignored (708 MB, not redistributed), so a clean clone has no case_pack.csv: fall back to the
+        # checked-in one-row fixture tests/fixtures/case_pack_HHG-014.csv (the same row ui/common.py embeds).
+        run: |
+          if [ ! -f data/raw/case_pack.csv ]; then
+            export CASE_PACK_CSV=tests/fixtures/case_pack_HHG-014.csv
+            echo "data/raw/case_pack.csv absent (gitignored) — using $CASE_PACK_CSV"
+          fi
+          if [ -f agent/bench.py ]; then
+            uv run python -m agent.bench --cases HHG-014 --run-id ci --mock
+            test -f runs/ci/HHG-014/answer.json
+            uv run python -m agent.validator --db "$VALIDATOR_DB" runs/ci/HHG-014/answer.json
+          else
+            echo "agent/bench.py not present yet — mock e2e step skipped"
+          fi
+
+      - name: UI smoke (streamlit AppTest over the mock run)
+        run: |
+          uv run python -m ops.make_mock_run --answers cases --run-id ui-smoke   # cases/ if present, else the HHG-014 sample
+          uv run python - <<'EOF'
+          from streamlit.testing.v1 import AppTest
+          for page in ["ui/app.py", "ui/pages/1_queue.py", "ui/pages/2_case.py", "ui/pages/3_approvals.py", "ui/pages/4_graph.py", "ui/pages/5_runs.py"]:
+              at = AppTest.from_file(page, default_timeout=60)
+              at.session_state["run_id"] = "ui-smoke"; at.session_state["case_id"] = "HHG-014"
+              at.run()
+              assert not at.exception, (page, [str(e.value) for e in at.exception])
+              print("ok", page)
+          EOF
+
+      - name: Upload run artefacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: runs
+          path: runs/
+          if-no-files-found: ignore

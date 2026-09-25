@@ -1,0 +1,27 @@
+// email_neighbors — other cards (not c) whose transactions in [from_ts, to_ts] carry recipient email domain e,
+// and the closed cases on those cards (R6 "same recipient email"). Bounded by the heap (60 cards / 60 cases).
+// Fan-out note: a hub domain (gmail.com) reverses ~100k RECIPIENT_EMAIL edges with a ts filter — sub-second on
+// TG-00, but the LLM should call this on rare domains; hubs are not shared-origin evidence.
+USE GRAPH FraudGraph
+CREATE OR REPLACE QUERY email_neighbors(VERTEX<EmailDomain> e, VERTEX<Card> c, DATETIME from_ts, DATETIME to_ts) FOR GRAPH FraudGraph SYNTAX v3 {
+  TYPEDEF TUPLE<STRING card_id, INT n_txns> CardRow;
+  TYPEDEF TUPLE<STRING id, STRING card_id, STRING pattern> ClosedRow;
+  HeapAccum<CardRow>(60, n_txns DESC, card_id ASC) @@cards;
+  HeapAccum<ClosedRow>(60, id ASC) @@closed_cases;
+  SumAccum<INT> @n;
+  MaxAccum<STRING> @@cid;
+
+  S = {c};
+  S = SELECT s FROM (s:S) POST-ACCUM @@cid += s.id;
+
+  E = {e};
+  C = SELECT k FROM (x:E)-[:REV_RECIPIENT_EMAIL]->(t:Transaction)-[:REV_MADE]->(k:Card)
+      WHERE t.ts >= from_ts AND t.ts <= to_ts AND k.id != @@cid
+      ACCUM k.@n += 1
+      POST-ACCUM @@cards += CardRow(k.id, k.@n);
+
+  P = SELECT p FROM (k:C)-[:REV_ON_CARD]->(p:ClosedCase)
+      POST-ACCUM @@closed_cases += ClosedRow(p.id, p.card_id, p.pattern);
+
+  PRINT @@cards AS cards, @@closed_cases AS closed_cases;
+}

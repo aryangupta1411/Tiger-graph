@@ -1,0 +1,162 @@
+{
+  "case_id": "HHG-008",
+  "case": {
+    "status": "closed_fraud",
+    "verdict": "fraud",
+    "fraud_probability": 0.92,
+    "pattern": "card_not_present_new_device",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3557979",
+      "3557987",
+      "3558054"
+    ],
+    "first_suspicious_txn_id": "3557979",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 166.97,
+    "evidence": [
+      {
+        "claim": "Customer C13171 denies making the $55.68 purchase 3558054 ('I never made this $55.68 purchase'); this denial is the case trigger and, per the bank's history, 0 of prior customer-reported denials were ever cleared.",
+        "source": "customer",
+        "ref": "trigger",
+        "entity_ids": [
+          "3558054",
+          "C13171"
+        ]
+      },
+      {
+        "claim": "The case-memory scorer places the flagged transaction 3558054 at cms_p=0.957266 (calibrated cal_p=0.7784), far above the real-time risk_score of 0.38, and the immediately preceding transaction 3557979 (21:48, $55.60) also scores 0.927636 on the same scorer.",
+        "source": "graph",
+        "ref": "query:case_context(txn=3558054)",
+        "entity_ids": [
+          "3558054",
+          "3557979"
+        ]
+      },
+      {
+        "claim": "card_profile lists 18 prior closed cases on this exact card (C13171-K2), all outcome confirmed_fraud, patterns card_not_present_new_device / card_not_present_fraud, most recently CC-5010 opened 2016-10-19; only one other closed case (CC-4819) was cleared as a new-phone false alarm.",
+        "source": "graph",
+        "ref": "query:prior_cases_for_customer(customer=C13171)",
+        "entity_ids": [
+          "CC-5010",
+          "CC-4485",
+          "CC-4163",
+          "CC-3928",
+          "CC-3728",
+          "CC-3566",
+          "CC-3422",
+          "CC-3079",
+          "CC-2716",
+          "CC-2454",
+          "CC-2244",
+          "CC-2059",
+          "CC-1925",
+          "CC-1715",
+          "CC-1293",
+          "CC-0772",
+          "CC-0467",
+          "CC-0056",
+          "C13171-K2"
+        ]
+      },
+      {
+        "claim": "recurring_charge_check on 3558054 found a hotmail.com group of 5 prior purchases within +-1% of the amount but with gap_cv=1.109554, well above the 0.6 ceiling the R7 exception requires, so this is not the customer's own regular recurring charge and R2 (block/case) governs rather than R7.",
+        "source": "graph",
+        "ref": "query:recurring_charge_check(t=3558054)",
+        "entity_ids": [
+          "3558054",
+          "C13171-K2"
+        ]
+      },
+      {
+        "claim": "episode_candidates shows transactions 3557979 ($55.60, 21:48:32), 3557987 ($55.69, 21:50:54, device_new=New) and 3558054 ($55.68, 22:08:56) as a signature-matched cluster (sig_match=true) sharing the same device profile 'NULL | NULL | chrome 66.0 | NULL' and the same hotmail.com purchaser/recipient email within a 20-minute span, giving an exposure of $166.97 across the three; the New-device member 3557987 drives the card_not_present_new_device label.",
+        "source": "graph",
+        "ref": "query:episode_candidates(t=3558054, gap_h=48)",
+        "entity_ids": [
+          "3557979",
+          "3557987",
+          "3558054",
+          "NULL | NULL | chrome 66.0 | NULL"
+        ]
+      },
+      {
+        "claim": "card_testing_check over the 217-member online chain found only 2 sub-$5 members and no larger-purchase-after-run shape (larger_purchase amt=0), ruling out the R5 card-testing pattern for this episode.",
+        "source": "graph",
+        "ref": "query:card_testing_check(c=C13171-K2)",
+        "entity_ids": [
+          "C13171-K2"
+        ]
+      },
+      {
+        "claim": "device_history shows the device profile 'NULL | NULL | chrome 66.0 | NULL' was already used on this card 9 times before this episode, first seen 2016-12-05, so the profile itself is not novel to the card even though one member transaction (3557987) is individually flagged device_new=New.",
+        "source": "graph",
+        "ref": "query:device_history(c=C13171-K2, d=NULL | NULL | chrome 66.0 | NULL)",
+        "entity_ids": [
+          "NULL | NULL | chrome 66.0 | NULL",
+          "C13171-K2"
+        ]
+      },
+      {
+        "claim": "The flagged amount $55.68 sits inside the card's pre-opening baseline (899 prior transactions, prior median $39.37, prior maximum $407.32), so amount alone would not have flagged this purchase.",
+        "source": "graph",
+        "ref": "query:case_context(txn=3558054)",
+        "entity_ids": [
+          "3558054",
+          "C13171-K2"
+        ]
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-3928",
+      "CC-2716",
+      "CC-3079",
+      "CC-4163",
+      "CC-5010",
+      "CC-4485"
+    ],
+    "summary": "Verdict fraud at probability 0.92, pattern card_not_present_new_device. The episode is the sig-matched cluster of transactions 3557979, 3557987 and 3558054, all from the same device profile and email within a 20-minute span on 2016-12-19, exposure $166.97. The decisive facts are the customer's denial of 3558054 and 18 prior confirmed-fraud closed cases on this same card with the same pattern; recurring_charge_check ruled out the alternative reading of an ordinary recurring hotmail.com charge (gap_cv 1.11 fails R7's 0.6 cadence test). No evidence request was needed; recommended actions are CREATE_CASE (auto) and BLOCK_CARD (L1, awaiting approval).",
+    "written_to_graph": true,
+    "graph_case_id": "AC-HHG-008"
+  },
+  "evidence_requests": [],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: fraud probability 0.92 exceeds the 0.30 case-opening threshold and the customer disputed transaction 3558054, so a case is opened to record the episode ($166.97 exposure across 3557979, 3557987, 3558054)."
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2/§3b: the customer denied transaction 3558054 and the recurring-charge gate (R7) does not apply (gap_cv 1.11 > 0.6), so blocking is recommended; exposure $166.97 ≤ $2,500 keeps this at L1."
+      }
+    ],
+    "final": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: fraud probability 0.92 exceeds the 0.30 case-opening threshold and the customer disputed transaction 3558054, so a case is opened to record the episode ($166.97 exposure across 3557979, 3557987, 3558054)."
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2/§3b: the customer denied transaction 3558054 and the recurring-charge gate (R7) does not apply (gap_cv 1.11 > 0.6), so blocking is recommended; exposure $166.97 ≤ $2,500 keeps this at L1."
+      }
+    ],
+    "what_changed": "nothing"
+  },
+  "sar": {
+    "file": false,
+    "reason": "3a not met: exposure $166.97 <= $1,000; the profile `NULL | NULL | chrome 66.0 | NULL` is a common, non-distinctive profile (not a strong device profile), so it is not a shared-origin signal; no shared region cluster; no other customer's fraud connected; documented pattern",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "Policy §6 test 1 fired: fraud probability 0.92 is at or above the 0.85 threshold with two independent evidence families (customer denial, case memory/history), so no further evidence request could change the action set and the initial recommendation stands as final.",
+  "tool_calls": 18,
+  "tokens": 310639,
+  "latency_s": 158.2
+}

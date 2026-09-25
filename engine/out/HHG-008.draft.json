@@ -1,0 +1,153 @@
+{
+  "case_id": "HHG-008",
+  "case": {
+    "status": "closed_fraud",
+    "verdict": "fraud",
+    "fraud_probability": 0.95,
+    "pattern": "card_not_present_new_device",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3557979",
+      "3557987",
+      "3558054"
+    ],
+    "first_suspicious_txn_id": "3557979",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 166.97,
+    "evidence": [
+      {
+        "claim": "Amount $55.68 sits inside the card's baseline (prior median $39.37, prior maximum $407.32 over 899 transactions)",
+        "source": "graph",
+        "ref": "query:case_context(txn=3558054)",
+        "entity_ids": [
+          "3558054",
+          "C13171-K2"
+        ]
+      },
+      {
+        "claim": "Purchaser email domain hotmail.com used 358 times before on this card",
+        "source": "graph",
+        "ref": "query:case_context(txn=3558054)",
+        "entity_ids": [
+          "3558054"
+        ]
+      },
+      {
+        "claim": "$55.68 +-1% under product code C is a recurring price point on this card: 7 prior purchases, 5 of them at hotmail.com (median gap 19.5 days, gap CV 1.11; R7's monthly-cadence test fails)",
+        "source": "graph",
+        "ref": "query:recurring_charge_check(txn=3558054)",
+        "entity_ids": [
+          "3558054",
+          "C13171-K2"
+        ]
+      },
+      {
+        "claim": "A second transaction in the same 48 h window (3557979, $55.60, online) scores 0.93 on the case-memory scorer",
+        "source": "graph",
+        "ref": "query:episode_candidates(txn=3558054)",
+        "entity_ids": [
+          "3557979",
+          "3558054"
+        ]
+      },
+      {
+        "claim": "Device profile `NULL | NULL | chrome 66.0 | NULL` is known to this card: 9 prior uses since 2016-12-05 (id_15 values seen: Found, New)",
+        "source": "graph",
+        "ref": "query:device_history(card=C13171-K2, device=NULL | NULL | chrome 66.0 | NULL)",
+        "entity_ids": [
+          "NULL | NULL | chrome 66.0 | NULL",
+          "C13171-K2"
+        ]
+      },
+      {
+        "claim": "Case-memory scorer (LightGBM over the bank's 5,565 closed cases; October holdout AUC 0.956) puts the flagged transaction at 0.96 (calibrated 0.78); the real-time risk score was 0.38",
+        "source": "graph",
+        "ref": "query:case_context(txn=3558054)",
+        "entity_ids": [
+          "3558054"
+        ]
+      },
+      {
+        "claim": "18 prior confirmed-fraud case(s) on this card (card_not_present_fraud, card_not_present_new_device), most recent 2016-10-19; 10 within 120 days on the same channel",
+        "source": "graph",
+        "ref": "query:prior_cases_for_customer(customer=C13171)",
+        "entity_ids": [
+          "CC-0056",
+          "CC-0467",
+          "CC-0772",
+          "CC-1293",
+          "CC-1715",
+          "CC-1925",
+          "CC-2059",
+          "CC-2244",
+          "CC-2454",
+          "CC-2716",
+          "CC-3079",
+          "CC-3422",
+          "C13171-K2"
+        ]
+      },
+      {
+        "claim": "Customer C13171 reports they did not make the $55.68 purchase 3558054 (the denial is evidence: 4,665/4,665 customer-reported closed cases were confirmed fraud, 0 denials were cleared)",
+        "source": "customer",
+        "ref": "trigger",
+        "entity_ids": [
+          "3558054",
+          "C13171"
+        ]
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-5010",
+      "CC-4819",
+      "CC-4485",
+      "CC-4163",
+      "CC-3928",
+      "CC-3728"
+    ],
+    "summary": "Customer C13171 disputed transaction 3558054 ($55.68, online) on card C13171-K2. Customer C13171 reports they did not make the $55.68 purchase 3558054 (the denial is evidence: 4,665/4,665 customer-reported closed cases were confirmed fraud, 0 denials were cleared). Verdict fraud at probability 0.95, pattern card_not_present_new_device, 3 affected transaction(s) worth $166.97. Final actions: CREATE_CASE, BLOCK_CARD; no evidence request was needed; status closed_fraud.",
+    "written_to_graph": false,
+    "graph_case_id": "AC-HHG-008"
+  },
+  "evidence_requests": [],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: customer dispute; case opened and written to the graph"
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: customer denied the transaction; exposure $166.97 is at or under $2,500 so route L1"
+      }
+    ],
+    "final": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: customer dispute; case opened and written to the graph"
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: customer denied the transaction; exposure $166.97 is at or under $2,500 so route L1"
+      }
+    ],
+    "what_changed": "nothing"
+  },
+  "sar": {
+    "file": false,
+    "reason": "3a not met: exposure $166.97 <= $1,000; the profile `NULL | NULL | chrome 66.0 | NULL` is a common, non-distinctive profile (not a strong device profile), so it is not a shared-origin signal; no shared region cluster; no other customer's fraud connected; documented pattern",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0.0,
+    "activity_dates": []
+  },
+  "stop_reason": "Policy \u00a76 test 1: fraud probability 0.95 is at or above 0.85 with 2 independent evidence families (customer, memory); no request could change the action set, so the initial recommendation is final.",
+  "tool_calls": 15,
+  "tokens": 0,
+  "latency_s": 0.06
+}

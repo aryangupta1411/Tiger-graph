@@ -1,0 +1,358 @@
+# mcp/query_descriptions.yaml — the single source for (a) graph/describe_queries.py, which registers each
+# description through pyTigerGraph updateQueryDescription(queryName, queryDescription, parameterDescriptions),
+# and (b) agent/mcp_client.py, which generates one typed tool per read query from `parameters` + `example`.
+# Parameter encoding over tigergraph__run_installed_query (verified against pyTigerGraph 2.0.4
+# _prep_query_parameters_json): VERTEX<T> -> {"id": "..."}; DATETIME -> "YYYY-MM-DD HH:MM:SS"; INT/FLOAT/BOOL/STRING
+# -> JSON scalars; SET<STRING> -> JSON array; MAP<STRING,FLOAT> -> plain JSON object (never use a key named "id").
+# `writer: true` and `harness_only: true` queries are never exposed to the LLM (writers and the four GraphRAG
+# queries called by agent/tools_local.py, whose LIST<FLOAT> q comes from rag.embed). `mandatory: true` queries run on every case.
+version: 1
+graph: FraudGraph
+tool_name: tigergraph__run_installed_query
+queries:
+  case_context:
+    mandatory: true
+    description: >
+      First look at a flagged transaction: its attributes (amount, channel, region, emails, risk_score,
+      case-memory score cms_p, card_seq, prior_* baselines, ring_hit, burst_id), its card (type, network,
+      modal in-person region, ring_id), customer (n_cards) and device profile (strength, fan-out, proxy and
+      fraud-case counts; device.id == "" when the transaction has no identity record).
+    parameters:
+      t: 'VERTEX<Transaction> — the flagged transaction as {"id": "<TransactionID>"}, e.g. {"id": "3514030"}.'
+      as_of: 'DATETIME — the case opened_at, "YYYY-MM-DD HH:MM:SS"; accepted for uniformity (the flagged transaction is always returned).'
+    example: {"t": {"id": "3514030"}, "as_of": "2016-12-05 01:55:28"}
+    prints: [txn, card, customer, device]
+  card_profile:
+    mandatory: true
+    description: >
+      Baselines and memory for one card up to as_of: every Card attribute (medians, max, modal region, ring_id,
+      burst look-alikes, WCC / degree / PPR; the history counts n_txns, first/last_ts, median/p90/max amounts,
+      online / in-person counts, n_regions and n_devices_seen are recomputed over ts <= as_of), last-30-day aggregates, top-5 regions (with distinct days),
+      top-5 device profiles (with strength), top-10 purchaser email domains, the customer's other cards,
+      prior closed cases (with template_id: fraud_reported / cleared_travel / cleared_new_phone / cleared_amount /
+      undoc_ring / undoc_burst — the cleared-precedent rule D9 matches on it) and prior agent-written cases on this
+      card (newest first, <= 30 each).
+    parameters:
+      c: 'VERTEX<Card> — {"id": "C12382-K1"}.'
+      as_of: 'DATETIME — evidence cut-off (case opened_at); only transactions with ts <= as_of are counted.'
+    example: {"c": {"id": "C12382-K1"}, "as_of": "2016-12-05 01:55:28"}
+    prints: [card, last30, regions, devices, emails, other_cards, prior_closed_cases, prior_agent_cases]
+  card_window:
+    mandatory: true
+    description: >
+      The card's transactions between from_ts and to_ts in chronological order (the last max_rows of the
+      window), each with amount, product, channel, region, emails, risk_score, cms_p, device profile,
+      device_new (id_15), proxy (id_23) and gap_seconds since the previous transaction on the card
+      (-1 for the first). summary counts the whole window. Use to_ts = opened_at so nothing after the case
+      opened leaks into the evidence.
+    parameters:
+      c: 'VERTEX<Card> — {"id": "C11891-K1"}.'
+      from_ts: 'DATETIME — window start, e.g. opened_at minus 72 hours.'
+      to_ts: 'DATETIME — window end; use the case opened_at.'
+      max_rows: 'INT — how many of the most recent rows to print (60 is the default the harness uses; keep <= 120).'
+    example: {"c": {"id": "C11891-K1"}, "from_ts": "2016-11-19 23:27:07", "to_ts": "2016-11-22 23:27:07", "max_rows": 60}
+    prints: [txns, summary]
+  region_history:
+    description: >
+      Is billing region addr1 familiar for this card? Prior count, distinct days, first/last use and share of
+      the card's transactions in that region up to as_of; the card's modal in-person region; number of regions
+      ever used; activity in the last 48 h split into modal-region vs other; hint = home / known / rare / new.
+      Playbook: in-person risk alerts (travel vs clone; account-takeover-in-home-region convention).
+    parameters:
+      c: 'VERTEX<Card> — {"id": "C09933-K2"}.'
+      addr1: 'STRING — the billing region code exactly as stored, e.g. "264.0".'
+      as_of: 'DATETIME — evidence cut-off.'
+    example: {"c": {"id": "C09933-K2"}, "addr1": "264.0", "as_of": "2016-12-05 03:46:14"}
+    prints: [region, modal_region, n_regions, home_activity_48h, hint]
+  device_history:
+    description: >
+      Has this card used device profile d before? prior_n = the card's transactions on d with ts <= as_of
+      (includes the flagged one when it is on d), first_ts, and the distinct id_15 values seen (New / Found /
+      Unknown). Playbook: online alerts with a New device — new phone vs new fraudster.
+    parameters:
+      c: 'VERTEX<Card> — {"id": "C02923-K1"}.'
+      d: 'VERTEX<DeviceProfile> — the exact 4-field profile string "DeviceInfo | id_30 | id_31 | id_33" with literal NULL parts, e.g. {"id": "iOS Device | iOS 11.1.2 | mobile safari 11.0 | 2208x1242"}.'
+      as_of: 'DATETIME — evidence cut-off.'
+    example: {"c": {"id": "C13487-K1"}, "d": {"id": "SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080"}, "as_of": "2016-11-22 20:11:00"}
+    prints: [prior_n, first_ts, device_new_values]
+  device_neighbors:
+    description: >
+      Every card that used device profile d between from_ts and to_ts (R6 shared origin, rings): per card
+      n_txns, sum_amt, proxy and New counts, first/last use; plus the closed cases whose transactions used THIS
+      profile (not every case on those cards) and the agent-written cases on those cards opened before to_ts
+      (never the calling case itself). If the profile is not strong (generic, e.g. "NULL | NULL | chrome 66.0 | NULL") only device{} is
+      returned and the lists are empty — generic profiles are never shared-device evidence.
+      Wave scope for a ring: from_ts = first day of the month, to_ts = end of the exam period.
+    parameters:
+      d: 'VERTEX<DeviceProfile> — exact profile string, e.g. {"id": "SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080"}.'
+      from_ts: 'DATETIME — window start.'
+      to_ts: 'DATETIME — window end (use opened_at for evidence, end of period for the wave).'
+      max_cards: 'INT — cap on the printed cards, ranked by transactions in the window (60).'
+    example: {"d": {"id": "SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080"}, "from_ts": "2016-11-01 00:00:00", "to_ts": "2016-11-22 20:11:00", "max_cards": 60}
+    prints: [device, cards, closed_cases, agent_cases]
+  email_neighbors:
+    description: >
+      Other cards whose transactions in the window carry recipient email domain e, and the closed cases on
+      those cards (R6 "same recipient email"). Call it on rare domains; hubs like gmail.com are not evidence.
+    parameters:
+      e: 'VERTEX<EmailDomain> — {"id": "me.com"}.'
+      c: 'VERTEX<Card> — the case card, excluded from the result: {"id": "C08623-K2"}.'
+      from_ts: 'DATETIME — window start.'
+      to_ts: 'DATETIME — window end (opened_at).'
+    example: {"e": {"id": "me.com"}, "c": {"id": "C08623-K2"}, "from_ts": "2016-11-10 15:01:21", "to_ts": "2016-12-10 15:01:21"}
+    prints: [cards, closed_cases]
+  shared_origin_scan:
+    description: >
+      Shared-origin candidates on the card's online transactions in the last `days` days before as_of:
+      device profiles (strength, 30-day fan-out, confirmed-fraud case count, uses on this card) and recipient
+      email domains (other cards in the last 30 days, confirmed-fraud cases that used the domain), plus the
+      precomputed region cluster JSON. Playbook: R2 "shared" clause, R6, 3a.
+    parameters:
+      c: 'VERTEX<Card> — {"id": "C13487-K1"}.'
+      as_of: 'DATETIME — evidence cut-off.'
+      days: 'INT — look-back in days (30).'
+    example: {"c": {"id": "C13487-K1"}, "as_of": "2016-11-22 20:11:00", "days": 30}
+    prints: [devices, recipient_emails, region_cluster_30d]
+  card_testing_check:
+    description: >
+      R5 detector: best run of >= min_n online authorisations of at most `small` dollars inside window_min
+      minutes (run is a one-element list [{start_id, ids, amts, start_ts, end_ts}] or []), the largest online
+      purchase above `small` in the lookahead_h hours after the run (larger_purchase.id == "" when none),
+      cleared_over_big (that purchase exceeds `big`), and chain{n_members, n_small}: the <= 48 h-gap chain
+      around the run (or the card's last transaction) with its count of small online members.
+    parameters:
+      c: 'VERTEX<Card> — {"id": "C11923-K2"}.'
+      as_of: 'DATETIME — evidence cut-off.'
+      small: 'FLOAT — "small authorisation" threshold in USD (5.0).'
+      window_min: 'INT — run window in minutes (60).'
+      min_n: 'INT — minimum authorisations in a run (3).'
+      big: 'FLOAT — R5 "purchase over $100" threshold (100.0).'
+      lookahead_h: 'INT — hours after the run to look for the larger purchase (48).'
+    example: {"c": {"id": "C11923-K2"}, "as_of": "2016-12-29 06:27:44", "small": 5.0, "window_min": 60, "min_n": 3, "big": 100.0, "lookahead_h": 48}
+    prints: [run, larger_purchase, cleared_over_big, chain]
+  under_threshold_burst:
+    description: >
+      Seeded pattern (b): groups of >= 4 online purchases of $450–499.99 inside 40 minutes on the card
+      (precomputed Transaction.burst_id), members <= as_of with amounts, timestamps, device profiles, email
+      domains and regions, plus lookalike_cards = other cards with the same shape within ±30 days (named in
+      pattern_description, never in connected_card_ids).
+    parameters:
+      c: 'VERTEX<Card> — {"id": "C07297-K1"}.'
+      as_of: 'DATETIME — evidence cut-off.'
+    example: {"c": {"id": "C07297-K1"}, "as_of": "2016-11-22 02:30:00"}
+    prints: [bursts, lookalike_cards]
+  recurring_charge_check:
+    description: >
+      R7 evidence for a disputed charge: prior transactions on the same card with the same ProductCD and an
+      amount within tol (fraction, 0.01 = 1 %) of the flagged amount, grouped by place (billing region for
+      in-person, purchaser email domain for online — there is no merchant field): n, median gap in days,
+      gap coefficient of variation, first/last. The engine's R7 gate needs n >= 5, median gap 5–35 days,
+      gap_cv <= 0.6.
+    parameters:
+      t: 'VERTEX<Transaction> — the disputed transaction {"id": "3491361"}.'
+      tol: 'FLOAT — amount tolerance as a fraction (0.01).'
+      as_of: 'DATETIME — evidence cut-off.'
+    example: {"t": {"id": "3491361"}, "tol": 0.01, "as_of": "2016-11-27 14:41:26"}
+    prints: [groups, total_n]
+  episode_candidates:
+    description: >
+      The <= gap_h-hour-gap chain of transactions on the card that contains the flagged transaction, up to
+      as_of, with cms_p, device, email, amount, channel and sig_match (same strong device profile, or same
+      email + product with the amount within 5 % inside 2 h). Input to affected_txn_ids. The chain stays within
+      7 days of the flagged transaction; a chain of more than 200 members prints the 100 before it and up to 100
+      after it (the same caps as the engine's DuckFacts).
+    parameters:
+      t: 'VERTEX<Transaction> — {"id": "3514948"}.'
+      as_of: 'DATETIME — evidence cut-off.'
+      gap_h: 'INT — maximum gap in hours between chain members (48).'
+    example: {"t": {"id": "3514948"}, "as_of": "2016-12-05 03:46:14", "gap_h": 48}
+    prints: [chain]
+  prior_cases_for_customer:
+    mandatory: true
+    description: >
+      Case memory for the customer across all cards: closed cases opened <= as_of (outcome, pattern, exposure,
+      report_filed, n_txns, template_id) and agent-written cases opened before as_of. Newest first, <= 40 each.
+    parameters:
+      cu: 'VERTEX<Customer> — {"id": "C02354"}.'
+      as_of: 'DATETIME — evidence cut-off.'
+    example: {"cu": {"id": "C02354"}, "as_of": "2016-11-27 14:41:26"}
+    prints: [closed_cases, agent_cases]
+  ring_profile:
+    description: >
+      Profile-centric ring facts for a card: ring_id (the strong device profile on the card's online
+      transactions with >= 2 confirmed-fraud cards or an anonymous-proxy share >= 0.9, "" if none), the
+      profile's counts, wave_cards = the other cards on the profile active within +-30 days of this card's own
+      transactions on it (the current wave; the engine reports them as connected_card_ids), pre_open_cards =
+      wave cards active <= as_of, n_cards_alltime = the profile's all-time card count, this card's transactions
+      on the profile, and the closed cases whose transactions used it as rows {id, card_id, pattern, outcome,
+      report_filed}.
+    parameters:
+      c: 'VERTEX<Card> — {"id": "C13487-K1"}.'
+      as_of: 'DATETIME — evidence cut-off.'
+    example: {"c": {"id": "C13487-K1"}, "as_of": "2016-11-22 20:11:00"}
+    prints: [ring_id, device, wave_cards, pre_open_cards, n_cards_alltime, card_txns_on_ring, closed_cases]
+  case_subgraph:
+    ui_only: true
+    harness_only: true      # UI/harness only — never a typed tool for the model
+    description: >
+      Small evidence subgraph for the UI: card, customer, the last <= 60 transactions in the `hours` before
+      as_of, their device profiles / purchaser email domains / billing regions, and the closed cases on the
+      card. nodes[{id, vtype, label}], edges[{src, dst, etype}], <= 300 elements.
+    parameters:
+      c: 'VERTEX<Card> — {"id": "C13487-K1"}.'
+      as_of: 'DATETIME — evidence cut-off.'
+      hours: 'INT — look-back in hours (72).'
+    example: {"c": {"id": "C13487-K1"}, "as_of": "2016-11-22 20:11:00", "hours": 72}
+    prints: [nodes, edges]
+  post_open_activity:
+    harness_only: true      # monitoring note only — never a typed tool for the model (it must not reach exposure)
+    description: >
+      Transactions on the card AFTER the case opened, within `days` days: monitoring note only — never part
+      of affected_txn_ids or exposure.
+    parameters:
+      c: 'VERTEX<Card> — {"id": "C08299-K1"}.'
+      opened_at: 'DATETIME — the case opened_at.'
+      days: 'INT — look-ahead in days (7).'
+    example: {"c": {"id": "C08299-K1"}, "opened_at": "2016-12-28 17:10:53", "days": 7}
+    prints: [txns, summary]
+  similar_prior_cases:
+    harness_only: true
+    description: >
+      Case memory (GraphRAG): structurally related ClosedCase / AgentCase (same card, customer, device profile,
+      billing region or pattern in the 120 days before as_of; agent-written cases strictly before as_of, so a case
+      never retrieves its own AgentCase) re-ranked by note-embedding similarity; at least
+      one cleared case when available. Harness-side tool find_similar_cases embeds the query text with
+      rag.embed and calls it — the LLM never sees the 1024-float q.
+    parameters:
+      q: 'LIST<FLOAT> — 1024 floats from rag.embed.Embedder.embed_query (never typed by the model).'
+      k: 'INT — rows wanted (8).'
+      card_id: 'STRING — the case card id, or "".'
+      customer_id: 'STRING — the customer id, or "".'
+      device_id: 'STRING — exact DeviceProfile id; pass "" when DeviceProfile.is_strong is false.'
+      addr1: 'STRING — billing region as stored, e.g. "444.0", or "".'
+      pattern_sig: 'STRING — candidate pattern from the engine, or "".'
+      as_of: 'DATETIME — "YYYY-MM-DD HH:MM:SS" = opened_at.'
+    example: {"q": [0.0123, -0.0456], "k": 8, "card_id": "C13487-K1", "customer_id": "C13487", "device_id": "SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080", "addr1": "191.0", "pattern_sig": "undocumented", "as_of": "2016-11-22 20:11:00"}
+    prints: [cases]
+  similar_prior_cases_closed:
+    harness_only: true
+    description: Fallback twin of similar_prior_cases over ClosedCase only (installed only if the two-type vectorSearch is rejected on day 0); rag.retrieval merges it with similar_prior_cases_agent.
+    parameters:
+      q: 'LIST<FLOAT> — 1024 floats from rag.embed (never typed by the model).'
+      k: 'INT — rows wanted (8).'
+      card_id: 'STRING or "".'
+      customer_id: 'STRING or "".'
+      device_id: 'STRING — exact DeviceProfile id or "".'
+      addr1: 'STRING — billing region as stored or "".'
+      pattern_sig: 'STRING — candidate pattern or "".'
+      as_of: 'DATETIME — opened_at.'
+    example: {"q": [0.0123, -0.0456], "k": 8, "card_id": "", "customer_id": "", "device_id": "", "addr1": "", "pattern_sig": "card_testing", "as_of": "2016-12-29 06:27:44"}
+    prints: [cases]
+  similar_prior_cases_agent:
+    harness_only: true
+    description: Fallback twin of similar_prior_cases over AgentCase only (empty result while no agent case is written).
+    parameters:
+      q: 'LIST<FLOAT> — 1024 floats from rag.embed (never typed by the model).'
+      k: 'INT — rows wanted (8).'
+      card_id: 'STRING or "".'
+      customer_id: 'STRING or "".'
+      device_id: 'STRING — exact DeviceProfile id or "".'
+      addr1: 'STRING — billing region as stored or "".'
+      pattern_sig: 'STRING — candidate pattern or "".'
+      as_of: 'DATETIME — opened_at.'
+    example: {"q": [0.0123, -0.0456], "k": 8, "card_id": "", "customer_id": "", "device_id": "", "addr1": "", "pattern_sig": "", "as_of": "2016-12-29 06:27:44"}
+    prints: [cases]
+  similar_cases_structural:
+    harness_only: true
+    description: >
+      Graph-only similar cases (no vector index): weighted overlap on device profile (3), card (2.5), customer (2),
+      pattern (1.5), region (1) plus recency, over ClosedCase and AgentCase in the 120 days before as_of. Used by
+      rag.retrieval while the vector index is rebuilding; never an LLM tool (decision D11).
+    parameters:
+      k: 'INT — rows wanted (8).'
+      card_id: 'STRING or "".'
+      customer_id: 'STRING or "".'
+      device_id: 'STRING — exact DeviceProfile id or "".'
+      addr1: 'STRING — billing region as stored or "".'
+      pattern_sig: 'STRING — candidate pattern or "".'
+      as_of: 'DATETIME — opened_at.'
+    example: {"k": 8, "card_id": "C11923-K2", "customer_id": "C11923", "device_id": "", "addr1": "", "pattern_sig": "card_testing", "as_of": "2016-12-29 06:27:44"}
+    prints: [cases]
+  grounding_chunks:
+    harness_only: true
+    description: >
+      Policy, pattern and regulation excerpts (PolicyChunk) nearest to a question; doc_filter narrows to one Document
+      id (fraud_policy, known_patterns, sar_guidance_narrative, sar_tti_19, fin_2011_a016, ...; "" = every document),
+      kind_filter to policy | pattern | regulation. Harness-side tool grounding_chunks embeds the question.
+    parameters:
+      q: 'LIST<FLOAT> — 1024 floats from rag.embed (never typed by the model).'
+      k: 'INT — chunks wanted (5).'
+      doc_filter: 'STRING — Document id or "".'
+      kind_filter: 'STRING — policy | pattern | regulation or "".'
+    example: {"q": [0.0123, -0.0456], "k": 5, "doc_filter": "sar_guidance_narrative", "kind_filter": ""}
+    prints: [chunks]
+  open_case:
+    writer: true
+    description: Harness-only. Upserts the AgentCase vertex (status open) and its CASE_ON_CARD / CASE_INVOLVES edges at intake.
+    parameters:
+      case_id: 'STRING — "AC-HHG-001".'
+      source_case_id: 'STRING — "HHG-001".'
+      customer_id: 'STRING — "C12382".'
+      card_id: 'STRING — "C12382-K1".'
+      trigger_type: 'STRING — risk_score | customer_report | analyst_request.'
+      opened_at: 'DATETIME — case_pack opened_at.'
+      run_id: 'STRING — runs/<run_id>.'
+      flagged_txn_id: 'STRING — "3514030".'
+    example: {"case_id": "AC-HHG-001", "source_case_id": "HHG-001", "customer_id": "C12382", "card_id": "C12382-K1", "trigger_type": "risk_score", "opened_at": "2016-12-05 01:55:28", "run_id": "run_2026-09-25T10-00", "flagged_txn_id": "3514030"}
+    prints: [ok, id]
+  append_case_event:
+    writer: true
+    description: Harness-only. Adds CaseEvent <case_id>-<seq:03d> with kind and JSON payload and the HAS_EVENT edge.
+    parameters:
+      case_id: 'STRING — "AC-HHG-001".'
+      seq: 'INT — 1-based event sequence.'
+      kind: 'STRING — evidence | assessment | nba_initial | evidence_request | assumed_response | nba_final | approval | sar | policy_override | executed.'
+      event_at: 'DATETIME — wall-clock time of the event (fills attribute `at`).'
+      payload: 'STRING — JSON payload built by the harness.'
+    example: {"case_id": "AC-HHG-001", "seq": 7, "kind": "nba_initial", "event_at": "2026-09-25 10:03:12", "payload": "{\"actions\":[{\"action\":\"VERIFY_WITH_CUSTOMER\",\"route\":\"auto\",\"reason\":\"R1\"}]}"}
+    prints: [ok, id]
+  close_case:
+    writer: true
+    description: Harness-only (P10). Writes the post-evidence verdict onto the AgentCase and the memory edges (affected transactions, connected cards / device profiles, pattern, similar cases with scores, cited chunks).
+    parameters:
+      ac: 'VERTEX<AgentCase> — {"id": "AC-HHG-001"} (must exist).'
+      status: 'STRING — open | closed_fraud | closed_legitimate | escalated.'
+      verdict: 'STRING — fraud | legitimate | uncertain.'
+      fraud_probability: 'FLOAT.'
+      pattern: 'STRING — one of the seven pattern values.'
+      pattern_description: 'STRING — "" unless undocumented.'
+      exposure_usd: 'FLOAT.'
+      summary: 'STRING.'
+      sar_filed: 'BOOL.'
+      sar_narrative: 'STRING — "" when no SAR.'
+      initial_actions: 'STRING — JSON list of action dicts.'
+      final_actions: 'STRING — JSON list of action dicts.'
+      what_changed: 'STRING.'
+      stop_reason: 'STRING.'
+      updated_at: 'DATETIME.'
+      affected_txn_ids: 'SET<STRING> — JSON array of TransactionIDs.'
+      connected_card_ids: 'SET<STRING> — JSON array of card ids.'
+      connected_device_profiles: 'SET<STRING> — JSON array of exact profile strings.'
+      similar_closed_cases: 'MAP<STRING,FLOAT> — {"CC-2649": 0.12, ...} (id -> vector distance).'
+      similar_agent_cases: 'MAP<STRING,FLOAT> — {"AC-HHG-006": 0.2}.'
+      cited_chunk_ids: 'SET<STRING> — PolicyChunk ids.'
+    example: {"ac": {"id": "AC-HHG-014"}, "status": "escalated", "verdict": "fraud", "fraud_probability": 0.9, "pattern": "undocumented", "pattern_description": "Anonymous-proxy device ring ...", "exposure_usd": 187.33, "summary": "...", "sar_filed": true, "sar_narrative": "...", "initial_actions": "[...]", "final_actions": "[...]", "what_changed": "nothing", "stop_reason": "Policy 6 test 1 ...", "updated_at": "2026-09-25 10:05:00", "affected_txn_ids": ["3460634", "3478561"], "connected_card_ids": ["C00123-K1"], "connected_device_profiles": ["SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080"], "similar_closed_cases": {"CC-2649": 0.11, "CC-2971": 0.12}, "similar_agent_cases": {}, "cited_chunk_ids": ["policy#R6", "policy#R9"]}
+    prints: [ok, id]
+  record_approval:
+    writer: true
+    description: Harness-only. Upserts Approval "AP-<case_id>-<action>" (pending / approved / rejected) and the HAS_APPROVAL edge; the UI's approval inbox calls it on approve.
+    parameters:
+      case_id: 'STRING — "AC-HHG-014".'
+      action: 'STRING — the policy action, e.g. FILE_REPORT.'
+      route: 'STRING — L1 | L2.'
+      status: 'STRING — pending | approved | rejected.'
+      decided_by: 'STRING — "" while pending.'
+      decided_at: 'DATETIME.'
+      reason: 'STRING — rule citation.'
+    example: {"case_id": "AC-HHG-014", "action": "FILE_REPORT", "route": "L2", "status": "pending", "decided_by": "", "decided_at": "2026-09-25 10:05:00", "reason": "3a: undocumented pattern; R6 shared device profile"}
+    prints: [ok, id]

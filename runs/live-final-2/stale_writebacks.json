@@ -1,0 +1,210 @@
+{
+  "generated_at": "2026-09-24T22:20:17",
+  "cases": [
+    "HHG-001",
+    "HHG-002",
+    "HHG-003",
+    "HHG-004",
+    "HHG-005",
+    "HHG-006",
+    "HHG-007",
+    "HHG-008",
+    "HHG-009",
+    "HHG-010",
+    "HHG-011",
+    "HHG-012",
+    "HHG-013",
+    "HHG-014",
+    "HHG-015",
+    "HHG-016",
+    "HHG-017",
+    "HHG-018",
+    "HHG-019",
+    "HHG-020"
+  ],
+  "applied": true,
+  "found": [
+    {
+      "vertex_type": "CaseEvent",
+      "id": "AC-HHG-003-001",
+      "case_id": "AC-HHG-003",
+      "status": "",
+      "action": "evidence"
+    },
+    {
+      "vertex_type": "CaseEvent",
+      "id": "AC-HHG-014-005",
+      "case_id": "AC-HHG-014",
+      "status": "",
+      "action": "sar"
+    },
+    {
+      "vertex_type": "CaseEvent",
+      "id": "AC-HHG-006-006",
+      "case_id": "AC-HHG-006",
+      "status": "",
+      "action": "executed"
+    },
+    {
+      "vertex_type": "CaseEvent",
+      "id": "AC-HHG-006-003",
+      "case_id": "AC-HHG-006",
+      "status": "",
+      "action": "nba_initial"
+    },
+    {
+      "vertex_type": "CaseEvent",
+      "id": "AC-HHG-014-002",
+      "case_id": "AC-HHG-014",
+      "status": "",
+      "action": "assessment"
+    },
+    {
+      "vertex_type": "CaseEvent",
+      "id": "AC-HHG-006-004",
+      "case_id": "AC-HHG-006",
+      "status": "",
+      "action": "nba_final"
+    },
+    {
+      "vertex_type": "CaseEvent",
+      "id": "AC-HHG-014-003",
+      "case_id": "AC-HHG-014",
+      "status": "",
+      "action": "nba_initial"
+    },
+    {
+      "vertex_type": "CaseEvent",
+      "id": "AC-HHG-003-004",
+      "case_id": "AC-HHG-003",
+      "status": "",
+      "action": "nba_final"
+    },
+    {
+      "vertex_type": "CaseEvent",
+      "id": "AC-HHG-003-005",
+      "case_id": "AC-HHG-003",
+      "status": "",
+      "action": "executed"
+    },
+    {
+      "vertex_type": "CaseEvent",
+      "id": "AC-HHG-014-001",
+      "case_id": "AC-HHG-014",
+      "status": "",
+      "action": "evidence"
+    },
+    {
+      "vertex_type": "CaseEvent",
+      "id": "AC-HHG-006-001",
+      "case_id": "AC-HHG-006",
+      "status": "",
+      "action": "evidence"
+    },
+    {
+      "vertex_type": "CaseEvent",
+      "id": "AC-HHG-014-006",
+      "case_id": "AC-HHG-014",
+      "status": "",
+      "action": "executed"
+    },
+    {
+      "vertex_type": "CaseEvent",
+      "id": "AC-HHG-006-005",
+      "case_id": "AC-HHG-006",
+      "status": "",
+      "action": "sar"
+    },
+    {
+      "vertex_type": "CaseEvent",
+      "id": "AC-HHG-014-004",
+      "case_id": "AC-HHG-014",
+      "status": "",
+      "action": "nba_final"
+    },
+    {
+      "vertex_type": "CaseEvent",
+      "id": "AC-HHG-003-003",
+      "case_id": "AC-HHG-003",
+      "status": "",
+      "action": "nba_initial"
+    },
+    {
+      "vertex_type": "CaseEvent",
+      "id": "AC-HHG-006-002",
+      "case_id": "AC-HHG-006",
+      "status": "",
+      "action": "assessment"
+    },
+    {
+      "vertex_type": "CaseEvent",
+      "id": "AC-HHG-003-002",
+      "case_id": "AC-HHG-003",
+      "status": "",
+      "action": "assessment"
+    },
+    {
+      "vertex_type": "Approval",
+      "id": "AP-AC-HHG-014-FILE_REPORT",
+      "case_id": "AC-HHG-014",
+      "status": "pending",
+      "action": "FILE_REPORT"
+    },
+    {
+      "vertex_type": "Approval",
+      "id": "AP-AC-HHG-003-BLOCK_CARD",
+      "case_id": "AC-HHG-003",
+      "status": "pending",
+      "action": "BLOCK_CARD"
+    },
+    {
+      "vertex_type": "Approval",
+      "id": "AP-AC-HHG-006-FILE_REPORT",
+      "case_id": "AC-HHG-006",
+      "status": "pending",
+      "action": "FILE_REPORT"
+    },
+    {
+      "vertex_type": "Approval",
+      "id": "AP-AC-HHG-006-BLOCK_CARD",
+      "case_id": "AC-HHG-006",
+      "status": "pending",
+      "action": "BLOCK_CARD"
+    },
+    {
+      "vertex_type": "Approval",
+      "id": "AP-AC-HHG-014-BLOCK_CARD",
+      "case_id": "AC-HHG-014",
+      "status": "pending",
+      "action": "BLOCK_CARD"
+    },
+    {
+      "vertex_type": "AgentCase",
+      "id": "AC-HHG-003",
+      "case_id": "AC-HHG-003",
+      "status": "open",
+      "action": ""
+    },
+    {
+      "vertex_type": "AgentCase",
+      "id": "AC-HHG-006",
+      "case_id": "AC-HHG-006",
+      "status": "escalated",
+      "action": ""
+    },
+    {
+      "vertex_type": "AgentCase",
+      "id": "AC-HHG-014",
+      "case_id": "AC-HHG-014",
+      "status": "escalated",
+      "action": ""
+    }
+  ],
+  "counts": {
+    "CaseEvent": 17,
+    "Approval": 5,
+    "AgentCase": 3
+  },
+  "deleted": 25,
+  "remaining": []
+}

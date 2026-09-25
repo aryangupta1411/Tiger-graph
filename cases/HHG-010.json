@@ -1,0 +1,165 @@
+{
+  "case_id": "HHG-010",
+  "case": {
+    "status": "closed_legitimate",
+    "verdict": "legitimate",
+    "fraud_probability": 0.05,
+    "pattern": "none",
+    "pattern_description": "",
+    "affected_txn_ids": [],
+    "first_suspicious_txn_id": "",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 0.0,
+    "evidence": [
+      {
+        "claim": "The memory-informed calibration scores this transaction at cms_p=0.02 (cal_p/p_engine=0.0227), far below the real-time risk_score of 0.90 captured on the same transaction.",
+        "source": "graph",
+        "ref": "query:case_context(t=3506725, as_of=2016-12-02 18:18:27)",
+        "entity_ids": [
+          "3506725",
+          "C10434-K1"
+        ]
+      },
+      {
+        "claim": "The $1,000.03 online purchase exceeds this card's prior maximum of $670.04 and prior median of $68.98 as of opening (33 prior transactions, card_seq-1=33), an amount anomaly taken alone.",
+        "source": "graph",
+        "ref": "query:case_context(t=3506725, as_of=2016-12-02 18:18:27)",
+        "entity_ids": [
+          "3506725",
+          "C10434-K1"
+        ]
+      },
+      {
+        "claim": "region_history shows billing region 469.0 is the card's modal/home region with 24 prior purchases across 19 days before opening and hint=home; no roaming or region novelty is present on this alert.",
+        "source": "graph",
+        "ref": "query:region_history(c=C10434-K1, addr1=469.0, as_of=2016-12-02 15:18:26)",
+        "entity_ids": [
+          "C10434-K1"
+        ]
+      },
+      {
+        "claim": "device_history shows prior_n=0 for the flagged device profile on this card as of the flagged timestamp, with device_new_values=['New'] the only value ever seen, consistent with a first-time-device event rather than a fraud signal by itself.",
+        "source": "graph",
+        "ref": "query:device_history(c=C10434-K1, d=Windows | Windows 10 | edge 16.0 | 1366x768, as_of=2016-12-02 15:18:26)",
+        "entity_ids": [
+          "C10434-K1",
+          "Windows | Windows 10 | edge 16.0 | 1366x768"
+        ]
+      },
+      {
+        "claim": "shared_origin_scan shows the flagged device profile is not strong (94 cards in the 30 days before opening, over the 40-card strength ceiling, 208 cards all-time), so despite 11 historical fraud cases on the profile it cannot count as R6 shared-origin evidence.",
+        "source": "graph",
+        "ref": "query:shared_origin_scan(c=C10434-K1, as_of=2016-12-02 18:18:27, days=30)",
+        "entity_ids": [
+          "Windows | Windows 10 | edge 16.0 | 1366x768",
+          "C10434-K1"
+        ]
+      },
+      {
+        "claim": "email_neighbors found 60 cards sharing the recipient domain anonymous.com with this card in the 30 days before opening (e.g. C11923-K2 with 101 txns, C06224-K2 with 93 txns), and shared_origin_scan's domain-level aggregate shows 0 fraud cases for anonymous.com in that same 30-day window, consistent with a high-fanout hub domain rather than a targeted shared-recipient ring.",
+        "source": "graph",
+        "ref": "query:email_neighbors(e=anonymous.com, c=C10434-K1, from_ts=2016-11-02 18:18:27, to_ts=2016-12-02 18:18:27)",
+        "entity_ids": [
+          "C10434-K1",
+          "C11923-K2",
+          "C06224-K2"
+        ]
+      },
+      {
+        "claim": "prior_cases_for_customer shows one closed case on this card, CC-0873, opened 2016-07-21, cleared under a confirmed-travel template with $0 exposure, a weak precedent that a prior risk alert on this card was a false positive.",
+        "source": "graph",
+        "ref": "query:prior_cases_for_customer(cu=C10434, as_of=2016-12-02 18:18:27)",
+        "entity_ids": [
+          "CC-0873",
+          "C10434-K1"
+        ]
+      },
+      {
+        "claim": "episode_candidates, card_testing_check and under_threshold_burst confirm the flagged transaction is an isolated singleton (chain n_members=1, no small-authorization run, no bursts), ruling out card_testing and the undocumented under-$500 burst pattern for this alert.",
+        "source": "graph",
+        "ref": "query:episode_candidates(t=3506725, as_of=2016-12-02 18:18:27, gap_h=48)",
+        "entity_ids": [
+          "3506725"
+        ]
+      },
+      {
+        "claim": "find_similar_cases surfaced 8 closed cases with a same-device overlap (e.g. CC-3954, CC-2720, CC-4362), all confirmed fraud under card_not_present_new_device/card_not_present_fraud, but since this device profile is not strong (94 cards in the 30 days before opening) this reads as base-rate noise from a high-fanout profile rather than distinctive shared-origin evidence.",
+        "source": "graph",
+        "ref": "query:similar_prior_cases(q=[1024 items], k=8, card_id=C10434-K1, customer_id=C10434, device_id=Windows | Windows 10 | edge 16.0 | 1366x768, addr1=469.0, pattern_sig=, as_of=2016-12-02 18:18:27)",
+        "entity_ids": [
+          "CC-3954",
+          "CC-2720",
+          "CC-4362"
+        ]
+      },
+      {
+        "claim": "Assumed reply: customer confirmed the purchase from a new phone/device and recognises the $1,000.03 charge",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": [
+          "3506725"
+        ]
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-3954",
+      "CC-2720",
+      "CC-4362"
+    ],
+    "summary": "Verdict legitimate at probability 0.05: the $1,000.03 online purchase (txn 3506725) fell in the card's home region, and while the real-time risk_score was 0.90, the memory-calibrated score was 0.02. No episode is scoped (exposure $0.00); the alert could have read as card_not_present_new_device fraud given similar closed cases on the same device profile, but that profile is not strong and a simulated customer_validation reply had the customer confirm the new-device charge. Recommended: CREATE_CASE, ALLOW_TRANSACTION and CLOSE_NO_FRAUD, all auto-route, no approval needed.",
+    "written_to_graph": true,
+    "graph_case_id": "AC-HHG-010"
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 20,
+      "assumed_response": "ASSUMED (simulated): customer confirmed the purchase from a new phone/device and recognises the $1,000.03 charge"
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: evidence is being requested on this risk-score alert (single-signal, p=0.05) so a case is opened per policy even though the probability sits well below the 0.30 verdict threshold."
+      },
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1: single evidence family (risk_score alone, contradicted by cms_p=0.02) and probability 0.05 < 0.70 requires verification with the customer before any further action on this online alert."
+      }
+    ],
+    "final": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: a case is opened to record the customer's confirmation of this risk-score alert on transaction 3506725 (exposure $0.00)."
+      },
+      {
+        "action": "ALLOW_TRANSACTION",
+        "route": "auto",
+        "reason": "R3: the customer confirmed the $1,000.03 purchase, so the transaction is recommended for allow."
+      },
+      {
+        "action": "CLOSE_NO_FRAUD",
+        "route": "auto",
+        "reason": "R3: customer confirmation plus the low calibrated probability (0.05) across two evidence families (customer, memory) meets the §6 stop rule, so the case is recommended for closing as no fraud."
+      }
+    ],
+    "what_changed": "The assumed customer validation reply (confirm) left the probability at 0.05 and kept the verdict legitimate, adding ALLOW_TRANSACTION, CLOSE_NO_FRAUD, removing VERIFY_WITH_CUSTOMER. Counterfactual: had the customer denied the purchase, R2 would have applied: BLOCK_CARD (L1) and CREATE_CASE."
+  },
+  "sar": {
+    "file": false,
+    "reason": "3a not met: verdict legitimate (fraud not confirmed or strongly suspected), exposure $0.00; no report",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "Policy §6 test 2 fired: the assumed customer confirmation of the charge settled the question. Independently, probability 0.05 with two evidence families (customer, memory) also meets §6 test 1.",
+  "tool_calls": 20,
+  "tokens": 311261,
+  "latency_s": 252.6
+}

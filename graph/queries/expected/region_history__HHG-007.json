@@ -1,0 +1,26 @@
+{
+ "query": "region_history",
+ "case": "HHG-007",
+ "params": {
+  "c": "C09933-K2",
+  "addr1": "264.0",
+  "as_of": "2016-12-05 03:46:14"
+ },
+ "expected": {
+  "region": {
+   "addr1": "264.0",
+   "prior_n": 2224,
+   "prior_days": 156,
+   "first_ts": "2016-07-03 00:57:14",
+   "last_ts": "2016-12-05 02:19:51",
+   "share": 0.9186
+  },
+  "modal_region": "264.0",
+  "n_regions": 31,
+  "home_activity_48h": {
+   "n_home": 24,
+   "n_other": 2
+  },
+  "hint": "home"
+ }
+}

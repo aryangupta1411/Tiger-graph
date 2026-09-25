@@ -1,0 +1,50 @@
+// close_case (writer, harness-only) — writes the post-evidence verdict onto the AgentCase vertex (P10) and the
+// memory edges: CASE_INVOLVES for every affected transaction, CASE_CONNECTED_TO for connected cards,
+// CASE_DEVICE for connected device profiles, CASE_MATCHES for the pattern, CASE_SIMILAR_TO / _AGENT with the
+// retrieval score, CASE_CITES for grounding chunks. `ac` must exist (open_case ran first). Any vertex id
+// passed in a set that does not exist is created as an empty vertex by INSERT — the validator guarantees
+// every id exists in the dataset before this runs. MAP params are sent as plain JSON objects
+// ({"CC-2649": 0.12}); pyTigerGraph converts them to keylist/valuelist.
+USE GRAPH FraudGraph
+CREATE OR REPLACE QUERY close_case(VERTEX<AgentCase> ac, STRING status, STRING verdict, FLOAT fraud_probability,
+                                   STRING pattern, STRING pattern_description, FLOAT exposure_usd, STRING summary,
+                                   BOOL sar_filed, STRING sar_narrative, STRING initial_actions, STRING final_actions,
+                                   STRING what_changed, STRING stop_reason, DATETIME updated_at,
+                                   SET<STRING> affected_txn_ids, SET<STRING> connected_card_ids,
+                                   SET<STRING> connected_device_profiles, MAP<STRING, FLOAT> similar_closed_cases,
+                                   MAP<STRING, FLOAT> similar_agent_cases, SET<STRING> cited_chunk_ids)
+                                   FOR GRAPH FraudGraph SYNTAX v3 {
+  MaxAccum<STRING> @@cid;
+  S = {ac};
+  S = SELECT s FROM (s:S)
+      POST-ACCUM @@cid += s.id,
+                 s.status = status, s.verdict = verdict, s.fraud_probability = fraud_probability,
+                 s.pattern = pattern, s.pattern_description = pattern_description, s.exposure_usd = exposure_usd,
+                 s.summary = summary, s.sar_filed = sar_filed, s.sar_narrative = sar_narrative,
+                 s.initial_actions = initial_actions, s.final_actions = final_actions,
+                 s.what_changed = what_changed, s.stop_reason = stop_reason, s.updated_at = updated_at;
+  STRING cid = @@cid;
+  FOREACH x IN affected_txn_ids DO
+    INSERT INTO CASE_INVOLVES (FROM, TO) VALUES (cid AgentCase, x Transaction);
+  END;
+  FOREACH x IN connected_card_ids DO
+    INSERT INTO CASE_CONNECTED_TO (FROM, TO) VALUES (cid AgentCase, x Card);
+  END;
+  FOREACH x IN connected_device_profiles DO
+    INSERT INTO CASE_DEVICE (FROM, TO) VALUES (cid AgentCase, x DeviceProfile);
+  END;
+  IF pattern != "" THEN
+    INSERT INTO CASE_MATCHES (FROM, TO) VALUES (cid AgentCase, pattern FraudPattern);
+  END;
+  FOREACH (k, v) IN similar_closed_cases DO
+    INSERT INTO CASE_SIMILAR_TO (FROM, TO, score) VALUES (cid AgentCase, k ClosedCase, v);
+  END;
+  FOREACH (k, v) IN similar_agent_cases DO
+    INSERT INTO CASE_SIMILAR_TO_AGENT (FROM, TO, score) VALUES (cid AgentCase, k AgentCase, v);
+  END;
+  FOREACH x IN cited_chunk_ids DO
+    INSERT INTO CASE_CITES (FROM, TO) VALUES (cid AgentCase, x PolicyChunk);
+  END;
+  BOOL ok = true;
+  PRINT ok, cid AS id;
+}

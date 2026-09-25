@@ -1,0 +1,13 @@
+USE GRAPH FraudGraph
+/*
+ graph/algos/clear_shares_device.gsql — deletes every SHARES_DEVICE edge so project_shares_device can be
+ re-run from scratch (idempotent day-4 / rebuild step). ACCUM DELETE(e) is the documented edge-delete form
+ in a SELECT block (SYNTAX v2; v3 pattern DELETE is not needed here).
+*/
+CREATE OR REPLACE QUERY clear_shares_device() SYNTAX v2 {
+  SumAccum<INT> @@n;
+  Start = {Card.*};
+  S = SELECT s FROM Start:s -(SHARES_DEVICE:e)- Card:t
+      ACCUM @@n += 1, DELETE(e);
+  PRINT @@n AS n_deleted_directed;   // each undirected edge is visited from both ends -> 2 x edges
+}

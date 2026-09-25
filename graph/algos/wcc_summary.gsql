@@ -1,0 +1,25 @@
+USE GRAPH FraudGraph
+/*
+ graph/algos/wcc_summary.gsql — honest report of what tg_wcc wrote into Card.wcc_id: component sizes
+ (top 10), number of components with >= 2 cards, and the component of the seeded ring profile's cards.
+ Used by run_algos.py after tg_wcc; the numbers go into the blog ("WCC is not a ring detector here").
+*/
+CREATE OR REPLACE QUERY wcc_summary(STRING ring_profile_id = "SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080", INT top_n = 10) SYNTAX v3 {
+  TYPEDEF TUPLE<INT wcc_id, INT n_cards> CompSize;
+  MapAccum<INT, SumAccum<INT>> @@size_by_comp;
+  HeapAccum<CompSize>(top_n, n_cards DESC) @@top;
+  SetAccum<INT> @@ring_comps;
+  SumAccum<INT> @@n_isolated, @@n_multi;
+
+  cards = SELECT c FROM (c:Card)
+          ACCUM IF c.wcc_id >= 0 THEN @@size_by_comp += (c.wcc_id -> 1) ELSE @@n_isolated += 1 END;
+  ring = SELECT c FROM (d:DeviceProfile)-[:REV_FROM_DEVICE]->(:Transaction)-[:REV_MADE]->(c:Card)
+         WHERE d.id == ring_profile_id
+         ACCUM @@ring_comps += c.wcc_id;
+  FOREACH (k, v) IN @@size_by_comp DO
+    @@top += CompSize(k, v);
+    IF v >= 2 THEN @@n_multi += 1; END;
+  END;
+  PRINT @@top AS top_components, @@n_multi AS n_components_ge2, @@n_isolated AS n_isolated_cards,
+        @@size_by_comp.size() AS n_components, @@ring_comps AS ring_card_components;
+}

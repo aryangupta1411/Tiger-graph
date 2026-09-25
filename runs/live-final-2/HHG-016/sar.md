@@ -1,0 +1,1 @@
+No SAR. 3a not met: exposure $59.67 <= $1,000; the New profile `Windows | NULL | edge 16.0 | NULL` is a common, non-distinctive profile (not a strong device profile), so it is not a shared-origin signal; no shared region cluster; no other customer's fraud connected; documented pattern

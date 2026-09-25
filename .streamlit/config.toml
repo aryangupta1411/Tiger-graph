@@ -1,0 +1,127 @@
+# HHGOA analyst dashboard theme — a single deliberate palette instead of
+# Streamlit's stock defaults, matched to the project's navy/brand colors used
+# across the demo deck and video script (#0b3d91). Light and dark variants are
+# both defined so judges get a working theme switcher (top-right menu ->
+# Settings -> Choose app theme) regardless of their OS setting.
+
+[theme]
+font = "'Inter':https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+codeFont = "'JetBrains Mono':https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"
+baseFontSize = 15
+headingFontSizes = ["28px", "21px", "17px", "15px", "14px", "13px"]
+headingFontWeights = [700, 700, 600, 600, 600, 600]
+linkUnderline = false
+
+baseRadius = "8px"
+buttonRadius = "8px"
+showWidgetBorder = true
+showSidebarBorder = true
+
+[theme.light]
+primaryColor = "#0b3d91"
+backgroundColor = "#ffffff"
+secondaryBackgroundColor = "#f4f6fb"
+textColor = "#1a1a1a"
+linkColor = "#0b3d91"
+
+borderColor = "#e2e6ee"
+codeTextColor = "#a3195b"
+codeBackgroundColor = "#f1f2f6"
+
+# Semantic palette — every common.badge()/route_badge()/verdict color in the
+# app maps to one of these names, so "red" always means the same red.
+redColor = "#c0392b"
+redBackgroundColor = "#fdecea"
+redTextColor = "#8e2a1f"
+
+orangeColor = "#b8860b"
+orangeBackgroundColor = "#fdf3e0"
+orangeTextColor = "#8a6508"
+
+yellowColor = "#b8860b"
+yellowBackgroundColor = "#fdf3e0"
+yellowTextColor = "#8a6508"
+
+greenColor = "#1e7e34"
+greenBackgroundColor = "#eaf6ec"
+greenTextColor = "#155724"
+
+blueColor = "#2563eb"
+blueBackgroundColor = "#eaf1fd"
+blueTextColor = "#1d4ed8"
+
+violetColor = "#7c3aed"
+violetBackgroundColor = "#f3ecfd"
+violetTextColor = "#5b21b6"
+
+grayColor = "#5b6472"
+grayBackgroundColor = "#eef0f3"
+grayTextColor = "#3f4652"
+
+chartCategoricalColors = ["#0b3d91", "#1e7e34", "#c0392b", "#b8860b", "#7c3aed", "#2563eb", "#5b6472"]
+
+dataframeBorderColor = "#e2e6ee"
+dataframeHeaderBackgroundColor = "#eef3fb"
+
+[theme.light.sidebar]
+backgroundColor = "#f8f9fc"
+secondaryBackgroundColor = "#eef1f7"
+borderColor = "#e2e6ee"
+primaryColor = "#0b3d91"
+
+[theme.dark]
+primaryColor = "#58a6ff"
+backgroundColor = "#0d1117"
+secondaryBackgroundColor = "#161b22"
+textColor = "#e6edf3"
+linkColor = "#58a6ff"
+
+borderColor = "#30363d"
+codeTextColor = "#ff9bc2"
+codeBackgroundColor = "#161b22"
+
+redColor = "#f85149"
+redBackgroundColor = "#3d1418"
+redTextColor = "#ffb3ab"
+
+orangeColor = "#d29922"
+orangeBackgroundColor = "#3b2e0a"
+orangeTextColor = "#f0c674"
+
+yellowColor = "#d29922"
+yellowBackgroundColor = "#3b2e0a"
+yellowTextColor = "#f0c674"
+
+greenColor = "#3fb950"
+greenBackgroundColor = "#0f2e17"
+greenTextColor = "#7ee2a8"
+
+blueColor = "#58a6ff"
+blueBackgroundColor = "#0d2847"
+blueTextColor = "#9ecbff"
+
+violetColor = "#bc8cff"
+violetBackgroundColor = "#2d1f47"
+violetTextColor = "#d2b8ff"
+
+grayColor = "#8b949e"
+grayBackgroundColor = "#21262d"
+grayTextColor = "#c9d1d9"
+
+chartCategoricalColors = ["#58a6ff", "#3fb950", "#f85149", "#d29922", "#bc8cff", "#79c0ff", "#8b949e"]
+
+dataframeBorderColor = "#30363d"
+dataframeHeaderBackgroundColor = "#161b22"
+
+[theme.dark.sidebar]
+backgroundColor = "#010409"
+secondaryBackgroundColor = "#0d1117"
+borderColor = "#21262d"
+primaryColor = "#58a6ff"
+
+[client]
+# "viewer" keeps developer clutter (deploy, rerun, clear cache) out of the
+# menu/toolbar for the demo, while still showing the theme toggle judges
+# need to switch light/dark ("minimal" hides the menu outright once no
+# developer options are left in it, which took the theme toggle with it).
+toolbarMode = "viewer"

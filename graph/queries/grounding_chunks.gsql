@@ -1,0 +1,28 @@
+USE GRAPH FraudGraph
+/*
+ grounding_chunks - policy / pattern / regulation retrieval over PolicyChunk.emb (contract: interfaces.md A).
+
+ Params: q LIST<FLOAT> (EMBED_DIM-d, query-side encoding; see rag/embed.py), k INT, doc_filter STRING ("" = any Document;
+         e.g. "sar_guidance_narrative" for SAR drafting, "fraud_policy" for rule citations),
+         kind_filter STRING ("" | policy | pattern | regulation).
+ PRINT chunks: v_id = chunk id (e.g. "sar_guidance_narrative#p06-when-did-the-suspicious", "policy#R1");
+ attributes doc_id, section, page, kind, text, @distance. rag.retrieval flattens to
+ {id, doc_id, section, page, kind, text, distance}.
+*/
+CREATE OR REPLACE QUERY grounding_chunks(LIST<FLOAT> q, INT k, STRING doc_filter, STRING kind_filter)
+    FOR GRAPH FraudGraph SYNTAX v3 {
+  MapAccum<VERTEX, FLOAT> @@dist;
+  MinAccum<FLOAT> @distance;
+
+  cand = SELECT p FROM (p:PolicyChunk)
+         WHERE (doc_filter == "" OR p.doc_id == doc_filter)
+           AND (kind_filter == "" OR p.kind == kind_filter);
+  IF cand.size() == 0 THEN
+    cand = SELECT p FROM (p:PolicyChunk);   // unknown filter: search everything rather than nothing
+  END;
+  v = vectorSearch({PolicyChunk.emb}, q, k, {candidate_set: cand, distance_map: @@dist});
+  v = SELECT x FROM (x:v) ACCUM x.@distance += @@dist.get(x);
+  res = SELECT x FROM (x:v) ORDER BY x.@distance ASC;
+  PRINT res[res.doc_id, res.section, res.page, res.kind, res.text, res.@distance] AS chunks;
+}
+INSTALL QUERY grounding_chunks

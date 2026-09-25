@@ -1,0 +1,186 @@
+{
+  "case_id": "HHG-007",
+  "case": {
+    "status": "open",
+    "verdict": "fraud",
+    "fraud_probability": 0.77,
+    "pattern": "account_takeover",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3508487",
+      "3514573",
+      "3514948"
+    ],
+    "first_suspicious_txn_id": "3508487",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 265.85,
+    "evidence": [
+      {
+        "claim": "Amount $111.92 sits inside the card's baseline (prior median $77.04, prior maximum $2,529.78 over 2431 transactions)",
+        "source": "graph",
+        "ref": "query:case_context(txn=3514948)",
+        "entity_ids": [
+          "3514948",
+          "C09933-K2"
+        ]
+      },
+      {
+        "claim": "Billing region 264.0 is the card's modal in-person region (2220 prior purchases on 155 days)",
+        "source": "graph",
+        "ref": "query:region_history(card=C09933-K2, addr1=264.0)",
+        "entity_ids": [
+          "3514948",
+          "C09933-K2"
+        ]
+      },
+      {
+        "claim": "$111.92 +-1% under product code W is a recurring price point on this card: 5 prior purchases, 5 of them at 264.0 (median gap 29.2 days, gap CV 0.60; R7's monthly-cadence test fails)",
+        "source": "graph",
+        "ref": "query:recurring_charge_check(txn=3514948)",
+        "entity_ids": [
+          "3514948",
+          "C09933-K2"
+        ]
+      },
+      {
+        "claim": "A second transaction in the same 48 h window (3514573, $36.97, in_person, region 264.0) scores 0.72 on the case-memory scorer",
+        "source": "graph",
+        "ref": "query:episode_candidates(txn=3514948)",
+        "entity_ids": [
+          "3514573",
+          "3514948"
+        ]
+      },
+      {
+        "claim": "Case-memory scorer (LightGBM over the bank's 5,565 closed cases; October holdout AUC 0.956) puts the flagged transaction at 0.85 (calibrated 0.77); the real-time risk score was 0.87",
+        "source": "graph",
+        "ref": "query:case_context(txn=3514948)",
+        "entity_ids": [
+          "3514948"
+        ]
+      },
+      {
+        "claim": "18 prior confirmed-fraud case(s) on this card (account_takeover, out_of_region_use), most recent 2016-10-31",
+        "source": "graph",
+        "ref": "query:prior_cases_for_customer(customer=C09933)",
+        "entity_ids": [
+          "CC-0104",
+          "CC-0765",
+          "CC-1228",
+          "CC-1524",
+          "CC-1682",
+          "CC-2565",
+          "CC-2834",
+          "CC-2986",
+          "CC-3136",
+          "CC-3439",
+          "CC-3821",
+          "CC-4196",
+          "C09933-K2"
+        ]
+      },
+      {
+        "claim": "The card's 8 prior account-takeover case(s) were confirmed in its modal region, so an in-region purchase is also the card's established fraud shape",
+        "source": "graph",
+        "ref": "query:prior_cases_for_customer(customer=C09933)",
+        "entity_ids": [
+          "CC-1228",
+          "CC-1524",
+          "CC-2834",
+          "CC-3136",
+          "CC-4455",
+          "CC-4597",
+          "C09933-K2"
+        ]
+      },
+      {
+        "claim": "1 prior risk-score alert(s) on this card were cleared after the customer confirmed the activity (CC-0657); that alert was a different shape (amount), so it is a weak precedent",
+        "source": "graph",
+        "ref": "query:prior_cases_for_customer(customer=C09933)",
+        "entity_ids": [
+          "CC-0657",
+          "C09933-K2"
+        ]
+      },
+      {
+        "claim": "No reply within 24 hours / verification not completed (assumed); probability unchanged",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": []
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-5521",
+      "CC-5092",
+      "CC-4787",
+      "CC-4597",
+      "CC-4455",
+      "CC-4196"
+    ],
+    "summary": "Risk-score alert (0.87) on transaction 3514948 ($111.92, in person) for card C09933-K2. Case-memory scorer (LightGBM over the bank's 5,565 closed cases; October holdout AUC 0.956) puts the flagged transaction at 0.85 (calibrated 0.77); the real-time risk score was 0.87. Verdict fraud at probability 0.77, pattern account_takeover, 3 affected transaction(s) worth $265.85. Final actions: CREATE_CASE, MONITOR_CARD, DECLINE_TRANSACTION, BLOCK_CARD after the assumed customer_validation reply; status open.",
+    "written_to_graph": false,
+    "graph_case_id": "AC-HHG-007"
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 15,
+      "assumed_response": "ASSUMED (simulated): no reply from the customer within 24 hours"
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: probability 0.77 reaches 0.30; case opened and written to the graph"
+      },
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "\u00a73b / \u00a75: probability 0.77 is below the \u00a76 stop threshold of 0.85; ask the cardholder which of the transactions were theirs"
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "\u00a73b: fraud verdict at probability 0.77 with 1 independent evidence family (memory), so R1 does not apply (probability at or above 0.70); exposure $265.85 routes L1"
+      }
+    ],
+    "final": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: probability 0.77 reaches 0.30; case opened and written to the graph"
+      },
+      {
+        "action": "MONITOR_CARD",
+        "route": "auto",
+        "reason": "R4: no reply within 24 h; raise monitoring sensitivity for 72 h"
+      },
+      {
+        "action": "DECLINE_TRANSACTION",
+        "route": "L1",
+        "reason": "R4: no reply within 24 h; decline pending / further authorisations on this card (card stays active)"
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "\u00a73b: fraud verdict at probability 0.77 with 1 independent evidence family (memory), so R1 does not apply (probability at or above 0.70); exposure $265.85 routes L1"
+      }
+    ],
+    "what_changed": "The assumed reply (customer_validation: no reply from the customer within 24 hours) left the probability at 0.77 and the verdict became fraud. Added MONITOR_CARD, DECLINE_TRANSACTION. Dropped VERIFY_WITH_CUSTOMER. Counterfactual: a confirmation would have closed the alert (R3); a denial would have led to BLOCK_CARD and CREATE_CASE (R2)."
+  },
+  "sar": {
+    "file": false,
+    "reason": "3a not met: exposure $265.85 <= $1,000; no device profile shared with other cards' fraud; no shared region cluster; no other customer's fraud connected; documented pattern",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0.0,
+    "activity_dates": []
+  },
+  "stop_reason": "Policy \u00a76 test 3: the verification was not completed within the window and the probability stayed at 0.77; the fraud-band actions (block pending approval) already apply, so no further automated step would change the recommendation.",
+  "tool_calls": 15,
+  "tokens": 0,
+  "latency_s": 0.07
+}

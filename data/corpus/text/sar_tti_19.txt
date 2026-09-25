@@ -1,0 +1,260 @@
+Financial Crimes Enforcement Network
+
+
+
+
+    Writing Effective SAR Narratives
+    By FinCEN’s Office of Outreach Resources
+
+In April 2008, FinCEN published guidance42 to assist financial institutions in filing
+SARs on activity related to foreign corruption. In the guidance, financial institutions
+were instructed to include the term “foreign corruption” in the narrative portion of
+the SAR.
+
+Analysis of SAR filings reporting foreign corruption included a review of SAR
+narratives to ascertain the details of the activity being reported. In addition to the
+analytical findings reported in this issue, this analysis provides FinCEN with an
+opportunity to offer feedback to filers on the quality of SAR narratives.
+
+The Importance of the SAR Narrative
+SAR narratives play an important role in understanding potential illegal activities,
+and assist law enforcement in detecting and preventing the flow of illicit funds. In
+addition to the value that SAR filings bring to law enforcement, and to regulatory
+agencies in conducting their work, FinCEN utilizes BSA data in our analytical
+products, which can provide important information to law enforcement, regulatory
+agencies, and the financial industry.
+
+SAR narratives have helped in determining the breadth of mortgage fraud activity,
+identity theft and trade based money laundering, just to name a few. For all the
+foregoing reasons, it is critical that the information conveyed in SAR filings be
+as accurate and complete as possible. The narrative section should identify the
+essential elements of the suspicious activity being reported – who, what, where,
+when and why – and should be a complete account of the activity and follow a
+chronological order.
+
+To assist filers in providing more effective SAR narratives, we remind filers of
+these key elements and highlight ways to improve the narrative portion of a SAR,
+specifically by use of examples from the analysis done for this issue:
+
+
+
+
+42. http://www.fincen.gov/statutes_regs/guidance/pdf/fin-2008-g005.pdf
+
+
+
+
+  46                                           SAR Activity Review — Trends, Tips & Issues
+                                                    Financial Crimes Enforcement Network
+
+
+ Who is conducting the activity?
+
+   • In the narrative, describe the known information about the suspect(s) reported
+     in the appropriate section of the form including, for example, with respect to
+     a senior foreign political figure, title, occupation, or nature of the suspect’s
+     business.
+
+   • If more than one individual or business is involved in the suspicious activity,
+     identify all suspects and any known relationships among them to the fullest
+     extent possible.
+
+   • If a senior foreign political figure is detected as a beneficial owner of a
+     company, provide information on the business.
+
+   • A senior foreign political figure may use family members and close associates
+     to facilitate hiding the corruption proceeds. Likewise, suspicious activity may
+     also be conducted through the use of intermediaries, such as an attorney or
+     accountant. If any such relationships are identified, they should be included in
+     the narrative.
+
+   • Note whether the senior foreign political figure is the institution’s customer/
+     account holder or another party to the transaction, such as an originator of a
+     wire.
+
+ What instruments or mechanisms are being used in the transaction(s)?
+
+   • An illustrative list of instruments or mechanisms that could be used in
+     suspicious activity involving corruption includes, but is not limited to, private
+     banking, wire transfers, bank drafts, use of shell companies, or the use of
+     correspondent accounts or escrow accounts.
+
+   • If a shell or operational company is being used, note whether the senior foreign
+     political figure is a beneficial owner.
+
+   • It may prove useful to note whether the senior foreign political figure is
+     utilizing retail banking services or more generally the type of account utilized.
+
+   • Identify all accounts involved in the suspicious activity, including those of
+     known relationships that the filer believes may also be involved.
+
+
+
+
+SAR Activity Review — Trends, Tips & Issues                                          47
+Financial Crimes Enforcement Network
+
+
+Where did the suspicious activity take place?
+
+ • Identify the jurisdictions where the accounts and subjects are located.
+
+When did the suspicious activity take place?
+
+ • If a pattern of activity has been occurring over a period of time, state when the
+   suspicious activity was first noticed, the duration of the activity and whether
+   the activity has changed over time.
+
+ • Also, note if a previous SAR was filed.
+
+Why does the filer think the activity is suspicious?
+
+ • Describe as fully as possible why the activity or transaction is unusual for that
+   customer. For example, if a family member of a senior foreign political figure is
+   sending or receiving large dollar wire transfers for which there is no apparent
+   reason or which do not correspond with the customer’s profile, this may be
+   an indication that the account is being used to move or hide the proceeds of
+   corruption.
+
+
+
+
+  48                                     SAR Activity Review — Trends, Tips & Issues
+                                              Financial Crimes Enforcement Network
+
+
+ Example of an Effective Narrative
+   BANK A (THE BANK) CONDUCTED A REVIEW OF AN ACCOUNT HELD BY
+   THERESA SMYTHE (SMYTHE), WIFE OF PRESIDENT EDWARD SMYTHE,
+   A POLITICALLY EXPOSED PERSON, ACCOUNT #12345678. A PRIOR SAR
+   REPORTED SUSPICIOUS INCOMING WIRES INTO SMYTHE’S ACCOUNT
+   AND POSSIBLE STRUCTURING. THIS ACTIVITY IS ONGOING, AND
+   THE REVIEW IDENTIFIED SUSPICIOUS ACTIVITY IN A NEW ACCOUNT
+   HELD BY THERESA AND A JOINT ACCOUNT HOLDER, BRYAN JONES
+   (JONES), WHO HAS BEEN IDENTIFIED IN NEWS REPORTS AS THERESA’S
+   SON. PUBLICLY AVAILABLE INFORMATION HAS PRESIDENT EDWARD
+   SMYTHE AND WIFE THERESA (COLLECTIVELY, “THE SMYTHES”), AS
+   BEING INVOLVED IN CORRUPTION AND THAT PROCEEDS OF THE
+   CORRUPTION HAVE BEEN FUNNELED THROUGH SHELL CORPORATIONS
+   AND FAMILY MEMBERS TO BENEFIT THE PERSONAL INTERESTS OF THE
+   SMYTHE FAMILY. THE BANK NOTED SUSPICIOUS ACTIVITY IN THE
+   JOINT ACCOUNT OF SMYTHE AND JONES, ACCOUNT #34567890 (OPENED
+   IN SEPTEMBER 2010.) A TRANSACTION REVIEW OF ACCOUNT #34567890
+   REVEALED THAT BETWEEN SEPTEMBER, 2010, AND DECEMBER, 2010,
+   THERE WERE $480,000 IN INCOMING WIRES FROM AN ACCOUNT IN
+   LONDON, UK AND $205,000 IN OUTGOING CASH TRANSACTIONS AND
+   CHECK CARD PURCHASES, INCLUDING TO LUXURY RETAILERS. ON
+   10/5/10, A WIRE FOR $130,000 WAS DEPOSITED TO ACCOUNT #234567891 AT
+   BANK B AND REFERENCED THE PURCHASE OF A LUXURY AUTOMOBILE.
+   SMYTHE CONDUCTED A CASH WITHDRAWAL FOR $8,000 ON 10/15/10,
+   $6,500 ON 10/17/10, $7400 ON 10/31/10, AND $9,200 ON 11/2/10. ON 11/22/10,
+   JONES PURCHASED A CASHIER’S CHECK FOR $32,000 MADE PAYABLE TO
+   HIMSELF, WHICH WAS DEPOSITED INTO AN ACCOUNT HELD AT BANK
+   C. ON THE SAME DAY, HE ALSO INITIATED A TRANSFER OF $60,000 TO
+   THOMAS JONES, WHICH WAS DEPOSITED TO PERSONAL CHECKING
+   ACCOUNT #345789234 HELD AT BANK A. THE WIRE REFERENCED
+   “PERSONAL TRANSFER”. THE BANK CONSIDERS THE EXCESSIVE
+   INCOMING WIRE AMOUNTS, PAYMENTS FOR LUXURY GOODS AND
+   OTHER WITHDRAWALS TO INDICATE POSSIBLE STRUCTURING AND
+   POTENTIAL ATTEMPTS TO HIDE FOREIGN CORRUPTION PROCEEDS.
+
+
+
+
+SAR Activity Review — Trends, Tips & Issues                                  49
+Financial Crimes Enforcement Network
+
+
+Why this narrative is effective:
+
+   This narrative contains all of the key elements of an effective narrative: who
+   is conducting the activity, including associated relationships the filer has
+   identified, what instruments are being used (wires and cashier’s checks), where
+   activity occurred, when the transactions took place, and why the filer believed
+   the activity was suspicious (news reports discussing potential corruption, large
+   incoming wire amounts, potential structuring, etc.)
+
+
+
+
+  50                                   SAR Activity Review — Trends, Tips & Issues
+                                              Financial Crimes Enforcement Network
+
+
+ Example of a Less Effective Narrative
+   BANK A (THE BANK) CONDUCTED A REVIEW OF AN ACCOUNT HELD
+   BY THERESA SMYTHE (SMYTHE) WHO IS THE WIFE OF A POLITICALLY
+   EXPOSED PERSON. A PRIOR SAR REPORTED SUSPICIOUS INCOMING
+   WIRES INTO SMYTHE’S ACCOUNT AND POSSIBLE STRUCTURING. THIS
+   ACTIVITY IS ONGOING, AND THE REVIEW IDENTIFIED SUSPICIOUS
+   ACTIVITY IN A NEW ACCOUNT HELD BY THERESA AND A JOINT
+   ACCOUNT HOLDER WHO HAS BEEN IDENTIFIED AS THERESA’S
+   SON. PUBLICLY AVAILABLE INFORMATION HAS THERESA AND HER
+   HUSBAND HAVE BEEN INVOLVED CORRUPTION AND THAT PROCEEDS
+   OF THE CORRUPTION HAVE BEEN FUNNELED THROUGH SHELL
+   CORPORATIONS AND FAMILY MEMBERS TO BENEFIT THE PERSONAL
+   INTERESTS OF THE SMYTHE FAMILY. THE BANK NOTED SUSPICIOUS
+   ACTIVITY IN THE JOINT ACCOUNT OF SMYTHE AND HER SON (OPENED
+   IN SEPTEMBER 2010.) A TRANSACTION REVIEW OF THE ACCOUNT
+   REVEALED THAT BETWEEN SEPTEMBER, 2010, AND DECEMBER, 2010,
+   THERE WERE NUMEROUS INCOMING WIRES FROM AN ACCOUNT IN
+   LONDON, UK AND OUTGOING CASH TRANSACTIONS AND CHECK CARD
+   PURCHASES, INCLUDING TO LUXURY RETAILERS. ON 10/5/10, A WIRE
+   WAS DEPOSITED TO AN ACCOUNT AT BANK B AND REFERENCED THE
+   PURCHASE OF A LUXURY AUTOMOBILE. SMYTHE ALSO CONDUCTED
+   CASH WITHDRAWALS ON 10/15/10, 10/17/10, 10/31/10, AND 11/2/10. ON
+   11/22/10, SHE PURCHASED A CASHIER’S CHECK MADE PAYABLE TO
+   HERSELF, WHICH WAS DEPOSITED INTO AN ACCOUNT HELD AT BANK
+   C. ON THE SAME DAY, SHE ALSO INITIATED A TRANSFER TO THOMAS
+   JONES, WHICH WAS DEPOSITED TO A PERSONAL CHECKING ACCOUNT
+   HELD AT BANK A. THE WIRE REFERENCED “PERSONAL TRANSFER”.
+   ACCORDING TO THE BANK’S RECORDS, THERESA DOES NOT APPREAR
+   TO BE EMPLOYED AND THERE IS NO EXPLANATION FOR THE SOURCE
+   OF FUNDS GOING IN AND OUT OF THE ACCOUNT, ADDITIONALLY,
+   THE BANK CONSIDERS THE EXCESSIVE INCOMING WIRE AMOUNTS,
+   PAYMENTS FOR LUXURY GOODS AND OTHER WITHDRAWALS TO
+   INDICATE POSSIBLE STRUCTURING AND POTENTIAL ATTEMPTS TO HIDE
+   FOREIGN CORRUPTION PROCEEDS.
+
+
+
+
+SAR Activity Review — Trends, Tips & Issues                                  51
+Financial Crimes Enforcement Network
+
+
+Why this narrative is less effective:
+
+    The narrative does not describe any specific account information (account
+    numbers, type of account, or names of other account holders), nor does it
+    specifically name the PEP with a connection to this account. It also does not
+    contain critical transactional information, such as dollar amounts, that alerted
+    the filer to potential suspicious activity. As a result, it is of less value to law
+    enforcement as part of an investigation than a narrative that does include
+    such details. Providing even such information as account numbers, names
+    associated with the accounts or types of products or services utilized by the
+    customer can help inform law enforcement as part of an investigation even if
+    no specific activity was identified as suspicious.
+
+Additional information is available to filers in preparing suspicious activity reports.
+In November 2003, FinCEN published SAR Narratives Guidance43 that provides
+further assistance to filers in completing effective SAR narratives. In Issue 16 of The
+SAR Activity Review – Trends, Tips & Issues, representatives from law enforcement
+agencies provided suggestions on preparing suspicious activity reports.44 In the
+same issue, FinCEN provided information to filers on avoiding commons SAR
+errors.45 Questions on how to complete SARs may also be directed to FinCEN’s
+Regulatory Help Line at 800-949-2732.
+
+
+
+
+43. http://www.fincen.gov/statutes_regs/guidance/pdf/narrativeguidance_webintro.pdf.
+44. See The SAR Activity Review – Trends, Tips and Issues (Issue 16, October 2009), page 45, Law
+    Enforcement Suggestions When Preparing Suspicious Activity Reports.
+45. See id., page 48, Avoiding Common Errors in Suspicious Activity Reports.
+
+
+
+
+  52                                              SAR Activity Review — Trends, Tips & Issues
+

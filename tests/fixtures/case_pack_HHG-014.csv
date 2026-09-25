@@ -1,0 +1,2 @@
+case_id,opened_at,trigger_type,trigger_text,flagged_txn_id,card_id,customer_id,risk_score
+HHG-014,2016-11-22 20:11:00,analyst_request,Analyst request: several cards this month show purchases from the same unusual device profile. Review transaction 3478561 on card C13487-K1 and look for related activity.,3478561,C13487-K1,C13487,

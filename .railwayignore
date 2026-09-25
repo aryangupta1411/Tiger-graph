@@ -1,0 +1,18 @@
+# `railway up` uploads the working tree minus .gitignore and this file. The Dockerfile needs only
+# requirements-ui.txt, .streamlit/, ops/, rag/, cases/, runs/live-final-2/ and ui/, so skip the bulk
+# (data/ and graph/ alone are over 150 MB). Exclusions only: a `!` line here overrides .gitignore
+# and could upload .env or local runs.
+.env
+.env.*
+.claude/
+data/
+graph/
+docs/
+agent/
+engine/
+etl/
+mcp/
+qa/
+contracts/
+policy/
+tests/

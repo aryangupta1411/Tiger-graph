@@ -1,0 +1,44 @@
+{
+ "query": "post_open_activity",
+ "case": "HHG-014",
+ "params": {
+  "c": "C13487-K1",
+  "opened_at": "2016-11-22 20:11:00",
+  "days": 7
+ },
+ "expected": {
+  "txns": [
+   {
+    "ts": "2016-11-26 17:39:00",
+    "id": "3489320",
+    "amt": 252.28,
+    "channel": "online",
+    "addr1": "191.0",
+    "device_new": "New",
+    "cms_p": 0.168974
+   },
+   {
+    "ts": "2016-11-28 22:07:15",
+    "id": "3495787",
+    "amt": 35.92,
+    "channel": "in_person",
+    "addr1": "191.0",
+    "device_new": "",
+    "cms_p": 0.002723
+   },
+   {
+    "ts": "2016-11-29 16:55:33",
+    "id": "3497594",
+    "amt": 30.96,
+    "channel": "in_person",
+    "addr1": "272.0",
+    "device_new": "",
+    "cms_p": 0.00103
+   }
+  ],
+  "summary": {
+   "n": 3,
+   "sum_amt": 319.16
+  }
+ }
+}

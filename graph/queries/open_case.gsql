@@ -1,0 +1,19 @@
+// open_case (writer, harness-only) — upserts the AgentCase vertex at intake (P0) with status "open" and links
+// it to its card and flagged transaction. Re-running with the same case_id overwrites the same attributes.
+// The vector attribute note_emb is NOT written here (attributes + vector go through pyTigerGraph upsertVertex
+// in P10). Writes commit when the query finishes; a following read query sees them.
+USE GRAPH FraudGraph
+CREATE OR REPLACE QUERY open_case(STRING case_id, STRING source_case_id, STRING customer_id, STRING card_id,
+                                  STRING trigger_type, DATETIME opened_at, STRING run_id, STRING flagged_txn_id)
+                                  FOR GRAPH FraudGraph SYNTAX v3 {
+  INSERT INTO AgentCase (PRIMARY_ID, source_case_id, customer_id, card_id, trigger_type, opened_at, updated_at,
+                         status, verdict, fraud_probability, pattern, pattern_description, exposure_usd, summary,
+                         sar_filed, sar_narrative, initial_actions, final_actions, what_changed, stop_reason, run_id)
+         VALUES (case_id, source_case_id, customer_id, card_id, trigger_type, opened_at, opened_at,
+                 "open", "", 0.0, "", "", 0.0, "", false, "", "[]", "[]", "", "", run_id);
+  INSERT INTO CASE_ON_CARD (FROM, TO) VALUES (case_id AgentCase, card_id Card);
+  INSERT INTO CASE_INVOLVES (FROM, TO) VALUES (case_id AgentCase, flagged_txn_id Transaction);
+  BOOL ok = true;
+  STRING id = case_id;
+  PRINT ok, id;
+}

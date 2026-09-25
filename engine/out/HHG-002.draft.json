@@ -1,0 +1,133 @@
+{
+  "case_id": "HHG-002",
+  "case": {
+    "status": "closed_fraud",
+    "verdict": "fraud",
+    "fraud_probability": 0.94,
+    "pattern": "card_not_present_fraud",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3478782"
+    ],
+    "first_suspicious_txn_id": "3478782",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 292.36,
+    "evidence": [
+      {
+        "claim": "Amount $292.36 is 2.4x the card's prior maximum ($121.32); prior median $47.29 over 35 transactions",
+        "source": "graph",
+        "ref": "query:case_context(txn=3478782)",
+        "entity_ids": [
+          "3478782",
+          "C11891-K1"
+        ]
+      },
+      {
+        "claim": "Card was dormant for 16 days before the flagged transaction",
+        "source": "graph",
+        "ref": "query:card_window(card=C11891-K1, hours=72)",
+        "entity_ids": [
+          "3478782",
+          "C11891-K1"
+        ]
+      },
+      {
+        "claim": "Purchaser email domain hotmail.com used 7 times before on this card",
+        "source": "graph",
+        "ref": "query:case_context(txn=3478782)",
+        "entity_ids": [
+          "3478782"
+        ]
+      },
+      {
+        "claim": "Case-memory scorer (LightGBM over the bank's 5,565 closed cases; October holdout AUC 0.956) puts the flagged transaction at 0.66 (calibrated 0.75); the real-time risk score was 0.79",
+        "source": "graph",
+        "ref": "query:case_context(txn=3478782)",
+        "entity_ids": [
+          "3478782"
+        ]
+      },
+      {
+        "claim": "1 prior confirmed-fraud case(s) on this card (card_not_present_fraud), most recent 2016-09-30; 1 within 120 days on the same channel",
+        "source": "graph",
+        "ref": "query:prior_cases_for_customer(customer=C11891)",
+        "entity_ids": [
+          "CC-4160",
+          "C11891-K1"
+        ]
+      },
+      {
+        "claim": "Customer denied the purchases when asked and still has the card (assumed reply)",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": []
+      },
+      {
+        "claim": "No identity record for this online transaction: the device is unknown, not new",
+        "source": "graph",
+        "ref": "query:case_context(txn=3478782)",
+        "entity_ids": [
+          "3478782"
+        ]
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-4160"
+    ],
+    "summary": "Risk-score alert (0.79) on transaction 3478782 ($292.36, online) for card C11891-K1. Customer denied the purchases when asked and still has the card (assumed reply). Verdict fraud at probability 0.94, pattern card_not_present_fraud, 1 affected transaction(s) worth $292.36. Final actions: CREATE_CASE, BLOCK_CARD after the assumed customer_validation reply; status closed_fraud.",
+    "written_to_graph": false,
+    "graph_case_id": "AC-HHG-002"
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 15,
+      "assumed_response": "ASSUMED (simulated): customer states they did not make these purchases and still has the card"
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: probability 0.83 reaches 0.30; case opened and written to the graph"
+      },
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "\u00a73b / \u00a75: probability 0.83 is below the \u00a76 stop threshold of 0.85; ask the cardholder which of the transactions were theirs"
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "\u00a73b: fraud verdict at probability 0.83 with 2 independent evidence families (history, memory), so R1 does not apply (probability at or above 0.70); exposure $292.36 routes L1"
+      }
+    ],
+    "final": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "3a: probability 0.94 reaches 0.30; case opened and written to the graph"
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: customer denied the transaction; exposure $292.36 is at or under $2,500 so route L1"
+      }
+    ],
+    "what_changed": "The assumed reply (customer_validation: customer states they did not make these purchases and still has the card) probability moved from 0.83 to 0.94 and the verdict became fraud. Dropped VERIFY_WITH_CUSTOMER. Counterfactual: had the customer confirmed the purchase, R3 would have applied: CLOSE_NO_FRAUD."
+  },
+  "sar": {
+    "file": false,
+    "reason": "3a not met: exposure $292.36 <= $1,000; no device profile shared with other cards' fraud; no shared region cluster; no other customer's fraud connected; documented pattern",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0.0,
+    "activity_dates": []
+  },
+  "stop_reason": "Policy \u00a76 test 2: the assumed customer denial settled the question. Probability 0.94 with 3 families also meets \u00a76 test 1.",
+  "tool_calls": 15,
+  "tokens": 0,
+  "latency_s": 0.04
+}

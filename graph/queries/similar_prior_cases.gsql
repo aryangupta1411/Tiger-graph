@@ -1,0 +1,118 @@
+USE GRAPH FraudGraph
+/*
+ similar_prior_cases - hybrid case-memory retrieval (contract: interfaces.md section A).
+
+ Structural candidate set first (same card / customer / device profile / billing region / pattern signature
+ among ClosedCase AND AgentCase opened in the 120 days before as_of), then vectorSearch over BOTH vector
+ attributes restricted to that candidate set, then diversification so at least one cleared / legitimate
+ case is returned when one is available.
+
+ Params (over MCP run_installed_query):
+   q            LIST<FLOAT>  EMBED_DIM-d query vector built by the harness (default: the free local backend,
+                             BAAI/bge-large-en-v1.5 at 1024-d with the BGE query prefix; EMBED_BACKEND=voyage
+                             gives voyage-4-lite with input_type="query" instead - see rag/embed.py)
+   k            INT          rows to return (agent asks for 8; the answer file keeps 3-6)
+   card_id      STRING       "" to skip
+   customer_id  STRING       "" to skip
+   device_id    STRING       exact DeviceProfile id ("" to skip)
+   addr1        STRING       billing region code as stored ("444.0"; "" to skip)
+   pattern_sig  STRING       candidate pattern from the engine ("" to skip)
+   as_of        DATETIME     opened_at of the case being investigated (time-box)
+
+ PRINT cases: rows carry v_id (the CC-/AC- id), v_type and attributes {@kind, @outcome_or_verdict, @pattern,
+ @exposure_usd, @opened_at, @distance, @overlap_reasons}; rag.retrieval flattens them (strips "@").
+
+ Verified syntax: v3 patterns with a WHERE inside the node ((d:DeviceProfile WHERE d.id == device_id) -
+ ecosys GSQL tutorial), vertex-set variables as node labels ((x:cand) - ecosys VectorSearch.md q6),
+ vectorSearch({A.e1, B.e1}, q, k, {candidate_set: c, distance_map: @@d}) - VectorSearch.md q2/q3 and the
+ 4.2 vector reference. The two-vertex-type search WITH a mixed candidate set is smoke-tested on day 0;
+ if it is rejected, install similar_prior_cases_closed.gsql + similar_prior_cases_agent.gsql instead and
+ rag.retrieval merges them (same printed shape).
+*/
+CREATE OR REPLACE QUERY similar_prior_cases(LIST<FLOAT> q, INT k, STRING card_id, STRING customer_id,
+                                            STRING device_id, STRING addr1, STRING pattern_sig,
+                                            DATETIME as_of) FOR GRAPH FraudGraph SYNTAX v3 {
+  MapAccum<VERTEX, FLOAT> @@dist;
+  SetAccum<STRING> @overlap_reasons;
+  MaxAccum<STRING> @kind;
+  MaxAccum<STRING> @outcome_or_verdict;
+  MaxAccum<STRING> @pattern;
+  MaxAccum<FLOAT> @exposure_usd;
+  MaxAccum<STRING> @opened_at;   // datetime_format() string: contract wants YYYY-MM-DD HH:MM:SS
+  MinAccum<FLOAT> @distance;
+  INT window_s = 120 * 86400;
+  INT kk = k * 3;
+  INT km1 = k - 1;
+
+  // ---- candidates among closed cases (attribute filters are cheap: 5,565 vertices) ----
+  cc_all = SELECT c FROM (c:ClosedCase)
+           WHERE c.opened_at <= as_of AND datetime_diff(as_of, c.opened_at) <= window_s
+           ACCUM c.@kind += "closed", c.@outcome_or_verdict += c.outcome, c.@pattern += c.pattern,
+                 c.@exposure_usd += c.exposure_usd, c.@opened_at += datetime_format(c.opened_at, "%Y-%m-%d %H:%M:%S");
+  cc_struct = SELECT c FROM (c:cc_all)
+              WHERE (card_id != "" AND c.card_id == card_id)
+                 OR (customer_id != "" AND c.customer_id == customer_id)
+                 OR (addr1 != "" AND c.note_region == addr1)
+                 OR (pattern_sig != "" AND c.pattern == pattern_sig)
+              ACCUM
+                IF card_id != "" AND c.card_id == card_id THEN c.@overlap_reasons += "same_card" END,
+                IF customer_id != "" AND c.customer_id == customer_id THEN c.@overlap_reasons += "same_customer" END,
+                IF addr1 != "" AND c.note_region == addr1 THEN c.@overlap_reasons += "same_region" END,
+                IF pattern_sig != "" AND c.pattern == pattern_sig THEN c.@overlap_reasons += "same_pattern" END;
+
+  // ---- candidates among agent-written cases (cases run in opened_at order, so earlier ones qualify). STRICT
+  //      opened_at < as_of: the case under investigation (its AgentCase is written at intake with opened_at = as_of,
+  //      and a superseded run's copy has the same id / opened_at) and any later case never retrieve themselves ----
+  ac_all = SELECT a FROM (a:AgentCase)
+           WHERE a.opened_at < as_of AND datetime_diff(as_of, a.opened_at) <= window_s
+           ACCUM a.@kind += "agent", a.@outcome_or_verdict += a.verdict, a.@pattern += a.pattern,
+                 a.@exposure_usd += a.exposure_usd, a.@opened_at += datetime_format(a.opened_at, "%Y-%m-%d %H:%M:%S");
+  ac_struct = SELECT a FROM (a:ac_all)
+              WHERE (card_id != "" AND a.card_id == card_id)
+                 OR (customer_id != "" AND a.customer_id == customer_id)
+                 OR (pattern_sig != "" AND a.pattern == pattern_sig)
+              ACCUM
+                IF card_id != "" AND a.card_id == card_id THEN a.@overlap_reasons += "same_card" END,
+                IF customer_id != "" AND a.customer_id == customer_id THEN a.@overlap_reasons += "same_customer" END,
+                IF pattern_sig != "" AND a.pattern == pattern_sig THEN a.@overlap_reasons += "same_pattern" END;
+
+  cand = cc_struct UNION ac_struct;
+
+  // ---- shared device profile through the graph (ring profile: 52 cards; generic profiles are skipped by
+  //      the harness, which passes device_id="" when DeviceProfile.is_strong is false) ----
+  IF device_id != "" THEN
+    cc_dev = SELECT c FROM (d:DeviceProfile WHERE d.id == device_id)<-[:FROM_DEVICE]-(t:Transaction)<-[:INVOLVES]-(c:ClosedCase)
+             WHERE c.opened_at <= as_of AND datetime_diff(as_of, c.opened_at) <= window_s
+             ACCUM c.@overlap_reasons += "same_device", c.@kind += "closed", c.@outcome_or_verdict += c.outcome,
+                   c.@pattern += c.pattern, c.@exposure_usd += c.exposure_usd, c.@opened_at += datetime_format(c.opened_at, "%Y-%m-%d %H:%M:%S");
+    ac_dev = SELECT a FROM (d:DeviceProfile WHERE d.id == device_id)<-[:CASE_DEVICE]-(a:AgentCase)
+             WHERE a.opened_at < as_of AND datetime_diff(as_of, a.opened_at) <= window_s
+             ACCUM a.@overlap_reasons += "same_device", a.@kind += "agent", a.@outcome_or_verdict += a.verdict,
+                   a.@pattern += a.pattern, a.@exposure_usd += a.exposure_usd, a.@opened_at += datetime_format(a.opened_at, "%Y-%m-%d %H:%M:%S");
+    cand = cand UNION cc_dev UNION ac_dev;
+  END;
+
+  // ---- no structural overlap at all: fall back to every case in the window ----
+  IF cand.size() == 0 THEN
+    cand = cc_all UNION ac_all;
+  END;
+
+  // ---- vector rerank inside the candidate set (both vertex types share the Voyage space) ----
+  v = vectorSearch({ClosedCase.note_emb, AgentCase.note_emb}, q, kk, {candidate_set: cand, distance_map: @@dist});
+  v = SELECT x FROM (x:v) ACCUM x.@distance += @@dist.get(x);
+
+  // ---- diversification: keep the k nearest, but guarantee one cleared/legitimate case when available ----
+  top = SELECT x FROM (x:v) ORDER BY x.@distance ASC LIMIT k;
+  has_clear = SELECT x FROM (x:top) WHERE x.@outcome_or_verdict == "cleared" OR x.@outcome_or_verdict == "legitimate";
+  best_clear = SELECT x FROM (x:v) WHERE x.@outcome_or_verdict == "cleared" OR x.@outcome_or_verdict == "legitimate"
+               ORDER BY x.@distance ASC LIMIT 1;
+  IF has_clear.size() == 0 AND best_clear.size() > 0 AND k > 1 THEN
+    top = SELECT x FROM (x:top) ORDER BY x.@distance ASC LIMIT km1;
+    top = top UNION best_clear;
+  END;
+  top = SELECT x FROM (x:top) ORDER BY x.@distance ASC;
+
+  PRINT top[top.@kind, top.@outcome_or_verdict, top.@pattern, top.@exposure_usd, top.@opened_at,
+            top.@distance, top.@overlap_reasons] AS cases;
+}
+INSTALL QUERY similar_prior_cases
